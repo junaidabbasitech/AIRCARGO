@@ -1,0 +1,19 @@
+packages:
+  "recharts": "For rendering data visualization charts on the dashboard"
+  "date-fns": "For formatting timestamps"
+  "clsx": "For conditional class merging"
+  "tailwind-merge": "For merging tailwind classes safely"
+  "lucide-react": "For UI icons"
+  "sonner": "For toast notifications"
+
+images:
+  - path: "artifacts/admin-dashboard/public/images/logo.png"
+    description: "Minimalist glowing cyan aviation radar or airplane vector icon on a completely transparent background"
+    aspect_ratio: "1:1"
+  - path: "artifacts/admin-dashboard/public/images/bg-pattern.png"
+    description: "Very dark navy and black background with a subtle, futuristic glowing cyan radar grid and topographic map lines"
+    aspect_ratio: "16:9"
+
+notes:
+  - "The UI relies on the generated hooks in @workspace/api-client-react."
+  - "Using a custom Aviation Command Center theme with glowing cyan accents and dark navy backgrounds."

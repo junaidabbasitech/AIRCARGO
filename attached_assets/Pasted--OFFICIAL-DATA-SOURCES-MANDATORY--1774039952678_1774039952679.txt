@@ -1,0 +1,132 @@
+-----------------------------------
+OFFICIAL DATA SOURCES (MANDATORY)
+-----------------------------------
+
+The system MUST use the following sources to fetch, validate, and enrich aviation and CBP-related data.
+
+Use them intelligently for scraping, parsing, or reference:
+
+1. IATA Airline & Airport Codes:
+https://www.iata.org/en/services/codes/
+https://www.iata.org/en/publications/directories/code-search
+https://www.iata.org/en/publications/manuals/airline-airport-location-coding-databases/
+
+Purpose:
+- Fetch airline names
+- IATA airline codes
+- Airport IATA codes
+- Standardized naming
+
+-----------------------------------
+
+2. US CBP Official Data:
+https://www.cbp.gov/sites/default/files/2024-08/ACE-Air-Import_Msg_Line_Identifiers_August%2023%202024%20%282%29_508.pdf
+https://www.cbp.gov/travel/general-aviation-processing/general-aviation-airports
+
+Purpose:
+- Extract CBP airline codes (if available)
+- Extract CBP airport port codes
+- Identify airports approved for customs clearance
+
+-----------------------------------
+
+3. US Airport Listings:
+https://www.airportcodes.us/us-airports.htm
+
+Purpose:
+- Full list of US airports
+- Airport names + IATA codes
+
+-----------------------------------
+
+4. CBP Airport Contact & Reference Data:
+https://pilatusowners.org/doc-lib/cbp-airport-contact-list/
+
+Purpose:
+- Supplement airport data
+- Add contact-level insights where possible
+
+-----------------------------------
+DATA EXTRACTION INSTRUCTIONS
+-----------------------------------
+
+The AI must:
+
+1. Build a data ingestion script that:
+   - Scrapes or parses HTML pages
+   - Downloads and parses PDF files
+   - Converts extracted data into structured JSON
+
+2. For PDF parsing:
+   - Use a Node.js PDF parser (like pdf-parse)
+   - Extract tables and structured text
+   - Identify:
+     - CBP codes
+     - Airport names
+     - Airline references
+
+3. Normalize data:
+   - Remove duplicates
+   - Standardize airline names (e.g., "American Airlines" not "AA")
+   - Match IATA + CBP codes properly
+
+4. Merge datasets:
+   - Combine IATA + CBP + airport datasets
+   - Create unified records
+
+-----------------------------------
+DATA STORAGE FORMAT
+-----------------------------------
+
+Store processed data in:
+
+/server/data/processed/
+- airlines.json
+- airports.json
+- airline_airport_mapping.json
+
+-----------------------------------
+ERROR HANDLING
+-----------------------------------
+
+- If scraping fails:
+  - Retry 3 times
+  - Log errors
+- If data is incomplete:
+  - Store partial data
+  - Flag for admin review
+
+-----------------------------------
+ADMIN DATA CONTROL
+-----------------------------------
+
+Admin panel must include:
+
+- "Sync Data from Sources" button
+- "View Raw Imported Data"
+- "Approve / Reject Records"
+- "Edit Before Save"
+
+-----------------------------------
+IMPORTANT LIMITATION HANDLING
+-----------------------------------
+
+
+- Do NOT rely on a single source
+- Always merge multiple sources for accuracy
+
+-----------------------------------
+FINAL DATA TARGET
+-----------------------------------
+
+System must aim to populate:
+- 100+ airlines
+- 200+ US airports
+- Valid CBP port codes where available
+
+Enhance system:
+- Add manual bulk upload for ground handlers (CSV)
+- Add audit logs for admin changes
+- Add search filters (Airline + Airport + Handler)
+- Add "last updated" timestamp for each record 
+

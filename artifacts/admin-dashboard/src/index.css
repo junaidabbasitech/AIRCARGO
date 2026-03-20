@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: 'Orbitron', sans-serif;
+  --font-sans: 'Manrope', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Aviation Command Center Palette */
+  --color-background: hsl(223 47% 5%);
+  --color-foreground: hsl(210 40% 98%);
+  
+  --color-card: hsl(221 45% 9%);
+  --color-card-foreground: hsl(210 40% 98%);
+  --color-card-border: hsl(215 32% 17%);
+
+  --color-popover: hsl(221 45% 9%);
+  --color-popover-foreground: hsl(210 40% 98%);
+  --color-popover-border: hsl(215 32% 17%);
+
+  --color-primary: hsl(189 94% 43%); /* Cyan */
+  --color-primary-foreground: hsl(223 47% 5%);
+  
+  --color-secondary: hsl(217 91% 60%); /* Blue */
+  --color-secondary-foreground: hsl(210 40% 98%);
+
+  --color-muted: hsl(225 35% 15%);
+  --color-muted-foreground: hsl(215 20% 65%);
+
+  --color-accent: hsl(189 94% 43% / 0.15);
+  --color-accent-foreground: hsl(189 94% 43%);
+
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(210 40% 98%);
+
+  --color-success: hsl(160 84% 39%);
+  --color-success-foreground: hsl(210 40% 98%);
+
+  --color-warning: hsl(38 92% 50%);
+  --color-warning-foreground: hsl(210 40% 98%);
+
+  --color-border: hsl(215 32% 17%);
+  --color-input: hsl(215 32% 17%);
+  --color-ring: hsl(189 94% 43%);
+
+  --color-sidebar: hsl(225 45% 7%);
+  --color-sidebar-foreground: hsl(210 40% 98%);
+  --color-sidebar-border: hsl(215 32% 17%);
+  --color-sidebar-accent: hsl(189 94% 43% / 0.1);
+  --color-sidebar-accent-foreground: hsl(189 94% 43%);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground font-sans antialiased min-h-screen selection:bg-primary/30 selection:text-primary;
+    background-image: 
+      radial-gradient(circle at 50% 0%, hsl(189 94% 43% / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 100% 100%, hsl(217 91% 60% / 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-wide uppercase;
+  }
+}
+
+@layer utilities {
+  .glow-border {
+    @apply border border-primary/30 shadow-[0_0_15px_rgba(6,182,212,0.15)];
+  }
+  .glow-border-active {
+    @apply border border-primary shadow-[0_0_20px_rgba(6,182,212,0.4)];
+  }
+  .glow-text {
+    text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+  }
+  .glass-panel {
+    @apply bg-card/80 backdrop-blur-md border border-card-border;
+  }
+}
+
+/* Custom Scrollbar for data-dense tables */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-muted/30 rounded-full;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-border rounded-full hover:bg-primary/50 transition-colors;
+}

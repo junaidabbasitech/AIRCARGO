@@ -3,13 +3,25 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Aviation CBP Admin Dashboard API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: airlines
+    description: Airline management
+  - name: airports
+    description: Airport management
+  - name: mappings
+    description: Airline-airport mappings
+  - name: sync
+    description: Data synchronization
+  - name: audit
+    description: Audit log operations
+  - name: groundHandlers
+    description: Ground handler management
 paths:
   /healthz:
     get:
@@ -24,6 +36,486 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /airlines:
+    get:
+      operationId: listAirlines
+      tags: [airlines]
+      summary: List airlines
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: List of airlines
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirlineListResponse"
+    post:
+      operationId: createAirline
+      tags: [airlines]
+      summary: Create airline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAirlineRequest"
+      responses:
+        "201":
+          description: Created airline
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airline"
+
+  /airlines/{id}:
+    get:
+      operationId: getAirline
+      tags: [airlines]
+      summary: Get airline by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Airline
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airline"
+    put:
+      operationId: updateAirline
+      tags: [airlines]
+      summary: Update airline
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAirlineRequest"
+      responses:
+        "200":
+          description: Updated airline
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airline"
+    delete:
+      operationId: deleteAirline
+      tags: [airlines]
+      summary: Delete airline
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /airlines/{id}/status:
+    patch:
+      operationId: updateAirlineStatus
+      tags: [airlines]
+      summary: Approve or reject airline
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StatusUpdateRequest"
+      responses:
+        "200":
+          description: Updated airline
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airline"
+
+  /airports:
+    get:
+      operationId: listAirports
+      tags: [airports]
+      summary: List airports
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: List of airports
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirportListResponse"
+    post:
+      operationId: createAirport
+      tags: [airports]
+      summary: Create airport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAirportRequest"
+      responses:
+        "201":
+          description: Created airport
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airport"
+
+  /airports/{id}:
+    get:
+      operationId: getAirport
+      tags: [airports]
+      summary: Get airport by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Airport
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airport"
+    put:
+      operationId: updateAirport
+      tags: [airports]
+      summary: Update airport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAirportRequest"
+      responses:
+        "200":
+          description: Updated airport
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airport"
+    delete:
+      operationId: deleteAirport
+      tags: [airports]
+      summary: Delete airport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /airports/{id}/status:
+    patch:
+      operationId: updateAirportStatus
+      tags: [airports]
+      summary: Approve or reject airport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StatusUpdateRequest"
+      responses:
+        "200":
+          description: Updated airport
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airport"
+
+  /ground-handlers:
+    get:
+      operationId: listGroundHandlers
+      tags: [groundHandlers]
+      summary: List ground handlers
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: airportId
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: List of ground handlers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroundHandlerListResponse"
+    post:
+      operationId: createGroundHandler
+      tags: [groundHandlers]
+      summary: Create ground handler
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGroundHandlerRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroundHandler"
+
+  /ground-handlers/{id}:
+    put:
+      operationId: updateGroundHandler
+      tags: [groundHandlers]
+      summary: Update ground handler
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGroundHandlerRequest"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroundHandler"
+    delete:
+      operationId: deleteGroundHandler
+      tags: [groundHandlers]
+      summary: Delete ground handler
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /ground-handlers/bulk-upload:
+    post:
+      operationId: bulkUploadGroundHandlers
+      tags: [groundHandlers]
+      summary: Bulk upload ground handlers via CSV
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkUploadRequest"
+      responses:
+        "200":
+          description: Upload result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BulkUploadResponse"
+
+  /sync:
+    post:
+      operationId: syncData
+      tags: [sync]
+      summary: Trigger data sync from official sources
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncRequest"
+      responses:
+        "200":
+          description: Sync result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncResponse"
+
+  /sync/status:
+    get:
+      operationId: getSyncStatus
+      tags: [sync]
+      summary: Get last sync status
+      responses:
+        "200":
+          description: Sync status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncStatusResponse"
+
+  /sync/raw-data:
+    get:
+      operationId: getRawData
+      tags: [sync]
+      summary: View raw imported data
+      parameters:
+        - name: source
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Raw imported data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RawDataResponse"
+
+  /audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags: [audit]
+      summary: List audit logs
+      parameters:
+        - name: entityType
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Audit logs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogListResponse"
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [airlines]
+      summary: Get dashboard statistics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +526,533 @@ components:
       required:
         - status
 
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    Airline:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        iataCode:
+          type: string
+          nullable: true
+        cbpCode:
+          type: string
+          nullable: true
+        icaoCode:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        source:
+          type: string
+          nullable: true
+        flaggedForReview:
+          type: boolean
+        lastUpdated:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - status
+        - flaggedForReview
+        - lastUpdated
+        - createdAt
+
+    AirlineListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Airline"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
+
+    CreateAirlineRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        iataCode:
+          type: string
+          nullable: true
+        cbpCode:
+          type: string
+          nullable: true
+        icaoCode:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        source:
+          type: string
+          nullable: true
+      required:
+        - name
+
+    UpdateAirlineRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        iataCode:
+          type: string
+          nullable: true
+        cbpCode:
+          type: string
+          nullable: true
+        icaoCode:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+
+    Airport:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        iataCode:
+          type: string
+          nullable: true
+        cbpPortCode:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        customsApproved:
+          type: boolean
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        source:
+          type: string
+          nullable: true
+        flaggedForReview:
+          type: boolean
+        lastUpdated:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - customsApproved
+        - status
+        - flaggedForReview
+        - lastUpdated
+        - createdAt
+
+    AirportListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Airport"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
+
+    CreateAirportRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        iataCode:
+          type: string
+          nullable: true
+        cbpPortCode:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        customsApproved:
+          type: boolean
+        source:
+          type: string
+          nullable: true
+      required:
+        - name
+
+    UpdateAirportRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        iataCode:
+          type: string
+          nullable: true
+        cbpPortCode:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        customsApproved:
+          type: boolean
+
+    GroundHandler:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        airportId:
+          type: integer
+          nullable: true
+        airportName:
+          type: string
+          nullable: true
+        contactName:
+          type: string
+          nullable: true
+        contactPhone:
+          type: string
+          nullable: true
+        contactEmail:
+          type: string
+          nullable: true
+        services:
+          type: string
+          nullable: true
+        lastUpdated:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - lastUpdated
+        - createdAt
+
+    GroundHandlerListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/GroundHandler"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
+
+    CreateGroundHandlerRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        airportId:
+          type: integer
+          nullable: true
+        contactName:
+          type: string
+          nullable: true
+        contactPhone:
+          type: string
+          nullable: true
+        contactEmail:
+          type: string
+          nullable: true
+        services:
+          type: string
+          nullable: true
+      required:
+        - name
+
+    BulkUploadRequest:
+      type: object
+      properties:
+        csvData:
+          type: string
+          description: CSV content as a string
+      required:
+        - csvData
+
+    BulkUploadResponse:
+      type: object
+      properties:
+        inserted:
+          type: integer
+        skipped:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+      required:
+        - inserted
+        - skipped
+        - errors
+        - message
+
+    SyncRequest:
+      type: object
+      properties:
+        sources:
+          type: array
+          items:
+            type: string
+            enum: [iata_airlines, iata_airports, us_airports, cbp_ports]
+      required:
+        - sources
+
+    SyncResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        airlinesAdded:
+          type: integer
+        airportsAdded:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: string
+        syncedAt:
+          type: string
+          format: date-time
+      required:
+        - success
+        - airlinesAdded
+        - airportsAdded
+        - errors
+        - syncedAt
+
+    SyncStatusResponse:
+      type: object
+      properties:
+        lastSyncAt:
+          type: string
+          format: date-time
+          nullable: true
+        lastSyncSources:
+          type: array
+          items:
+            type: string
+        totalAirlines:
+          type: integer
+        totalAirports:
+          type: integer
+        pendingReview:
+          type: integer
+      required:
+        - lastSyncAt
+        - lastSyncSources
+        - totalAirlines
+        - totalAirports
+        - pendingReview
+
+    RawDataEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        source:
+          type: string
+        dataType:
+          type: string
+        rawData:
+          type: object
+          additionalProperties: true
+        importedAt:
+          type: string
+          format: date-time
+        flagged:
+          type: boolean
+      required:
+        - id
+        - source
+        - dataType
+        - rawData
+        - importedAt
+        - flagged
+
+    RawDataResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RawDataEntry"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
+
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        entityType:
+          type: string
+        entityId:
+          type: integer
+          nullable: true
+        action:
+          type: string
+        changes:
+          type: object
+          additionalProperties: true
+          nullable: true
+        performedBy:
+          type: string
+        performedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - entityType
+        - action
+        - performedBy
+        - performedAt
+
+    AuditLogListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLog"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
+
+    StatsResponse:
+      type: object
+      properties:
+        totalAirlines:
+          type: integer
+        approvedAirlines:
+          type: integer
+        pendingAirlines:
+          type: integer
+        rejectedAirlines:
+          type: integer
+        totalAirports:
+          type: integer
+        approvedAirports:
+          type: integer
+        pendingAirports:
+          type: integer
+        rejectedAirports:
+          type: integer
+        totalGroundHandlers:
+          type: integer
+        customsApprovedAirports:
+          type: integer
+        lastSyncAt:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+        - totalAirlines
+        - approvedAirlines
+        - pendingAirlines
+        - rejectedAirlines
+        - totalAirports
+        - approvedAirports
+        - pendingAirports
+        - rejectedAirports
+        - totalGroundHandlers
+        - customsApprovedAirports
+        - lastSyncAt
+
+    StatusUpdateRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [approved, rejected]
+      required:
+        - status
