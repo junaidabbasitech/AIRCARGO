@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useListAirlines, useListAirports } from "@workspace/api-client-react";
-import { Search, Plane, Building2, MapPin, Filter, ChevronRight, ChevronDown, X, Phone, Mail, Hash, DollarSign, ArrowLeft, Zap } from "lucide-react";
+import {
+  Search, Plane, Building2, MapPin, Filter, ChevronRight, X,
+  Phone, Mail, Hash, DollarSign, ArrowLeft, Zap, Globe, Radio,
+  Shield, TrendingUp, AlertCircle
+} from "lucide-react";
+import { Watermark } from "@/components/Watermark";
 
 interface AirlineOperation {
   id: number;
@@ -33,6 +38,61 @@ async function fetchOps(airlineId?: number, airportId?: number): Promise<Airline
   return json.data ?? [];
 }
 
+function Badge({ children, color }: { children: React.ReactNode; color: "blue" | "orange" | "purple" | "green" | "slate" }) {
+  const cls = {
+    blue: "bg-sky-500/15 text-sky-300 border border-sky-500/25",
+    orange: "bg-orange-500/15 text-orange-300 border border-orange-500/25",
+    purple: "bg-purple-500/15 text-purple-300 border border-purple-500/25",
+    green: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/25",
+    slate: "bg-white/8 text-slate-300 border border-white/10",
+  }[color];
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold tracking-wider ${cls}`}>
+      {children}
+    </span>
+  );
+}
+
+function DetailCard({
+  icon, label, value, color, isEmail
+}: {
+  icon: React.ReactNode; label: string; value: string | null | undefined; color: "sky" | "green" | "orange" | "purple" | "red"; isEmail?: boolean;
+}) {
+  const bg = {
+    sky: "from-sky-500/10 border-sky-500/20",
+    green: "from-emerald-500/10 border-emerald-500/20",
+    orange: "from-orange-500/10 border-orange-500/20",
+    purple: "from-purple-500/10 border-purple-500/20",
+    red: "from-red-500/10 border-red-500/20",
+  }[color];
+  const labelClr = {
+    sky: "text-sky-400", green: "text-emerald-400", orange: "text-orange-400",
+    purple: "text-purple-400", red: "text-red-400",
+  }[color];
+
+  return (
+    <div className={`relative overflow-hidden rounded-xl border bg-gradient-to-br ${bg} to-transparent p-4`}>
+      <div className="flex items-center gap-2 mb-2">
+        <span className={labelClr}>{icon}</span>
+        <span className={`text-[10px] font-bold uppercase tracking-widest ${labelClr}`}>{label}</span>
+      </div>
+      {value ? (
+        isEmail ? (
+          <a href={`mailto:${value}`} className="text-sm text-sky-300 hover:text-sky-100 hover:underline break-all font-medium transition-colors">
+            {value}
+          </a>
+        ) : (
+          <p className="text-sm font-semibold text-white break-words">{value}</p>
+        )
+      ) : (
+        <p className="text-xs text-slate-500 italic flex items-center gap-1">
+          <AlertCircle className="h-3 w-3" /> Not available
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function AirPublic() {
   const [tab, setTab] = useState<"airlines" | "airports">("airlines");
   const [search, setSearch] = useState("");
@@ -44,13 +104,11 @@ export default function AirPublic() {
   const [customs, setCustoms] = useState<"" | "yes" | "no">("");
   const [airportFilter, setAirportFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(25);
+  const [showFilters, setShowFilters] = useState(false);
 
-  // Airline IDs that have ISC/operations data
   const [iscAirlineIds, setIscAirlineIds] = useState<Set<number>>(new Set());
   const iscFetched = useRef(false);
-
-  // Airline IDs that have operations with the specified FIRMS code
   const [firmsAirlineIds, setFirmsAirlineIds] = useState<Set<number>>(new Set());
   const firmsRef = useRef("");
 
@@ -81,7 +139,6 @@ export default function AirPublic() {
       .catch(() => {});
   }, [firmsFilter]);
 
-  // Drilldown state
   const [selectedAirline, setSelectedAirline] = useState<{ id: number; name: string; iataCode?: string | null } | null>(null);
   const [airlineOps, setAirlineOps] = useState<AirlineOperation[]>([]);
   const [opsLoading, setOpsLoading] = useState(false);
@@ -120,191 +177,228 @@ export default function AirPublic() {
     setOpsLoading(false);
   };
 
-  const clearAirlineFilters = () => { setCountry(""); setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter(""); setPage(1); };
-  const hasActiveFilters = !!(country || icaoFilter || cbpFilter || hasIscOnly || firmsFilter);
-
   const handleTab = (t: "airlines" | "airports") => {
     setTab(t); setSearch(""); setPage(1); setCountry(""); setCustoms(""); setAirportFilter("");
     setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter("");
     setSelectedAirline(null); setSelectedOp(null); setAirlineOps([]);
   };
 
-  const handleSearch = (val: string) => { setSearch(val); setPage(1); };
+  const clearAll = () => {
+    setSearch(""); setCountry(""); setCustoms(""); setAirportFilter("");
+    setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter(""); setPage(1);
+    setSelectedAirline(null); setSelectedOp(null);
+  };
+
+  const hasActiveFilters = !!(search || country || icaoFilter || cbpFilter || hasIscOnly || firmsFilter || airportFilter || customs);
+  const totalShown = tab === "airlines" ? (filteredAirlines?.length ?? 0) : (filteredAirports?.length ?? 0);
+  const grandTotal = tab === "airlines" ? (airlines?.total ?? 0) : (airports?.total ?? 0);
+  const totalPages = Math.ceil(grandTotal / limit);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-orange-50">
-      {/* Header */}
-      <div className="bg-[hsl(220,48%,14%)] text-white px-6 py-4 flex items-center justify-between shadow-lg">
-        <div className="flex items-center gap-3">
-          <Plane className="h-7 w-7 text-orange-400" />
-          <div>
-            <div>
-              <span className="font-display text-xl tracking-widest text-sky-300">AIR</span>
-              <span className="font-display text-xl tracking-widest text-orange-400 ml-1">SEARCH</span>
-            </div>
-            <p className="text-xs text-slate-400 font-mono">Aviation Data Directory</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-          <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-          LIVE DATA
-        </div>
+    <div className="-m-4 sm:-m-6 lg:-m-8 min-h-screen bg-gradient-to-br from-slate-950 via-[hsl(222,55%,9%)] to-slate-900 relative">
+      <Watermark />
+
+      {/* Atmospheric glow blobs */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden -z-0">
+        <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-sky-500/6 blur-[120px]" />
+        <div className="absolute top-1/3 -right-32 h-[400px] w-[400px] rounded-full bg-orange-500/5 blur-[100px]" />
+        <div className="absolute bottom-0 left-1/3 h-[300px] w-[300px] rounded-full bg-sky-600/4 blur-[80px]" />
       </div>
 
-      {/* Hero */}
-      <div className="bg-gradient-to-b from-[hsl(220,48%,20%)] to-transparent pt-8 pb-14 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-2xl font-display text-white tracking-widest mb-1">
-            FIND <span className="text-orange-400">AVIATION</span> DATA
-          </h1>
-          <p className="text-slate-300 text-sm mb-6">Search airlines and airports — click an airline to see where it operates, then view ISC charges and contact details</p>
+      {/* ─── HERO ─── */}
+      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16">
+        {/* Status badges */}
+        <div className="flex items-center justify-end gap-3 mb-10 max-w-6xl mx-auto">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
+            <span className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">Live Data</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20">
+            <Radio className="h-3 w-3 text-sky-400" />
+            <span className="text-[10px] font-bold text-sky-400 tracking-widest uppercase hidden sm:inline">Registry Online</span>
+          </div>
+        </div>
 
-          {/* Tabs */}
-          <div className="flex justify-center mb-5">
-            <div className="inline-flex bg-white/10 rounded-xl p-1 gap-1">
-              <button onClick={() => handleTab("airlines")} className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${tab === "airlines" ? "bg-sky-500 text-white shadow-md scale-105" : "text-slate-300 hover:text-white hover:bg-white/10"}`}>
-                <Plane className="h-4 w-4" /> Airlines
-              </button>
-            </div>
+        {/* Title */}
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 mb-5">
+            <TrendingUp className="h-3 w-3 text-sky-400" />
+            <span className="text-[10px] font-bold text-sky-400 uppercase tracking-widest">Aviation Data Intelligence</span>
+          </div>
+
+          <h1 className="font-display text-4xl sm:text-5xl font-black tracking-widest text-white mb-3 leading-tight normal-case">
+            Find <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-400">Aviation</span>
+            {" "}Data
+          </h1>
+          <p className="text-slate-400 text-sm sm:text-base mb-8 leading-relaxed">
+            Search airlines and airports — click an airline to explore where it operates,
+            then view ISC charges, FIRMS codes and ground handler contacts.
+          </p>
+
+          {/* Tab switcher */}
+          <div className="inline-flex bg-white/5 backdrop-blur-sm rounded-2xl p-1.5 gap-1 border border-white/8 mb-7">
+            <button
+              onClick={() => handleTab("airlines")}
+              className={`flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                tab === "airlines"
+                  ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/30 scale-[1.02]"
+                  : "text-slate-400 hover:text-white hover:bg-white/8"
+              }`}
+            >
+              <Plane className="h-4 w-4" />
+              <span>Airlines</span>
+              {airlines && <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md ${tab === "airlines" ? "bg-white/20" : "bg-white/8 text-slate-500"}`}>{airlines.total}</span>}
+            </button>
+            <button
+              onClick={() => handleTab("airports")}
+              className={`flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                tab === "airports"
+                  ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 scale-[1.02]"
+                  : "text-slate-400 hover:text-white hover:bg-white/8"
+              }`}
+            >
+              <Building2 className="h-4 w-4" />
+              <span>Airports</span>
+              {airports && <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md ${tab === "airports" ? "bg-white/20" : "bg-white/8 text-slate-500"}`}>{airports.total}</span>}
+            </button>
           </div>
 
           {/* Search bar */}
           <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={e => handleSearch(e.target.value)}
-              placeholder={tab === "airlines" ? "Search by airline name, IATA code..." : "Search by airport name, city, state, IATA..."}
-              className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-white/20 bg-white/95 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/30 shadow-lg text-sm"
-            />
+            <div className="absolute inset-0 rounded-2xl bg-sky-500/20 blur-xl opacity-60" />
+            <div className="relative flex items-center bg-white/8 backdrop-blur-md border border-white/15 rounded-2xl overflow-hidden focus-within:border-sky-500/60 focus-within:bg-white/10 transition-all duration-300 shadow-xl">
+              <Search className="ml-5 h-5 w-5 text-slate-400 shrink-0" />
+              <input
+                type="text"
+                value={search}
+                onChange={e => { setSearch(e.target.value); setPage(1); }}
+                placeholder={tab === "airlines" ? "Search airline name, IATA or ICAO code..." : "Search airport name, city, state, IATA..."}
+                className="flex-1 px-4 py-4 bg-transparent text-white placeholder-slate-500 focus:outline-none text-sm"
+              />
+              {search && (
+                <button onClick={() => setSearch("")} className="mr-3 p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/10 transition-all">
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+              <button
+                onClick={() => setShowFilters(v => !v)}
+                className={`mr-2 flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
+                  showFilters || hasActiveFilters
+                    ? "bg-sky-500 text-white shadow-lg shadow-sky-500/30"
+                    : "bg-white/8 text-slate-400 hover:bg-white/15 hover:text-white border border-white/10"
+                }`}
+              >
+                <Filter className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Filters</span>
+                {hasActiveFilters && <span className="h-4 w-4 rounded-full bg-white/30 text-[9px] flex items-center justify-center font-black">!</span>}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 -mt-6">
-        {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-md p-3 mb-4 border border-sky-100">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
-              <Filter className="h-4 w-4 text-sky-500" /> Filters:
-            </div>
+      {/* ─── MAIN CONTENT ─── */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-8 pb-20">
 
-            {/* Country — always shown */}
-            <div className="flex items-center gap-2">
-              <label className="text-xs font-mono text-slate-500 whitespace-nowrap">Country:</label>
-              <input type="text" value={country} onChange={e => { setCountry(e.target.value); setPage(1); }} placeholder="e.g. US, GR" className="border border-sky-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-sky-400 bg-sky-50 hover:bg-sky-100 transition-colors w-24" />
-            </div>
+        {/* ─── FILTER PANEL ─── */}
+        {showFilters && (
+          <div className="mb-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 shadow-xl">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                <Filter className="h-3.5 w-3.5 text-sky-400" /> Active Filters
+              </div>
 
-            {/* Airlines-only filters */}
-            {tab === "airlines" && (
-              <>
-                <div className="flex items-center gap-2">
-                  <label className="text-xs font-mono text-slate-500 whitespace-nowrap">ICAO:</label>
-                  <input type="text" value={icaoFilter} onChange={e => { setIcaoFilter(e.target.value.toUpperCase()); setPage(1); }} placeholder="e.g. DAL" className="border border-sky-200 rounded-lg px-3 py-1.5 text-sm font-mono uppercase focus:outline-none focus:border-sky-400 bg-sky-50 hover:bg-sky-100 transition-colors w-24" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <label className="text-xs font-mono text-slate-500 whitespace-nowrap">CBP Code:</label>
-                  <input type="text" value={cbpFilter} onChange={e => { setCbpFilter(e.target.value.toUpperCase()); setPage(1); }} placeholder="e.g. EK" className="border border-orange-200 rounded-lg px-3 py-1.5 text-sm font-mono uppercase focus:outline-none focus:border-orange-400 bg-orange-50 hover:bg-orange-100 transition-colors w-24" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <label className="text-xs font-mono text-slate-500 whitespace-nowrap">FIRMS Code:</label>
-                  <input type="text" value={firmsFilter} onChange={e => { setFirmsFilter(e.target.value.toUpperCase()); setPage(1); }} placeholder="e.g. S0743" className="border border-purple-200 rounded-lg px-3 py-1.5 text-sm font-mono uppercase focus:outline-none focus:border-purple-400 bg-purple-50 hover:bg-purple-100 transition-colors w-28" />
-                </div>
-                <button
-                  onClick={() => { setHasIscOnly(v => !v); setPage(1); }}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${hasIscOnly ? "bg-green-500 border-green-500 text-white shadow-md" : "bg-green-50 border-green-200 text-green-700 hover:bg-green-100"}`}
-                >
-                  <Zap className="h-3.5 w-3.5" />
-                  Has ISC Data
-                </button>
-              </>
-            )}
+              <div className="flex items-center gap-2">
+                <Globe className="h-3.5 w-3.5 text-sky-400" />
+                <input
+                  type="text" value={country}
+                  onChange={e => { setCountry(e.target.value); setPage(1); }}
+                  placeholder="Country (e.g. US)"
+                  className="w-28 px-3 py-1.5 bg-white/8 border border-white/12 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500/60 font-mono"
+                />
+              </div>
 
-            {/* Airports-only filters */}
-            {tab === "airports" && (
-              <>
-                <div className="flex items-center gap-2">
-                  <label className="text-xs font-mono text-slate-500 whitespace-nowrap">Airport:</label>
-                  <input type="text" value={airportFilter} onChange={e => { setAirportFilter(e.target.value); setPage(1); }} placeholder="Name or IATA" className="border border-orange-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-orange-400 bg-orange-50 hover:bg-orange-100 transition-colors w-32" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <label className="text-xs font-mono text-slate-500 whitespace-nowrap">Customs:</label>
-                  <select value={customs} onChange={e => { setCustoms(e.target.value as any); setPage(1); }} className="border border-orange-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-orange-400 bg-orange-50 hover:bg-orange-100 transition-colors cursor-pointer">
-                    <option value="">All</option>
+              {tab === "airlines" && (
+                <>
+                  <input type="text" value={icaoFilter} onChange={e => { setIcaoFilter(e.target.value.toUpperCase()); setPage(1); }}
+                    placeholder="ICAO" className="w-24 px-3 py-1.5 bg-white/8 border border-white/12 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500/60 font-mono uppercase" />
+                  <input type="text" value={cbpFilter} onChange={e => { setCbpFilter(e.target.value.toUpperCase()); setPage(1); }}
+                    placeholder="CBP Code" className="w-24 px-3 py-1.5 bg-white/8 border border-orange-500/20 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500/60 font-mono uppercase" />
+                  <input type="text" value={firmsFilter} onChange={e => { setFirmsFilter(e.target.value.toUpperCase()); setPage(1); }}
+                    placeholder="FIRMS" className="w-28 px-3 py-1.5 bg-white/8 border border-purple-500/20 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/60 font-mono uppercase" />
+                  <button
+                    onClick={() => { setHasIscOnly(v => !v); setPage(1); }}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-200 ${
+                      hasIscOnly
+                        ? "bg-emerald-500 border-emerald-500 text-white shadow-md shadow-emerald-500/30"
+                        : "bg-white/5 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
+                    }`}
+                  >
+                    <Zap className="h-3.5 w-3.5" /> Has ISC Data
+                  </button>
+                </>
+              )}
+
+              {tab === "airports" && (
+                <>
+                  <input type="text" value={airportFilter} onChange={e => { setAirportFilter(e.target.value); setPage(1); }}
+                    placeholder="Airport / IATA" className="w-36 px-3 py-1.5 bg-white/8 border border-white/12 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500/60" />
+                  <select value={customs} onChange={e => { setCustoms(e.target.value as any); setPage(1); }}
+                    className="px-3 py-1.5 bg-white/8 border border-white/12 rounded-lg text-sm text-slate-300 focus:outline-none focus:border-sky-500/60 cursor-pointer">
+                    <option value="">All Airports</option>
                     <option value="yes">Customs Approved</option>
                     <option value="no">Not Approved</option>
                   </select>
-                </div>
-              </>
-            )}
+                </>
+              )}
 
-            {(search || country || customs || airportFilter || icaoFilter || cbpFilter || hasIscOnly || firmsFilter) && (
-              <button
-                onClick={() => { setSearch(""); setCountry(""); setCustoms(""); setAirportFilter(""); setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter(""); setPage(1); setSelectedAirline(null); setSelectedOp(null); }}
-                className="ml-auto flex items-center gap-1 text-xs text-red-500 hover:text-red-700 font-semibold transition-colors"
-              >
-                <X className="h-3.5 w-3.5" /> Clear All
-              </button>
-            )}
-          </div>
-
-          {/* Active filter chips */}
-          {(icaoFilter || cbpFilter || hasIscOnly || country || firmsFilter) && tab === "airlines" && (
-            <div className="flex flex-wrap gap-2 mt-2.5 pt-2.5 border-t border-slate-100">
-              {country && (
-                <span className="inline-flex items-center gap-1 bg-sky-100 text-sky-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                  Country: {country}
-                  <button onClick={() => { setCountry(""); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
-                </span>
-              )}
-              {icaoFilter && (
-                <span className="inline-flex items-center gap-1 bg-sky-100 text-sky-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                  ICAO: {icaoFilter}
-                  <button onClick={() => { setIcaoFilter(""); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
-                </span>
-              )}
-              {cbpFilter && (
-                <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                  CBP: {cbpFilter}
-                  <button onClick={() => { setCbpFilter(""); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
-                </span>
-              )}
-              {hasIscOnly && (
-                <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                  <Zap className="h-3 w-3" /> Has ISC Data
-                  <button onClick={() => { setHasIscOnly(false); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
-                </span>
-              )}
-              {firmsFilter && (
-                <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                  FIRMS: {firmsFilter}
-                  <button onClick={() => { setFirmsFilter(""); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
-                </span>
+              {hasActiveFilters && (
+                <button onClick={clearAll} className="ml-auto flex items-center gap-1 text-xs text-red-400 hover:text-red-300 font-semibold transition-colors">
+                  <X className="h-3.5 w-3.5" /> Clear all
+                </button>
               )}
             </div>
-          )}
-        </div>
 
-        {/* ─── AIRLINE DRILLDOWN VIEW ─── */}
+            {/* Active chips */}
+            {hasActiveFilters && (
+              <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/8">
+                {country && <Chip label={`Country: ${country}`} onRemove={() => setCountry("")} color="blue" />}
+                {icaoFilter && <Chip label={`ICAO: ${icaoFilter}`} onRemove={() => setIcaoFilter("")} color="blue" />}
+                {cbpFilter && <Chip label={`CBP: ${cbpFilter}`} onRemove={() => setCbpFilter("")} color="orange" />}
+                {firmsFilter && <Chip label={`FIRMS: ${firmsFilter}`} onRemove={() => setFirmsFilter("")} color="purple" />}
+                {hasIscOnly && <Chip label="Has ISC Data" onRemove={() => setHasIscOnly(false)} color="green" />}
+                {airportFilter && <Chip label={`Airport: ${airportFilter}`} onRemove={() => setAirportFilter("")} color="blue" />}
+                {customs && <Chip label={customs === "yes" ? "Customs Approved" : "No Customs"} onRemove={() => setCustoms("")} color="orange" />}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ─── AIRLINE DRILLDOWN ─── */}
         {selectedAirline && (
-          <div className="bg-white rounded-2xl shadow-md border border-sky-200 overflow-hidden mb-4">
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden mb-4 shadow-xl">
             {/* Breadcrumb header */}
-            <div className="px-5 py-3 bg-sky-600 text-white flex items-center gap-3">
-              <button onClick={() => { setSelectedAirline(null); setSelectedOp(null); setAirlineOps([]); }} className="flex items-center gap-1 text-sm text-sky-200 hover:text-white transition-colors">
+            <div className="px-5 py-4 bg-gradient-to-r from-sky-600/30 to-blue-600/20 border-b border-sky-500/20 flex items-center gap-3 flex-wrap">
+              <button
+                onClick={() => { setSelectedAirline(null); setSelectedOp(null); setAirlineOps([]); }}
+                className="flex items-center gap-1.5 text-sm text-sky-300 hover:text-white transition-colors font-medium"
+              >
                 <ArrowLeft className="h-4 w-4" /> Back
               </button>
-              <span className="text-sky-300">›</span>
-              <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-lg bg-white/20 flex items-center justify-center font-bold font-mono text-xs">{selectedAirline.iataCode}</div>
-                <span className="font-semibold">{selectedAirline.name}</span>
+              <span className="text-sky-500/60">›</span>
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-lg bg-sky-500/20 border border-sky-500/30 flex items-center justify-center font-black font-mono text-xs text-sky-300">
+                  {selectedAirline.iataCode || "—"}
+                </div>
+                <span className="font-bold text-white text-sm">{selectedAirline.name}</span>
               </div>
               {selectedOp && (
                 <>
-                  <span className="text-sky-300">›</span>
-                  <button onClick={() => setSelectedOp(null)} className="flex items-center gap-1 text-sm text-sky-100 hover:text-white transition-colors">
+                  <span className="text-sky-500/60">›</span>
+                  <button onClick={() => setSelectedOp(null)} className="flex items-center gap-1.5 text-sm text-sky-200 hover:text-white transition-colors">
+                    <Building2 className="h-3.5 w-3.5" />
                     {selectedOp.airportIata} — {selectedOp.airportName}
-                    <X className="h-3.5 w-3.5 ml-1" />
+                    <X className="h-3.5 w-3.5 ml-1 opacity-60" />
                   </button>
                 </>
               )}
@@ -314,65 +408,91 @@ export default function AirPublic() {
               /* ── Airport detail panel ── */
               <div className="p-6">
                 <div className="flex items-start gap-4 mb-6">
-                  <div className="h-12 w-12 rounded-xl bg-orange-100 flex items-center justify-center font-bold font-mono text-orange-700 text-sm shrink-0">{selectedOp.airportIata}</div>
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-800">{selectedOp.airportName}</h2>
-                    <p className="text-sm text-slate-500 flex items-center gap-1 mt-0.5">
-                      <MapPin className="h-3.5 w-3.5" />
-                      {[selectedOp.airportCity, selectedOp.airportState].filter(Boolean).join(", ")}
-                    </p>
+                  <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/25 flex items-center justify-center font-black font-mono text-orange-300 text-sm shrink-0 shadow-lg">
+                    {selectedOp.airportIata}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-lg font-black text-white tracking-wide">{selectedOp.airportName}</h2>
+                    {(selectedOp.airportCity || selectedOp.airportState) && (
+                      <p className="text-sm text-slate-400 flex items-center gap-1.5 mt-0.5">
+                        <MapPin className="h-3.5 w-3.5 text-orange-400" />
+                        {[selectedOp.airportCity, selectedOp.airportState].filter(Boolean).join(", ")}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-2 mt-2 flex-wrap">
+                      {selectedOp.firmsCode && <Badge color="blue">FIRMS: {selectedOp.firmsCode}</Badge>}
+                      {selectedOp.iscAmount && <Badge color="green">ISC: ${selectedOp.iscAmount}</Badge>}
+                    </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <DetailCard icon={<Hash className="h-4 w-4 text-sky-600" />} label="FIRMS Code" value={selectedOp.firmsCode} color="sky" />
-                  <DetailCard icon={<DollarSign className="h-4 w-4 text-green-600" />} label="ISC Amount" value={selectedOp.iscAmount ? `$${selectedOp.iscAmount}` : null} color="green" />
-                  <DetailCard icon={<Building2 className="h-4 w-4 text-orange-600" />} label="ISC Payable At" value={selectedOp.iscPayableAt} color="orange" />
-                  <DetailCard icon={<Plane className="h-4 w-4 text-purple-600" />} label="ISC Payable To (Ground Handler)" value={selectedOp.iscPayableTo} color="purple" />
-                  <DetailCard icon={<Phone className="h-4 w-4 text-sky-600" />} label="Contact Number" value={selectedOp.contactNumber} color="sky" />
-                  <DetailCard icon={<Mail className="h-4 w-4 text-red-600" />} label="Email Address" value={selectedOp.contactEmail} color="red" isEmail />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <DetailCard icon={<Hash className="h-4 w-4" />} label="FIRMS Code" value={selectedOp.firmsCode} color="sky" />
+                  <DetailCard icon={<DollarSign className="h-4 w-4" />} label="ISC Amount" value={selectedOp.iscAmount ? `$${selectedOp.iscAmount}` : null} color="green" />
+                  <DetailCard icon={<Building2 className="h-4 w-4" />} label="ISC Payable At" value={selectedOp.iscPayableAt} color="orange" />
+                  <DetailCard icon={<Plane className="h-4 w-4" />} label="Ground Handler" value={selectedOp.iscPayableTo} color="purple" />
+                  <DetailCard icon={<Phone className="h-4 w-4" />} label="Contact Number" value={selectedOp.contactNumber} color="sky" />
+                  <DetailCard icon={<Mail className="h-4 w-4" />} label="Email Address" value={selectedOp.contactEmail} color="red" isEmail />
                 </div>
+
                 {selectedOp.notes && (
-                  <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                    <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Notes</p>
-                    <p className="text-sm text-slate-700">{selectedOp.notes}</p>
+                  <div className="mt-4 p-4 bg-white/5 rounded-xl border border-white/10">
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1.5">Notes</p>
+                    <p className="text-sm text-slate-300 leading-relaxed">{selectedOp.notes}</p>
                   </div>
                 )}
               </div>
             ) : (
-              /* ── Airports list ── */
+              /* ── Airports list for the selected airline ── */
               <>
-                <div className="px-5 py-2.5 border-b border-sky-100 bg-sky-50 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-sky-700">
-                    {opsLoading ? "Loading airports..." : airlineOps.length > 0 ? `${airlineOps.length} airport${airlineOps.length !== 1 ? "s" : ""} — click to view ISC & contact details` : "No operational data found for this airline"}
+                <div className="px-5 py-3 border-b border-white/8 flex items-center justify-between bg-white/3">
+                  <span className="text-sm font-semibold text-sky-300">
+                    {opsLoading
+                      ? "Loading airport operations..."
+                      : airlineOps.length > 0
+                        ? `${airlineOps.length} airport${airlineOps.length !== 1 ? "s" : ""} — click to view ISC & contact details`
+                        : "No operational data found for this airline"
+                    }
                   </span>
                 </div>
                 {opsLoading ? (
-                  <div className="py-12 text-center text-slate-400 text-sm animate-pulse">Fetching airport operations...</div>
+                  <div className="py-14 text-center">
+                    <div className="inline-flex items-center gap-3 text-slate-400 text-sm">
+                      <div className="h-4 w-4 rounded-full border-2 border-sky-500 border-t-transparent animate-spin" />
+                      Fetching airport operations...
+                    </div>
+                  </div>
                 ) : airlineOps.length === 0 ? (
-                  <div className="py-12 text-center text-slate-400 text-sm">No operational data available for this airline yet.</div>
+                  <div className="py-14 text-center text-slate-500 text-sm">No operational data available for this airline yet.</div>
                 ) : (
-                  <div className="divide-y divide-sky-50">
+                  <div className="divide-y divide-white/5">
                     {airlineOps.map(op => (
-                      <button key={op.id} onClick={() => setSelectedOp(op)} className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-orange-50 transition-colors group text-left">
-                        <div className="h-10 w-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-700 font-bold font-mono text-sm shrink-0 group-hover:bg-orange-200 transition-colors">
+                      <button
+                        key={op.id}
+                        onClick={() => setSelectedOp(op)}
+                        className="w-full flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-all duration-150 group text-left"
+                      >
+                        <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-orange-500/15 to-amber-500/8 border border-orange-500/20 flex items-center justify-center text-orange-300 font-black font-mono text-xs shrink-0 group-hover:border-orange-500/40 group-hover:from-orange-500/20 transition-all">
                           {op.airportIata}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-slate-800 text-sm truncate">{op.airportName}</p>
-                          <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+                          <p className="font-semibold text-white text-sm truncate group-hover:text-sky-200 transition-colors">{op.airportName}</p>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
                             {op.airportCity && (
-                              <span className="text-xs text-slate-400 flex items-center gap-1">
-                                <MapPin className="h-3 w-3" />{[op.airportCity, op.airportState].filter(Boolean).join(", ")}
+                              <span className="text-xs text-slate-500 flex items-center gap-1">
+                                <MapPin className="h-3 w-3 text-slate-600" />
+                                {[op.airportCity, op.airportState].filter(Boolean).join(", ")}
                               </span>
                             )}
-                            {op.firmsCode && <span className="text-xs font-mono bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded">FIRMS: {op.firmsCode}</span>}
-                            {op.iscAmount && <span className="text-xs font-mono bg-green-100 text-green-700 px-1.5 py-0.5 rounded">ISC: ${op.iscAmount}</span>}
-                            {op.iscPayableTo && <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded truncate max-w-[150px]">{op.iscPayableTo}</span>}
+                            {op.firmsCode && <Badge color="blue">FIRMS: {op.firmsCode}</Badge>}
+                            {op.iscAmount && <Badge color="green">ISC: ${op.iscAmount}</Badge>}
+                            {op.iscPayableTo && (
+                              <span className="text-[10px] text-slate-500 truncate max-w-[130px]">{op.iscPayableTo}</span>
+                            )}
                           </div>
                         </div>
-                        <div className="shrink-0 flex items-center gap-1 text-xs text-orange-500 font-semibold group-hover:text-orange-700 transition-colors">
-                          View Details <ChevronRight className="h-4 w-4" />
+                        <div className="shrink-0 flex items-center gap-1 text-xs text-slate-500 font-semibold group-hover:text-orange-400 transition-colors">
+                          View <ChevronRight className="h-4 w-4" />
                         </div>
                       </button>
                     ))}
@@ -383,104 +503,145 @@ export default function AirPublic() {
           </div>
         )}
 
-        {/* ─── RESULTS (hidden while drilldown is open) ─── */}
+        {/* ─── RESULTS LIST ─── */}
         {!selectedAirline && (
-          <div className="bg-white rounded-2xl shadow-md border border-sky-100 overflow-hidden mb-8">
-            {tab === "airlines" ? (
-              <>
-                <div className="px-5 py-3 border-b border-sky-100 flex items-center justify-between bg-sky-50">
-                  <span className="text-sm font-semibold text-sky-700">
-                    {airlinesQuery.isLoading ? "Loading..." : `${filteredAirlines?.length ?? 0} Airlines`}
-                  </span>
-                  <span className="text-xs text-slate-400 font-mono">Click an airline to see airports & ISC details</span>
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+            {/* Result count header */}
+            <div className={`px-5 py-3.5 border-b flex items-center justify-between ${tab === "airlines" ? "border-sky-500/15 bg-sky-500/5" : "border-orange-500/15 bg-orange-500/5"}`}>
+              <div className="flex items-center gap-2.5">
+                {tab === "airlines"
+                  ? <Plane className="h-4 w-4 text-sky-400" />
+                  : <Building2 className="h-4 w-4 text-orange-400" />
+                }
+                <span className={`text-sm font-bold ${tab === "airlines" ? "text-sky-300" : "text-orange-300"}`}>
+                  {(tab === "airlines" ? airlinesQuery.isLoading : airportsQuery.isLoading)
+                    ? "Loading..."
+                    : `${totalShown} ${tab === "airlines" ? "Airlines" : "Airports"}`
+                  }
+                </span>
+                {grandTotal > 0 && <span className="text-xs text-slate-600 font-mono">of {grandTotal} total</span>}
+              </div>
+              {tab === "airlines" && (
+                <span className="text-xs text-slate-600 font-mono hidden sm:block">Click an airline to explore airports & ISC data</span>
+              )}
+            </div>
+
+            {/* Loading */}
+            {(tab === "airlines" ? airlinesQuery.isLoading : airportsQuery.isLoading) && (
+              <div className="py-20 text-center">
+                <div className="inline-flex items-center gap-3 text-slate-500 text-sm">
+                  <div className="h-4 w-4 rounded-full border-2 border-sky-500 border-t-transparent animate-spin" />
+                  Searching registry...
                 </div>
-                {airlinesQuery.isLoading ? (
-                  <div className="py-16 text-center text-slate-400 text-sm animate-pulse">Searching airline registry...</div>
-                ) : filteredAirlines?.length === 0 ? (
-                  <div className="py-16 text-center text-slate-400 text-sm">No airlines match your search.</div>
-                ) : (
-                  <div className="divide-y divide-sky-50">
-                    {filteredAirlines?.map(airline => (
-                      <button key={airline.id} onClick={() => handleAirlineClick(airline)} className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-sky-50 transition-colors group text-left">
-                        <div className="h-10 w-10 rounded-xl bg-sky-100 flex items-center justify-center text-sky-700 font-bold font-mono text-sm shrink-0 group-hover:bg-sky-200 transition-colors">
-                          {airline.iataCode || "??"}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-slate-800 text-sm truncate">{airline.name}</p>
-                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                            {airline.iataCode && <span className="text-xs font-mono bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded">IATA: {airline.iataCode}</span>}
-                            {airline.icaoCode && <span className="text-xs font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">ICAO: {airline.icaoCode}</span>}
-                            {airline.cbpCode && <span className="text-xs font-mono bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">CBP: {airline.cbpCode}</span>}
-                            {airline.country && <span className="text-xs text-slate-400">• {airline.country}</span>}
-                          </div>
-                        </div>
-                        <div className="shrink-0 flex items-center gap-1 text-xs text-sky-500 font-semibold group-hover:text-sky-700 transition-colors">
-                          Airports <ChevronRight className="h-4 w-4" />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+              </div>
+            )}
+
+            {/* Empty */}
+            {!((tab === "airlines" ? airlinesQuery.isLoading : airportsQuery.isLoading)) && totalShown === 0 && (
+              <div className="py-20 text-center">
+                <Search className="h-10 w-10 text-slate-700 mx-auto mb-3" />
+                <p className="text-slate-500 text-sm">No results match your search.</p>
+                {hasActiveFilters && (
+                  <button onClick={clearAll} className="mt-3 text-xs text-sky-400 hover:text-sky-300 underline transition-colors">Clear all filters</button>
                 )}
-              </>
-            ) : (
-              <>
-                <div className="px-5 py-3 border-b border-orange-100 flex items-center justify-between bg-orange-50">
-                  <span className="text-sm font-semibold text-orange-700">
-                    {airportsQuery.isLoading ? "Loading..." : `${filteredAirports?.length ?? 0} Airports`}
-                  </span>
-                  {airports && <span className="text-xs text-slate-400 font-mono">{airports.total} total approved</span>}
-                </div>
-                {airportsQuery.isLoading ? (
-                  <div className="py-16 text-center text-slate-400 text-sm animate-pulse">Searching airport registry...</div>
-                ) : filteredAirports?.length === 0 ? (
-                  <div className="py-16 text-center text-slate-400 text-sm">No airports match your search.</div>
-                ) : (
-                  <div className="divide-y divide-orange-50">
-                    {filteredAirports?.map(airport => (
-                      <div key={airport.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-orange-50 transition-colors group cursor-default">
-                        <div className="h-10 w-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 font-bold font-mono text-sm shrink-0 group-hover:bg-orange-200 transition-colors">
-                          {airport.iataCode || "??"}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-slate-800 text-sm truncate">{airport.name}</p>
-                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                            {airport.iataCode && <span className="text-xs font-mono bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded">IATA: {airport.iataCode}</span>}
-                            {airport.cbpPortCode && <span className="text-xs font-mono bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">CBP: {airport.cbpPortCode}</span>}
-                            {(airport.city || airport.state) && (
-                              <span className="text-xs text-slate-400 flex items-center gap-1"><MapPin className="h-3 w-3" />{[airport.city, airport.state].filter(Boolean).join(", ")}</span>
-                            )}
-                            {airport.customsApproved && <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-semibold">✓ Customs</span>}
-                          </div>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-orange-400 transition-colors shrink-0" />
+              </div>
+            )}
+
+            {/* Airlines list */}
+            {tab === "airlines" && !airlinesQuery.isLoading && (filteredAirlines?.length ?? 0) > 0 && (
+              <div className="divide-y divide-white/5">
+                {filteredAirlines?.map(airline => (
+                  <button
+                    key={airline.id}
+                    onClick={() => handleAirlineClick(airline)}
+                    className="w-full flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-all duration-150 group text-left"
+                  >
+                    <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-sky-500/15 to-blue-500/8 border border-sky-500/20 flex items-center justify-center text-sky-300 font-black font-mono text-xs shrink-0 group-hover:border-sky-500/40 group-hover:from-sky-500/22 transition-all">
+                      {airline.iataCode || "?"}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white text-sm group-hover:text-sky-200 transition-colors truncate">{airline.name}</p>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        {airline.iataCode && <Badge color="blue">IATA {airline.iataCode}</Badge>}
+                        {airline.icaoCode && <Badge color="slate">ICAO {airline.icaoCode}</Badge>}
+                        {airline.cbpCode && <Badge color="orange">CBP {airline.cbpCode}</Badge>}
+                        {airline.country && <span className="text-[10px] text-slate-600 font-mono">{airline.country}</span>}
                       </div>
-                    ))}
+                    </div>
+                    <div className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-slate-600 group-hover:text-sky-400 transition-colors">
+                      Airports <ChevronRight className="h-4 w-4" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Airports list */}
+            {tab === "airports" && !airportsQuery.isLoading && (filteredAirports?.length ?? 0) > 0 && (
+              <div className="divide-y divide-white/5">
+                {filteredAirports?.map(airport => (
+                  <div
+                    key={airport.id}
+                    className="flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-all duration-150 group cursor-default"
+                  >
+                    <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-orange-500/15 to-amber-500/8 border border-orange-500/20 flex items-center justify-center text-orange-300 font-black font-mono text-xs shrink-0 group-hover:border-orange-500/35 transition-all">
+                      {airport.iataCode || "?"}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white text-sm truncate group-hover:text-orange-200 transition-colors">{airport.name}</p>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        {airport.iataCode && <Badge color="blue">IATA {airport.iataCode}</Badge>}
+                        {airport.cbpPortCode && <Badge color="orange">CBP {airport.cbpPortCode}</Badge>}
+                        {(airport.city || airport.state) && (
+                          <span className="text-[10px] text-slate-500 flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {[airport.city, airport.state].filter(Boolean).join(", ")}
+                          </span>
+                        )}
+                        {airport.customsApproved && (
+                          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-semibold">
+                            <Shield className="h-3 w-3" /> Customs
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-700 group-hover:text-orange-400 transition-colors shrink-0" />
                   </div>
-                )}
-              </>
+                ))}
+              </div>
             )}
 
             {/* Pagination */}
-            {((tab === "airlines" && airlines && airlines.total > 0) ||
-              (tab === "airports" && airports && airports.total > 0)) && (
-              <div className="px-5 py-3 border-t border-slate-100 flex flex-wrap justify-between items-center gap-2 bg-slate-50">
-                <span className="text-xs font-mono text-slate-400">
-                  Page {page} of {Math.ceil((tab === "airlines" ? (airlines?.total ?? 0) : (airports?.total ?? 0)) / limit)}
-                  {" "}· {tab === "airlines" ? (airlines?.total ?? 0) : (airports?.total ?? 0)} total
+            {totalPages > 1 && (
+              <div className="px-5 py-3.5 border-t border-white/8 flex flex-wrap items-center justify-between gap-3 bg-white/3">
+                <span className="text-xs text-slate-500 font-mono">
+                  Page {page} of {totalPages} · {grandTotal} total
                 </span>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <span>Show</span>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                    Show
                     <select
                       value={limit}
                       onChange={e => { setLimit(Number(e.target.value)); setPage(1); }}
-                      className="h-7 px-1.5 rounded-lg border border-slate-200 bg-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-sky-400"
+                      className="h-7 px-2 rounded-lg bg-white/8 border border-white/12 text-slate-300 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-sky-500/60"
                     >
-                      {[20, 40, 50, 100].map(s => <option key={s} value={s}>{s}</option>)}
+                      {[20, 25, 50, 100].map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
-                  <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-sky-50 hover:border-sky-300 hover:text-sky-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all">← Prev</button>
-                  <button disabled={page * limit >= (tab === "airlines" ? (airlines?.total ?? 0) : (airports?.total ?? 0))} onClick={() => setPage(p => p + 1)} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-sky-50 hover:border-sky-300 hover:text-sky-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all">Next →</button>
+                  <button
+                    disabled={page === 1}
+                    onClick={() => setPage(p => p - 1)}
+                    className="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-xs font-bold text-slate-400 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    ← Prev
+                  </button>
+                  <button
+                    disabled={page >= totalPages}
+                    onClick={() => setPage(p => p + 1)}
+                    className="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-xs font-bold text-slate-400 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    Next →
+                  </button>
                 </div>
               </div>
             )}
@@ -491,29 +652,17 @@ export default function AirPublic() {
   );
 }
 
-function DetailCard({ icon, label, value, color, isEmail }: { icon: React.ReactNode; label: string; value: string | null | undefined; color: string; isEmail?: boolean }) {
-  const colorMap: Record<string, string> = {
-    sky: "bg-sky-50 border-sky-200",
-    green: "bg-green-50 border-green-200",
-    orange: "bg-orange-50 border-orange-200",
-    purple: "bg-purple-50 border-purple-200",
-    red: "bg-red-50 border-red-200",
-  };
+function Chip({ label, onRemove, color }: { label: string; onRemove: () => void; color: "blue" | "orange" | "purple" | "green" }) {
+  const cls = {
+    blue: "bg-sky-500/15 text-sky-300 border-sky-500/25",
+    orange: "bg-orange-500/15 text-orange-300 border-orange-500/25",
+    purple: "bg-purple-500/15 text-purple-300 border-purple-500/25",
+    green: "bg-emerald-500/15 text-emerald-300 border-emerald-500/25",
+  }[color];
   return (
-    <div className={`p-4 rounded-xl border ${colorMap[color] ?? "bg-slate-50 border-slate-200"}`}>
-      <div className="flex items-center gap-2 mb-1.5">
-        {icon}
-        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</span>
-      </div>
-      {value ? (
-        isEmail ? (
-          <a href={`mailto:${value}`} className="text-sm text-sky-600 hover:underline break-all">{value}</a>
-        ) : (
-          <p className="text-sm font-semibold text-slate-800 break-words">{value}</p>
-        )
-      ) : (
-        <p className="text-sm text-slate-400 italic">Not available</p>
-      )}
-    </div>
+    <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border ${cls}`}>
+      {label}
+      <button onClick={onRemove} className="hover:opacity-70 transition-opacity"><X className="h-2.5 w-2.5" /></button>
+    </span>
   );
 }

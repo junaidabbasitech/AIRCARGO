@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import { Lock } from "lucide-react";
+import { Lock, Plane, Shield } from "lucide-react";
 import { Layout } from "@/components/Layout";
+import { Watermark } from "@/components/Watermark";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import Airlines from "@/pages/Airlines";
@@ -32,7 +33,7 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
       sessionStorage.setItem(AUTH_KEY, "1");
       onSuccess();
     } else {
-      setError("Incorrect password. Access denied.");
+      setError("Incorrect access code. Please try again.");
       setShake(true);
       setTimeout(() => setShake(false), 500);
       setPwd("");
@@ -40,43 +41,76 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-100 to-blue-200 flex items-center justify-center px-4">
-      <div className={`bg-white rounded-2xl shadow-xl border border-sky-200 p-8 w-full max-w-sm ${shake ? "animate-bounce" : ""}`}>
-        <div className="flex flex-col items-center gap-3 mb-6">
-          <div className="h-14 w-14 rounded-2xl bg-sky-100 border-2 border-sky-300 flex items-center justify-center">
-            <Lock className="h-7 w-7 text-sky-600" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-[hsl(222,55%,9%)] to-slate-900 flex items-center justify-center px-4 relative overflow-hidden">
+      <Watermark />
+
+      {/* Glow blobs */}
+      <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-sky-500/6 blur-[100px] pointer-events-none" />
+      <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-orange-500/5 blur-[80px] pointer-events-none" />
+
+      <div className={`relative w-full max-w-sm ${shake ? "animate-bounce" : ""}`}>
+        {/* Card */}
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
+          {/* Logo area */}
+          <div className="flex flex-col items-center gap-4 mb-8">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-2xl bg-sky-500/20 blur-xl" />
+              <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-700 flex items-center justify-center shadow-xl shadow-sky-500/30">
+                <Lock className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="font-display text-xl font-black tracking-widest mb-1">
+                <span className="text-sky-300">AVIA</span><span className="text-orange-400">CBP</span>
+              </div>
+              <h2 className="font-display text-sm text-white tracking-widest uppercase">Command Center</h2>
+              <p className="text-xs text-slate-500 mt-1.5 font-sans normal-case tracking-normal">Enter your access code to continue</p>
+            </div>
           </div>
-          <div className="text-center">
-            <h2 className="font-display text-lg text-slate-800 tracking-widest uppercase">Command Center</h2>
-            <p className="text-sm text-slate-500 mt-1 font-sans normal-case tracking-normal">Enter your admin password to continue</p>
+
+          <div className="space-y-4">
+            <div className="relative">
+              <Shield className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+              <input
+                type="password"
+                value={pwd}
+                onChange={e => { setPwd(e.target.value); setError(""); }}
+                onKeyDown={e => e.key === "Enter" && attempt()}
+                placeholder="• • • • • •"
+                autoFocus
+                className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/8 border border-white/12 text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/60 focus:bg-white/10 text-center text-xl tracking-[0.5em] font-mono transition-all"
+              />
+            </div>
+
+            {error && (
+              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5">
+                <div className="h-1.5 w-1.5 rounded-full bg-red-400 shrink-0" />
+                <p className="text-xs text-red-400 font-semibold">{error}</p>
+              </div>
+            )}
+
+            <button
+              onClick={attempt}
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-sm hover:from-sky-400 hover:to-blue-500 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-sky-500/25 uppercase tracking-widest"
+            >
+              Unlock Access
+            </button>
+
+            <div className="text-center pt-1">
+              <a
+                href="/air"
+                className="text-xs text-slate-600 hover:text-sky-400 transition-colors font-medium"
+              >
+                ← Return to AIR Search (public)
+              </a>
+            </div>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <input
-            type="password"
-            value={pwd}
-            onChange={e => { setPwd(e.target.value); setError(""); }}
-            onKeyDown={e => e.key === "Enter" && attempt()}
-            placeholder="Password"
-            autoFocus
-            className="w-full px-4 py-3 rounded-xl border-2 border-sky-200 bg-sky-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-center text-xl tracking-[0.4em] font-mono transition-all"
-          />
-          {error && (
-            <p className="text-xs text-red-500 text-center font-semibold">{error}</p>
-          )}
-          <button
-            onClick={attempt}
-            className="w-full py-3 rounded-xl bg-sky-600 text-white font-bold text-sm hover:bg-sky-700 active:scale-95 transition-all duration-150 shadow-md hover:shadow-sky-300/50 uppercase tracking-wider"
-          >
-            Unlock
-          </button>
-          <a
-            href="/air"
-            className="block text-center text-xs text-slate-400 hover:text-orange-500 transition-colors mt-2"
-          >
-            Go to AIR Search (public) →
-          </a>
+        {/* Footer brand */}
+        <div className="flex items-center justify-center gap-2 mt-6">
+          <Plane className="h-3.5 w-3.5 text-slate-700" />
+          <span className="text-[10px] text-slate-700 font-mono tracking-widest uppercase">Aviation CBP Registry System</span>
         </div>
       </div>
     </div>
@@ -141,9 +175,9 @@ function App() {
         position="bottom-right"
         toastOptions={{
           style: {
-            background: "hsl(0 0% 100%)",
-            border: "1px solid hsl(210 25% 88%)",
-            color: "hsl(215 40% 15%)",
+            background: "hsl(222 55% 11%)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            color: "hsl(210 30% 90%)",
             fontFamily: "Manrope, sans-serif",
           }
         }}
