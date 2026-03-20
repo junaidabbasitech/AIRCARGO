@@ -40,6 +40,7 @@ export default function AirPublic() {
   const [icaoFilter, setIcaoFilter] = useState("");
   const [cbpFilter, setCbpFilter] = useState("");
   const [hasIscOnly, setHasIscOnly] = useState(false);
+  const [firmsFilter, setFirmsFilter] = useState("");
   const [customs, setCustoms] = useState<"" | "yes" | "no">("");
   const [airportFilter, setAirportFilter] = useState("");
   const [page, setPage] = useState(1);
@@ -48,6 +49,10 @@ export default function AirPublic() {
   // Airline IDs that have ISC/operations data
   const [iscAirlineIds, setIscAirlineIds] = useState<Set<number>>(new Set());
   const iscFetched = useRef(false);
+
+  // Airline IDs that have operations with the specified FIRMS code
+  const [firmsAirlineIds, setFirmsAirlineIds] = useState<Set<number>>(new Set());
+  const firmsRef = useRef("");
 
   useEffect(() => {
     if (hasIscOnly && !iscFetched.current) {
@@ -61,6 +66,20 @@ export default function AirPublic() {
         .catch(() => {});
     }
   }, [hasIscOnly]);
+
+  useEffect(() => {
+    const code = firmsFilter.trim();
+    if (!code) { setFirmsAirlineIds(new Set()); firmsRef.current = ""; return; }
+    if (firmsRef.current === code) return;
+    firmsRef.current = code;
+    fetch(`${BASE}/api/airline-operations?firmsCode=${encodeURIComponent(code)}`)
+      .then(r => r.json())
+      .then(json => {
+        const ids = new Set<number>((json.data ?? []).map((op: AirlineOperation) => op.airlineId));
+        setFirmsAirlineIds(ids);
+      })
+      .catch(() => {});
+  }, [firmsFilter]);
 
   // Drilldown state
   const [selectedAirline, setSelectedAirline] = useState<{ id: number; name: string; iataCode?: string | null } | null>(null);
@@ -79,6 +98,7 @@ export default function AirPublic() {
     if (icaoFilter && !a.icaoCode?.toLowerCase().includes(icaoFilter.toLowerCase())) return false;
     if (cbpFilter && !a.cbpCode?.toLowerCase().includes(cbpFilter.toLowerCase())) return false;
     if (hasIscOnly && !iscAirlineIds.has(a.id)) return false;
+    if (firmsFilter.trim() && !firmsAirlineIds.has(a.id)) return false;
     return true;
   });
 
@@ -100,12 +120,12 @@ export default function AirPublic() {
     setOpsLoading(false);
   };
 
-  const clearAirlineFilters = () => { setCountry(""); setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setPage(1); };
-  const hasActiveFilters = !!(country || icaoFilter || cbpFilter || hasIscOnly);
+  const clearAirlineFilters = () => { setCountry(""); setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter(""); setPage(1); };
+  const hasActiveFilters = !!(country || icaoFilter || cbpFilter || hasIscOnly || firmsFilter);
 
   const handleTab = (t: "airlines" | "airports") => {
     setTab(t); setSearch(""); setPage(1); setCountry(""); setCustoms(""); setAirportFilter("");
-    setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false);
+    setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter("");
     setSelectedAirline(null); setSelectedOp(null); setAirlineOps([]);
   };
 
@@ -187,6 +207,10 @@ export default function AirPublic() {
                   <label className="text-xs font-mono text-slate-500 whitespace-nowrap">CBP Code:</label>
                   <input type="text" value={cbpFilter} onChange={e => { setCbpFilter(e.target.value.toUpperCase()); setPage(1); }} placeholder="e.g. EK" className="border border-orange-200 rounded-lg px-3 py-1.5 text-sm font-mono uppercase focus:outline-none focus:border-orange-400 bg-orange-50 hover:bg-orange-100 transition-colors w-24" />
                 </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-mono text-slate-500 whitespace-nowrap">FIRMS Code:</label>
+                  <input type="text" value={firmsFilter} onChange={e => { setFirmsFilter(e.target.value.toUpperCase()); setPage(1); }} placeholder="e.g. S0743" className="border border-purple-200 rounded-lg px-3 py-1.5 text-sm font-mono uppercase focus:outline-none focus:border-purple-400 bg-purple-50 hover:bg-purple-100 transition-colors w-28" />
+                </div>
                 <button
                   onClick={() => { setHasIscOnly(v => !v); setPage(1); }}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${hasIscOnly ? "bg-green-500 border-green-500 text-white shadow-md" : "bg-green-50 border-green-200 text-green-700 hover:bg-green-100"}`}
@@ -215,9 +239,9 @@ export default function AirPublic() {
               </>
             )}
 
-            {(search || country || customs || airportFilter || icaoFilter || cbpFilter || hasIscOnly) && (
+            {(search || country || customs || airportFilter || icaoFilter || cbpFilter || hasIscOnly || firmsFilter) && (
               <button
-                onClick={() => { setSearch(""); setCountry(""); setCustoms(""); setAirportFilter(""); setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setPage(1); setSelectedAirline(null); setSelectedOp(null); }}
+                onClick={() => { setSearch(""); setCountry(""); setCustoms(""); setAirportFilter(""); setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter(""); setPage(1); setSelectedAirline(null); setSelectedOp(null); }}
                 className="ml-auto flex items-center gap-1 text-xs text-red-500 hover:text-red-700 font-semibold transition-colors"
               >
                 <X className="h-3.5 w-3.5" /> Clear All
@@ -226,7 +250,7 @@ export default function AirPublic() {
           </div>
 
           {/* Active filter chips */}
-          {(icaoFilter || cbpFilter || hasIscOnly || country) && tab === "airlines" && (
+          {(icaoFilter || cbpFilter || hasIscOnly || country || firmsFilter) && tab === "airlines" && (
             <div className="flex flex-wrap gap-2 mt-2.5 pt-2.5 border-t border-slate-100">
               {country && (
                 <span className="inline-flex items-center gap-1 bg-sky-100 text-sky-700 text-xs font-semibold px-2.5 py-1 rounded-full">
@@ -250,6 +274,12 @@ export default function AirPublic() {
                 <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
                   <Zap className="h-3 w-3" /> Has ISC Data
                   <button onClick={() => { setHasIscOnly(false); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
+                </span>
+              )}
+              {firmsFilter && (
+                <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                  FIRMS: {firmsFilter}
+                  <button onClick={() => { setFirmsFilter(""); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
                 </span>
               )}
             </div>

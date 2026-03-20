@@ -98,6 +98,45 @@ router.post("/airlines", async (req, res) => {
   }
 });
 
+// GET /api/airlines/all-ids — returns all IDs matching current filters (for select-all across pages)
+router.get("/airlines/all-ids", async (req, res) => {
+  try {
+    const { search, status } = req.query as Record<string, string>;
+    const conditions = [];
+    if (search) {
+      conditions.push(or(
+        ilike(airlinesTable.name, `%${search}%`),
+        ilike(airlinesTable.iataCode, `%${search}%`),
+        ilike(airlinesTable.cbpCode, `%${search}%`),
+        ilike(airlinesTable.icaoCode, `%${search}%`)
+      ));
+    }
+    if (status && ["pending", "approved", "rejected"].includes(status)) {
+      conditions.push(eq(airlinesTable.status, status as "pending" | "approved" | "rejected"));
+    }
+    const where = conditions.length > 0 ? and(...conditions) : undefined;
+    const rows = await db.select({ id: airlinesTable.id }).from(airlinesTable).where(where).orderBy(airlinesTable.name);
+    res.json({ ids: rows.map(r => r.id), total: rows.length });
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// POST /api/airlines/bulk-status — update status for many airlines at once
+router.post("/airlines/bulk-status", async (req, res) => {
+  try {
+    const { ids, status } = req.body as { ids: number[]; status: string };
+    if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ message: "ids array is required" });
+    if (!["approved", "rejected"].includes(status)) return res.status(400).json({ message: "Invalid status" });
+    await db.update(airlinesTable).set({ status: status as "approved" | "rejected", lastUpdated: new Date() }).where(inArray(airlinesTable.id, ids));
+    res.json({ updated: ids.length });
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.get("/airlines/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id);

@@ -98,6 +98,46 @@ router.post("/airports", async (req, res) => {
   }
 });
 
+// GET /api/airports/all-ids — returns all IDs matching current filters (for select-all across pages)
+router.get("/airports/all-ids", async (req, res) => {
+  try {
+    const { search, status } = req.query as Record<string, string>;
+    const conditions = [];
+    if (search) {
+      conditions.push(or(
+        ilike(airportsTable.name, `%${search}%`),
+        ilike(airportsTable.iataCode, `%${search}%`),
+        ilike(airportsTable.cbpPortCode, `%${search}%`),
+        ilike(airportsTable.city, `%${search}%`),
+        ilike(airportsTable.state, `%${search}%`)
+      ));
+    }
+    if (status && ["pending", "approved", "rejected"].includes(status)) {
+      conditions.push(eq(airportsTable.status, status as "pending" | "approved" | "rejected"));
+    }
+    const where = conditions.length > 0 ? and(...conditions) : undefined;
+    const rows = await db.select({ id: airportsTable.id }).from(airportsTable).where(where).orderBy(airportsTable.name);
+    res.json({ ids: rows.map(r => r.id), total: rows.length });
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// POST /api/airports/bulk-status — update status for many airports at once
+router.post("/airports/bulk-status", async (req, res) => {
+  try {
+    const { ids, status } = req.body as { ids: number[]; status: string };
+    if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ message: "ids array is required" });
+    if (!["approved", "rejected"].includes(status)) return res.status(400).json({ message: "Invalid status" });
+    await db.update(airportsTable).set({ status: status as "approved" | "rejected", lastUpdated: new Date() }).where(inArray(airportsTable.id, ids));
+    res.json({ updated: ids.length });
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.get("/airports/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id);

@@ -1,17 +1,18 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { airlineOperationsTable, airlinesTable, airportsTable, auditLogsTable } from "@workspace/db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, ilike } from "drizzle-orm";
 
 const router: IRouter = Router();
 
 // GET /api/airline-operations — list all, optionally filtered by airlineId or airportId
 router.get("/airline-operations", async (req, res) => {
   try {
-    const { airlineId, airportId } = req.query as Record<string, string>;
+    const { airlineId, airportId, firmsCode } = req.query as Record<string, string>;
     const conditions = [];
     if (airlineId) conditions.push(eq(airlineOperationsTable.airlineId, parseInt(airlineId)));
     if (airportId) conditions.push(eq(airlineOperationsTable.airportId, parseInt(airportId)));
+    if (firmsCode) conditions.push(ilike(airlineOperationsTable.firmsCode, `%${firmsCode}%`));
     const where = conditions.length > 0 ? and(...conditions) : undefined;
 
     const rows = await db
