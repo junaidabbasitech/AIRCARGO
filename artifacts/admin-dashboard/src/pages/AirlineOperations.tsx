@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { useListAirlines, useListAirports } from "@workspace/api-client-react";
+import { useListAirlines } from "@workspace/api-client-react";
 import { Card, CardContent, Button, Input, Label, Modal, Select, Badge } from "@/components/ui";
+import { SearchableAirportSelect } from "@/components/SearchableAirportSelect";
 import { Plus, Edit2, Trash2, Search, Plane, Building2, ChevronLeft, Phone, Mail, Hash, DollarSign, MapPin, CheckSquare, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -48,7 +49,6 @@ export default function AirlineOperations() {
   const [bulkLoading, setBulkLoading] = useState(false);
 
   const airlinesQ = useListAirlines({ status: "approved" as any, page: 1, limit: 300 });
-  const airportsQ = useListAirports({ status: "approved" as any, page: 1, limit: 300 });
 
   const loadOps = async () => {
     setLoading(true);
@@ -220,7 +220,8 @@ export default function AirlineOperations() {
         <OperationModal
           isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}
           editing={editing} form={form} saving={saving}
-          airlinesQ={airlinesQ} airportsQ={airportsQ}
+          airlinesQ={airlinesQ}
+          onAirportChange={(id: string) => setForm(prev => ({ ...prev, airportId: id }))}
           f={f} handleSave={handleSave}
         />
       </div>
@@ -410,7 +411,8 @@ export default function AirlineOperations() {
       <OperationModal
         isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}
         editing={editing} form={form} saving={saving}
-        airlinesQ={airlinesQ} airportsQ={airportsQ}
+        airlinesQ={airlinesQ}
+        onAirportChange={(id: string) => setForm(prev => ({ ...prev, airportId: id }))}
         f={f} handleSave={handleSave}
       />
     </div>
@@ -436,7 +438,7 @@ function DetailCard({ color, label, value, icon }: { color: string; label: strin
   );
 }
 
-function OperationModal({ isOpen, onClose, editing, form, saving, airlinesQ, airportsQ, f, handleSave }: any) {
+function OperationModal({ isOpen, onClose, editing, form, saving, airlinesQ, onAirportChange, f, handleSave }: any) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={editing ? "Edit Operation Record" : "Add Airline Operation"}>
       <div className="space-y-4">
@@ -451,13 +453,11 @@ function OperationModal({ isOpen, onClose, editing, form, saving, airlinesQ, air
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Airport *</Label>
-            <Select value={form.airportId} onChange={f("airportId")} className="hover:border-orange-400 transition-colors">
-              <option value="">— Select Airport —</option>
-              {airportsQ.data?.data.map((a: any) => (
-                <option key={a.id} value={a.id}>{a.name} ({a.iataCode})</option>
-              ))}
-            </Select>
+            <Label>Airport</Label>
+            <SearchableAirportSelect
+              value={form.airportId}
+              onChange={onAirportChange}
+            />
           </div>
         </div>
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useListGroundHandlers, useCreateGroundHandler, useUpdateGroundHandler, useDeleteGroundHandler, useBulkUploadGroundHandlers, GroundHandler, CreateGroundHandlerRequest } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent, Button, Input, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Modal, Label } from "@/components/ui";
+import { SearchableAirportSelect } from "@/components/SearchableAirportSelect";
 import { Search, Plus, Edit2, Trash2, Upload, Users } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
@@ -54,7 +55,7 @@ export default function GroundHandlers() {
     }
   });
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<z.infer<typeof formSchema>>({
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", airportId: null, contactName: "", contactPhone: "", contactEmail: "", services: "" }
   });
@@ -170,7 +171,13 @@ export default function GroundHandlers() {
       <Modal isOpen={isModalOpen} onClose={closeModal} title={editingHandler ? "Edit Operator" : "Add Operator"}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2"><Label>Operator Name *</Label><Input {...register("name")} />{errors.name && <span className="text-xs text-destructive">{errors.name.message}</span>}</div>
-          <div className="space-y-2"><Label>Assigned Airport ID</Label><Input type="number" {...register("airportId")} /></div>
+          <div className="space-y-2">
+            <Label>Assigned Airport</Label>
+            <SearchableAirportSelect
+              value={String(watch("airportId") ?? "")}
+              onChange={(id) => setValue("airportId", id ? Number(id) : null)}
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2"><Label>Contact Name</Label><Input {...register("contactName")} /></div>
             <div className="space-y-2"><Label>Contact Phone</Label><Input {...register("contactPhone")} /></div>
