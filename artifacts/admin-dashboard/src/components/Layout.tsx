@@ -4,13 +4,14 @@ import { cn } from "@/lib/utils";
 import {
   Plane, Building2, Users, RefreshCw, ClipboardList,
   LayoutDashboard, Menu, X, ChevronDown, ChevronRight,
-  Radar, Search
+  Radar, Search, Network
 } from "lucide-react";
 
 const CMD_SUB_ITEMS = [
   { href: "/cmd", label: "Command Center", icon: LayoutDashboard },
   { href: "/airlines", label: "Airlines", icon: Plane },
   { href: "/airports", label: "Airports", icon: Building2 },
+  { href: "/airline-operations", label: "Airline Operations", icon: Network },
   { href: "/ground-handlers", label: "Ground Handlers", icon: Users },
   { href: "/sync", label: "Sync Operations", icon: RefreshCw },
   { href: "/audit", label: "Audit Logs", icon: ClipboardList },

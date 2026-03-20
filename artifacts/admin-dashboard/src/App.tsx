@@ -12,6 +12,7 @@ import GroundHandlers from "@/pages/GroundHandlers";
 import SyncData from "@/pages/SyncData";
 import AuditLogs from "@/pages/AuditLogs";
 import AirPublic from "@/pages/AirPublic";
+import AirlineOperations from "@/pages/AirlineOperations";
 
 const CORRECT_PASSWORD = "332";
 const AUTH_KEY = "aviacbp_auth";
@@ -117,6 +118,7 @@ function AppRouter() {
         <Route path="/cmd" component={Dashboard} />
         <Route path="/airlines" component={Airlines} />
         <Route path="/airports" component={Airports} />
+        <Route path="/airline-operations" component={AirlineOperations} />
         <Route path="/ground-handlers" component={GroundHandlers} />
         <Route path="/sync" component={SyncData} />
         <Route path="/audit" component={AuditLogs} />

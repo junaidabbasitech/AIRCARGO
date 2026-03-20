@@ -4,3 +4,4 @@ export * from "./groundHandlers";
 export * from "./auditLogs";
 export * from "./rawImports";
 export * from "./syncLogs";
+export * from "./airlineOperations";
