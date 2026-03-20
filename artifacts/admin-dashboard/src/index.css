@@ -6,57 +6,54 @@
   --font-sans: 'Manrope', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Aviation Command Center Palette */
-  --color-background: hsl(223 47% 5%);
-  --color-foreground: hsl(210 40% 98%);
-  
-  --color-card: hsl(221 45% 9%);
-  --color-card-foreground: hsl(210 40% 98%);
-  --color-card-border: hsl(215 32% 17%);
+  /* Light Blue & Orange Palette */
+  --color-background: hsl(210 30% 96%);
+  --color-foreground: hsl(215 40% 15%);
 
-  --color-popover: hsl(221 45% 9%);
-  --color-popover-foreground: hsl(210 40% 98%);
-  --color-popover-border: hsl(215 32% 17%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(215 40% 15%);
+  --color-card-border: hsl(210 25% 88%);
 
-  --color-primary: hsl(189 94% 43%); /* Cyan */
-  --color-primary-foreground: hsl(223 47% 5%);
-  
-  --color-secondary: hsl(217 91% 60%); /* Blue */
-  --color-secondary-foreground: hsl(210 40% 98%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(215 40% 15%);
+  --color-popover-border: hsl(210 25% 88%);
 
-  --color-muted: hsl(225 35% 15%);
-  --color-muted-foreground: hsl(215 20% 65%);
+  --color-primary: hsl(205 88% 42%);           /* Light blue */
+  --color-primary-foreground: hsl(0 0% 100%);
 
-  --color-accent: hsl(189 94% 43% / 0.15);
-  --color-accent-foreground: hsl(189 94% 43%);
+  --color-secondary: hsl(25 95% 53%);          /* Orange */
+  --color-secondary-foreground: hsl(0 0% 100%);
 
-  --color-destructive: hsl(0 84% 60%);
-  --color-destructive-foreground: hsl(210 40% 98%);
+  --color-muted: hsl(210 20% 92%);
+  --color-muted-foreground: hsl(215 20% 50%);
 
-  --color-success: hsl(160 84% 39%);
-  --color-success-foreground: hsl(210 40% 98%);
+  --color-accent: hsl(205 88% 42% / 0.12);
+  --color-accent-foreground: hsl(205 88% 38%);
 
-  --color-warning: hsl(38 92% 50%);
-  --color-warning-foreground: hsl(210 40% 98%);
+  --color-destructive: hsl(0 78% 55%);
+  --color-destructive-foreground: hsl(0 0% 100%);
 
-  --color-border: hsl(215 32% 17%);
-  --color-input: hsl(215 32% 17%);
-  --color-ring: hsl(189 94% 43%);
+  --color-success: hsl(145 70% 36%);
+  --color-success-foreground: hsl(0 0% 100%);
 
-  --color-sidebar: hsl(225 45% 7%);
-  --color-sidebar-foreground: hsl(210 40% 98%);
-  --color-sidebar-border: hsl(215 32% 17%);
-  --color-sidebar-accent: hsl(189 94% 43% / 0.1);
-  --color-sidebar-accent-foreground: hsl(189 94% 43%);
+  --color-warning: hsl(38 95% 50%);
+  --color-warning-foreground: hsl(0 0% 100%);
+
+  --color-border: hsl(210 25% 88%);
+  --color-input: hsl(210 25% 93%);
+  --color-ring: hsl(205 88% 42%);
+
+  /* Sidebar – dark navy for contrast */
+  --color-sidebar: hsl(220 48% 14%);
+  --color-sidebar-foreground: hsl(210 30% 90%);
+  --color-sidebar-border: hsl(220 35% 22%);
+  --color-sidebar-accent: hsl(205 88% 42% / 0.15);
+  --color-sidebar-accent-foreground: hsl(200 90% 70%);
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground font-sans antialiased min-h-screen selection:bg-primary/30 selection:text-primary;
-    background-image: 
-      radial-gradient(circle at 50% 0%, hsl(189 94% 43% / 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 100% 100%, hsl(217 91% 60% / 0.05) 0%, transparent 50%);
-    background-attachment: fixed;
+    @apply bg-background text-foreground font-sans antialiased min-h-screen;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -66,27 +63,25 @@
 
 @layer utilities {
   .glow-border {
-    @apply border border-primary/30 shadow-[0_0_15px_rgba(6,182,212,0.15)];
-  }
-  .glow-border-active {
-    @apply border border-primary shadow-[0_0_20px_rgba(6,182,212,0.4)];
+    @apply border border-primary/40 shadow-[0_0_12px_rgba(14,130,202,0.18)];
   }
   .glow-text {
-    text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    text-shadow: 0 0 12px rgba(14, 130, 202, 0.4);
   }
   .glass-panel {
-    @apply bg-card/80 backdrop-blur-md border border-card-border;
+    @apply bg-card/90 backdrop-blur-md border border-card-border;
+  }
+  .orange-glow {
+    box-shadow: 0 0 14px rgba(234, 105, 10, 0.25);
+  }
+
+  /* Universal hover transitions */
+  button, a, [role="button"] {
+    @apply transition-all duration-200;
   }
 }
 
-/* Custom Scrollbar for data-dense tables */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  @apply bg-muted/30 rounded-full;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-border rounded-full hover:bg-primary/50 transition-colors;
-}
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { @apply bg-muted/40 rounded-full; }
+::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-primary/50; }
