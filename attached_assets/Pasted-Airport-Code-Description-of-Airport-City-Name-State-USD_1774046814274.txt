@@ -1,0 +1,382 @@
+Airport Code	Description of Airport	City Name	State	USDA Compliance Agreement in Place and Eligible for Precleared Arrivals
+KBHM	Birmingham International Airport	Birmingham	Alabama	Yes
+KDCU	Pryor Field Regional Airport	Decatur	Alabama	Yes
+KCQF	Sonny Callahan Airport	Fairhope	Alabama	No
+KJKA	Jack Edwards Airport	Gulf Shores	Alabama	No
+KHSV	Huntsville International Airport	Huntsville	Alabama	Yes
+KBFM	Mobile Downtown Airport (Brookley Field)	Mobile	Alabama	No
+KMOB	Mobile Regional Airport (Bates Field)	Mobile	Alabama	No
+PANC	Anchorage International Airport (Ted Stevens)	Anchorage	Alaska	Yes
+PAFA	Fairbanks International Airport	Fairbanks	Alaska	Yes
+PAHN	Haines Airport	Haines	Alaska	No
+PAJN	Juneau Municipal Airport	Juneau	Alaska	No
+P5KE	Ketchikan Harbor Seaplane Base	Ketchikan	Alaska	No
+PAKT	Ketchikan International Airport	Ketchikan	Alaska	Yes
+PAOM	Nome Airport	Nome	Alaska	No
+PAOR	Northway Airport	Northway	Alaska	No
+PASI	Sitka Rocky Gutierrez Airport	Sitka	Alaska	No
+PAGY	Skagway Municipal Airport	Skagway	Alaska	No
+PADU	Unalaska Emergency Field (Tom Madsen Airport	Unalaska	Alaska	No
+PAVD	Valdez Pioneer Field Airport	Valdez	Alaska	No
+PAWG	Wrangell Seaplane Base	Wrangell	Alaska	No
+KDGL	Douglas Municipal Airport	Douglas	Arizona	No
+KDUG	Bisbee-Douglas International Airport	Douglas	Arizona	No
+KIWA	Williams Gateway Airport	Mesa	Arizona	Yes
+KOLS	Nogales International Airport	Nogales	Arizona	No
+KPHX	Phoenix Sky Harbor International Airport	Phoenix	Arizona	Yes
+KSDL	Scottsdale Airport	Scottsdale	Arizona	No
+KTUS	Tucson International Airport	Tucson	Arizona	Yes
+KNYL	Yuma International Airport	Yuma	Arizona	Yes
+KLIT	Bill and Hillary Clinton National Airport	Little Rock	Arkansas	Yes
+KROG	Rogers Municipal Airport	Rogers	Arkansas	Yes
+KCXL	Calexico International Airport	Calexico	California	No
+KCRQ	McClellan-Palomar Airport	Carlsbad	California	Yes
+KSUU	Travis Air Force Base	Fairfield	California	Yes
+KFAT	Fresno Yosemite International Airport	Fresno	California	Yes
+KLAX	Los Angeles International Airport	Los Angeles	California	Yes
+KNUQ	Moffett Federal Airfield	Mountain View	California	Yes
+KOAK	Oakland International Airport	Oakland	California	Yes
+KPSP	Palm Springs International Airport	Palm Springs	California	Yes
+KMCC	McClellan Air Force Base	Sacramento	California	Yes
+KBAB	Beale Air Force Base	Sacramento	California	Yes
+KSMF	Sacramento International Airport	Sacramento	California	Yes
+KSBD	San Bernardino International Airport	San Bernardino	California	Yes
+KSDM	Brown Field	San Diego	California	No
+KSAN	San Diego International Airport (Lindbergh Field)	San Diego	California	Yes
+KSFO	San Francisco International Airport	San Francisco	California	Yes
+KSJC	Norman Y. Mineta San Jose International Airport	San Jose	California	Yes
+KVNY	Van Nuys Airport	Van Nuys	California	Yes
+KVCV	Southern California Logisitics Airport	Victorville	California	Yes
+KBJC	Jefferson County Airport	Broomfield	Colorado	Yes
+KCOS	Colorado Springs Airport	Colorado Springs	Colorado	Yes
+KDEN	Denver International Airport	Denver	Colorado	Yes
+KAPA	Denver Centennial Airport	Englewood	Colorado	Yes
+KEGE	Eagle County Regional Airport	Gypsum	Colorado	Yes
+KFNL	Northern Colorado Regional Airport	Loveland	Colorado	Yes
+KBDR	Sikorsky Memorial Airport	Bridgeport	Connecticut	Yes
+KGON	Groton-New London Airport	Groton	Connecticut	Yes
+KHVN	Tweed-New Haven Regional Airport	New Haven	Connecticut	Yes
+KOXC	Waterbury Oxford Airport	Oxford	Connecticut	No
+KBDL	Bradley International Airport	Windsor Locks	Connecticut	Yes
+KDOV	Dover Air Force Base	Dover	Delaware	Yes
+KGED	Delaware Coastal Airport	Georgetown	Delaware	Yes
+KILG	New Castle Airport	Wilmington	Delaware	Yes
+KBCT	Boca Raton Airport	Boca Raton	Florida	Yes
+KDAB	Daytona Beach International Airport	Daytona	Florida	No
+KFLL	Fort Lauderdale-Hollywood International Airport	Fort Lauderdale	Florida	Yes
+KFXE	Fort Lauderdale Executive Airport	Fort Lauderdale	Florida	Yes
+KRSW	Southwest Florida International Airport	Fort Myers	Florida	Yes
+KFPR	Treasure Coast International Airport	Fort Pierce	Florida	Yes
+KJAX	Jacksonville International Airport	Jacksonville	Florida	Yes
+KEYW	Key West International Airport	Key West	Florida	Yes
+KLAL	Lakeland Linder Regional Airport	Lakeland	Florida	No
+KLEE	Leesburg Regional Airport	Leesburg	Florida	No
+KMTH	Florida Keys Marathon Airport	Marathon	Florida	Yes
+KMLB	Melbourne Airport	Melbourne	Florida	Yes
+KMIA	Miami International Airport	Miami	Florida	Yes
+KOPF	Miami-Opa Locka Executive Airport	Miami	Florida	No
+KTMB	Miami Executive Airport	Miami	Florida	No
+KAPF	Naples Airport	Naples	Florida	Yes
+KMCO	Orlando International Airport	Orlando	Florida	Yes
+KORL	Orlando Executive Airport	Orlando	Florida	Yes
+KPNS	Pensacola Regional Airport	Pensacola	Florida	Yes
+KSFB	Orlando Sanford International Airport	Sanford	Florida	Yes
+KSRQ	Sarasota Bradenton International Airport	Sarasota	Florida	Yes
+KSGJ	St. Augustine Airport	St. Augustine	Florida	Yes
+KPIE	St. Petersburg-Clearwater International Airport	St. Petersburg	Florida	Yes
+KSUA	Martin County Airport at Witham Field	Stuart	Florida	Yes
+KMCF	MacDill Air Force Base	Tampa	Florida	Yes
+KTPA	Tampa International Airport	Tampa	Florida	Yes
+KPBI	Palm Beach International Airport	West Palm Beach	Florida	Yes
+KVRB	Vero Beach Regional Airport	Vero Beach	Florida	Yes
+KATL	Hartsfield-Jackson Atlanta International Airport	Atlanta	Georgia	Yes
+KFTY	Fulton County Airport-Brown Field	Atlanta	Georgia	Yes
+KPDK	Dekalb Peachtree Airport	Atlanta	Georgia	Yes
+KBQK	Brunswick Golden Isles Airport (Glynco Jetport)	Brunswick	Georgia	No
+KSSI	McKinnon St. Simons Island Airport	Brunswick	Georgia	No
+KRYY	Cobb County International Airport (McCollum Field)	Kennesaw	Georgia	Yes
+KMGE	Dobbins Air Reserve Base	Marietta	Georgia	Yes
+KSAV	Savannah/Hilton Head International Airport	Savannah	Georgia	Yes
+KSVN	Hunter Army Field	Savannah	Georgia	No
+PGUM	Guam International Airport	Tumon	Guam	No
+PHTO	Hilo International Airport	Hilo	Hawaii	No
+PHNL	Daniel K. Inouye International Airport	Honolulu	Hawaii	Yes
+PHWR	Hickam Air Force Base	Honolulu	Hawaii	Yes
+PHOG	Kahului Airport	Kahului	Hawaii	No
+PHKO	Ellison Onizuka Kona International Airport at Keahole	Kailua-Kona	Hawaii	Yes
+PHLI	Lihue Airport	Lihue	Hawaii	Yes
+KBOI	Boise Airport	Boise	Idaho	Yes
+KCOE	Coeur D'Alene Airport - Pappy Boyington Field	Hayden	Idaho	Yes
+K1S1	Eckhart International Airport	Porthill	Idaho	No
+KMDW	Midway Airport	Chicago	Illinois	Yes
+KORD	O'Hare International Airport	Chicago	Illinois	Yes
+KBLV	MidAmerica St. Louis Airport	Mascoutah	Illinois	Yes
+KMLI	Quad Cities International Airport	Moline	Illinois	Yes
+KPIA	Peoria International Airport	Peoria	Illinois	Yes
+KRFD	Chicago Rockford International Airport	Rockford	Illinois	Yes
+KCMI	University of Illinois-Willard Airport	Savoy	Illinois	Yes
+KUGN	Waukegan National Airport	Waukegan	Illinois	Yes
+KDPA	DuPage County Airport	West Chicago	Illinois	Yes
+KPWK	Chicago Executive Airport	Wheeling	Illinois	Yes
+KGYY	Gary/Chicago International Airport	Gary	Indiana	Yes
+KIND	Indianapolis International Airport	Indianapolis	Indiana	Yes
+KSBN	South Bend International Airport	South Bend	Indiana	Yes
+KFWA	Fort Wayne International Airport	Yoder	Indiana	Yes
+KDSM	Des Moines International Airport	Des Moines	Iowa	Yes
+KICT	Wichita Mid-Continent Airport	Wichita	Kansas	Yes
+KCVG	Cincinnati/Northern Kentucky International Airport	Hebron	Kentucky	Yes
+KLEX	Blue Grass Airport	Lexington	Kentucky	Yes
+KSDF	Louisville Muhammad Ali International Airport	Louisville	Kentucky	Yes
+KHUM	Houma-Terrebonne Airport	Morgan City	Louisiana	No
+KBTR	Baton Rouge Metropolitan Airport - Ryan Field	Baton Rouge	Louisiana	No
+KGAO	South Lafourche Leonard Miller Jr Airport	Galliano	Louisiana	No
+KREG	Louisiana Regional Airport	Gonzales	Louisiana	No
+KARA	Acadiana Regional Airport	Iberia	Louisiana	No
+KCWF	Chennault International Airport	Lake Charles	Louisiana	No
+KLFT	Lafayette Regional Airport	Lafayette	Louisiana	No
+KLCH	Lake Charles Regional Airport	Lake Charles	Louisiana	No
+KNEW	Lakefront Airport	New Orleans	Louisiana	No
+KMSY	New Orleans International Airport (Moissant Field)	New Orleans	Louisiana	Yes
+KSHV	Shreveport Regional Airport	Shrevport	Louisiana	No
+KBGR	Bangor International Airport	Bangor	Maine	Yes
+KCAR	Caribou International Airport	Caribou	Maine	Yes
+KEPM	Eastport Municipal Airport	Eastport	Maine	No
+KFVE	Northern Aroostook Regional Airport	Frenchville	Maine	No
+KHUL	Houlton International Airport	Houlton	Maine	Yes
+K59B	Jackman Airport - Newton Field	Jackman	Maine	No
+K60B	Moose River Seaplane Base	Jackman	Maine	No
+K65B	Lubec Municipal Airport	Lubec	Maine	No
+K06B	Lucky Landing Marina and Seaplane Base	Lucky Landing	Maine	No
+KPWM	Portland International Jetport	Portland	Maine	Yes
+KPQI	Presque Isle lnternational Airport	Presque Isle	Maine	Yes
+KPNN	Princeton Municipal Airport	Princeton	Maine	No
+K05B	Van Buren Seaplane Base	Van Buren	Maine	No
+KME8	Vanceboro Seaplane Base	Vanceboro	Maine	No
+KAPG	Aberdeen Proving Ground (Phillips AAF)	Aberdeen	Maryland	No
+KBWI	Baltimore/Washington International Airport	Baltimore	Maryland	Yes
+KMTN	Martin State Airport	Baltimore	Maryland	Yes
+KNHK	Patuxant River Naval Air Station (Trapnell Field)	Lexington Park	Maryland	Yes
+KBED	L. G. Hanscom Field	Bedford	Massachusetts	Yes
+KBVY	Beverly Municipal Airport	Beverly	Massachusetts	No
+KBOS	Logan International Airport	Boston	Massachusetts	Yes
+KCEF	Westover Air Force Base	Chicopee	Massachusetts	Yes
+KHYA	Cape Cod Gateway Airport	Hyannis	Massachusetts	Yes
+KLWM	Lawrence Municipal Airport	Lawrence	Massachusetts	No
+KEWB	New Bedford Regional Airport	New Bedford	Massachusetts	Yes
+KPSF	Pittsfield Municipal Airport	Pittsfield	Massachusetts	No
+KBAF	Westfield-Barnes Airport	Westfield	Massachusetts	Yes
+KORH	Worcester Regional Airport	Worcester	Massachusetts	Yes
+KBTL	WK Kellogg Airport	Battle Creek	Michigan	Yes
+K3CM	James Clements Airport	Bay City	Michigan	No
+KDET	Detroit City Airport	Detroit	Michigan	No
+KDTW	Detroit Metropolitan Wayne County Airport	Detroit	Michigan	Yes
+KFNT	Bishop International Airport	Flint	Michigan	No
+KGRR	Gerald R. Ford International Airport	Grand Rapids	Michigan	Yes
+KAZO	Kalamazoo/Battle Creek International Airport	Kalamazoo	Michigan	Yes
+KLAN	Capital Region International Airport	Lansing	Michigan	Yes
+KPHN	St Clair County International Airport	Port Huron	Michigan	Yes
+KMBS	MBS International Airport	Saginaw	Michigan	Yes
+KANJ	Sault Ste Marie Municipal/Sanderson Field	Sault Ste Marie	Michigan	No
+KCIU	Chippewa County International Airport	Sault Ste Marie	Michigan	No
+KPTK	Oakland County International Airport	Waterford	Michigan	Yes
+KYIP	Willow Run Airport	Ypsilanti	Michigan	Yes
+KBDE	Baudette International Airport	Baudette	Minnesota	No
+KCDD	Scotts Seaplane Base	Crane Lake	Minnesota	No
+KDLH	Duluth International Airport	Duluth	Minnesota	Yes
+KDYT	Sky Harbor Airport	Duluth	Minnesota	Yes
+KELO	Ely Municipal Airport	Ely	Minnesota	No
+KMN41	Shagawa Seaplane Base	Ely	Minnesota	No
+K0G5	Grand Marais/Cook County Seaplane Base	Grand Marais	Minnesota	No
+KCKC	Grand Marais/Cook County Airport	Grand Marais	Minnesota	No
+KINC	International Falls Seaplane Base	Int'l Falls	Minnesota	No
+KINL	Falls International Airport	Int'l Falls	Minnesota	Yes
+KMSP	MSP International Airport	Minneapolis	Minnesota	Yes
+KRST	Rochester International Airport	Rochester	Minnesota	Yes
+KSTP	St. Paul Downtown Airport (Holman Field)	St. Paul	Minnesota	Yes
+K12D	Lake Vermillion Seaplane Base	Tower	Minnesota	No
+K75Y	Warroad Seaplane Base	Warroad	Minnesota	No
+KRRT	Warroad International Airport (Swede Carlson Field)	Warroad	Minnesota	No
+4MN2	Oak Island Seaplane Base	Angle Inlet	Minnesota	No
+KGPT	Gulfport-Biloxi International Airport	Gulfport	Mississippi	Yes
+KJAN	Jackson-Evers International Airport	Jackson	Mississippi	Yes
+KPQL	Trent Lott International Airport	Pascagoula	Mississippi	No
+KSUS	Spirit of St. Louis Airport	Chesterfield	Missouri	Yes
+KMCI	Kansas City International Airport	Kansas City	Missouri	Yes
+KMKC	Charles B. Wheeler Downtown Airport	Kansas City	Missouri	Yes
+KSGF	Springfield-Branson National Airport	Springfield	Missouri	Yes
+KSTL	Lambert-St. Louis International Airport	St Louis	Missouri	Yes
+KBZN	Bozeman Yellowstone International Airport	Bozeman	Montana	Yes
+KBTM	Bert Mooney Airport	Butte	Montana	No
+KCTB	Cut Bank Airport	Cut Bank	Montana	No
+KH28	Whetstone International Airport	Del Bonita	Montana	No
+KGTF	Great Falls International Airport	Great Falls	Montana	Yes
+KHLN	Helena Regional Airport	Helena	Montana	No
+KGPI	Glacier Park International Airport	Kalispell	Montana	Yes
+K8U3	East Poplar International	Scobey	Montana	No
+K7S8	Ross International Airport	Sweetgrass	Montana	No
+KOMA	Eppley Airfield	Omaha	Nebraska	Yes
+KLAS	McCarran International Airport	Las Vegas	Nevada	Yes
+KRNO	Reno-Tahoe International Airport	Reno	Nevada	Yes
+KMHT	Manchester Airport	Manchester	New Hampshire	Yes
+KPSM	Portsmouth International Airport at Pease	Portsmouth	New Hampshire	Yes
+KACY	Atlantic City International Airport	Egg Harbour Township	New Jersey	Yes
+KNEL	Joint Base McGuire-Dix-Lakehurst	Lakehurst	New Jersey	Yes
+KMMU	Morristown Municipal Airport	Morristown	New Jersey	Yes
+KEWR	Newark Liberty International Airport	Newark	New Jersey	Yes
+KTEB	Teterboro Airport	Teterboro	New Jersey	Yes
+KTTN	Trenton-Mercer Airport	Trenton	New Jersey	Yes
+KWRI	McGuire Air Force Base	Wrightstown	New Jersey	Yes
+KABQ	Albuquerque International Sunport	Albuquerque	New Mexico	Yes
+KDNA	Santa Teresa Airport	Santa Teresa	New Mexico	Yes
+KALB	Albany International Airport	Albany	New York	Yes
+KBUF	Buffalo/Niagara International Airport	Buffalo	New York	Yes
+KFRG	Republic Airport	Farmingdale	New York	Yes
+KLGA	LaGuardia Airport	Flushing	New York	Yes
+KGFL	Floyd Bennett Memorial Airport	Glens Falls	New York	No
+K1B1	Columbia County Airport	Hudson	New York	No
+KISP	Long Island MacArthur Airport	Islip	New York	Yes
+KJFK	John F Kennedy International Airport	Jamaica	New York	Yes
+KNY27	Fulton County Airport	Johnstown	New York	No
+KMSS	Richards Field	Massena	New York	No
+KSWF	Stewart International Airport	Newburgh	New York	Yes
+KIAG	Niagara Falls International Airport	Niagara Falls	New York	Yes
+KOGS	Ogdensburg International Airport (and Harbor)	Ogdensburg	New York	No
+KN66	Oneonta Municipal Airport	Oneonta	New York	No
+KPBG	Plattsburgh International Airport	Plattsburgh	New York	Yes
+KROC	Greater Rochester International Airport	Rochester	New York	Yes
+KNY47	Rouses Point Seaplane Base	Rouses Point	New York	No
+KSLK	Adirondack Regional Airport	Saranac Lake	New York	No
+K5B2	Saratoga County Airport	Saratoga Springs	New York	No
+KSCH	Schenectady County Airport	Schenectady	New York	Yes
+KN23	Sidney Municipal Airport	Sidney	New York	No
+KSYR	Syracuse Hancock International Airport	Syracuse	New York	Yes
+KART	Watertown International Airport	Watertown	New York	No
+KFOK	Francis S. Gabreski Airport	Westhampton Beach	New York	Yes
+KHPN	Westchester County Airport	White Plains	New York	Yes
+KHSA	Stennis International Airport	Kiln	Mississippi	No
+KMRH	Michael J. Smith Field	Beaufort-Morehead	North Carolina	No
+KCLT	Charlotte-Douglas International Airport	Charlotte	North Carolina	Yes
+KGSO	Piedmont Triad International Airport	Greensboro	North Carolina	Yes
+KNKT	Cherry Point MCAS (Cunningham Field) - Military only	Havelock	North Carolina	Yes
+KEQY	Charlotte Monroe Executive Airport	Monroe	North Carolina	Yes
+KRDU	Raleigh-Durham International Airport	Raleigh-Durham	North Carolina	Yes
+KILM	Wilmington International Airport	Wilmington	North Carolina	Yes
+KINT	Smith Reynolds Airport	Winston Salem	North Carolina	Yes
+KS28	International Peace Garden Airport	Dunseith	North Dakota	No
+KFAR	Hector International Airport	Fargo	North Dakota	Yes
+KGFK	Grand Forks International Airport	Grand Forks	North Dakota	Yes
+KMOT	Minot International Airport	Minot	North Dakota	Yes
+KPMB	Pembina Municipal Airport	Pembina	North Dakota	No
+KXWA	Williston Basin International Airport	Williston	North Dakota	No
+PGSN	Saipan International Airport	I Fadang	Northern Mariana Islands	No
+PGRO	Rota International Airport	Sinapalo	Northern Mariana Islands	No
+KCAK	Akron-Canton Airport	Akron	Ohio	Yes
+KLUK	Cincinnati Municipal Lunken Airport	Cincinnati	Ohio	Yes
+KCLE	Cleveland Hopkins International Airport	Cleveland	Ohio	Yes
+KCMH	Port Columbus International Airport	Columbus	Ohio	Yes
+KLCK	Rickenbacker International Airport	Columbus	Ohio	Yes
+KDAY	Dayton International Airport	Dayton	Ohio	Yes
+KPCW	Erie-Ottowa Regional Airport	Port Clinton	Ohio	No
+KTOL	Toledo Express Airport	Toledo	Ohio	Yes
+KOKC	Will Rogers World Airport	Oklahoma City	Oklahoma	Yes
+KTUL	Tulsa International Airport	Tulsa	Oklahoma	Yes
+KHIO	Hillsboro Airport	Hillsboro	Oregon	Yes
+KPDX	Portland International Airport	Portland	Oregon	Yes
+KABE	Lehigh Valley International Airport	Allentown	Pennsylvania	Yes
+KERI	Erie International Airport Tom Ridge Field	Erie	Pennsylvania	Yes
+KMDT	Harrisburg International Airport	Middletown	Pennsylvania	Yes
+KPHL	Philadelphia International Airport	Philadelphia	Pennsylvania	Yes
+KPIT	Pittsburgh International Airport	Pittsburgh	Pennsylvania	Yes
+KAVP	Wilkes-Barre/Scranton International Airport	Wilkes-Barre	Pennsylvania	Yes
+TJBQ	Rafael Hernandez Airport	Aguadilla	Puerto Rico	Yes
+TJRV	Jose Aponte de la Torre Airport	Ceiba	Puerto Rico	Yes
+TJCP	Benjamin Rivera Noriega Airport	Culebra	Puerto Rico	No
+TJPS	Mercedita International Airport	Ponce	Puerto Rico	Yes
+TJIG	Fernando Luis Ribas Dominicci Airport (Isla Grande)	San Juan	Puerto Rico	Yes
+TJSJ	San Juan Luis Munoz Marin International Airport	San Juan	Puerto Rico	Yes
+TJVQ	Antonio Rivera Rodriguez Airport	Vieques	Puerto Rico	No
+KSFZ	North Central State Airport	Lincoln	Rhode Island	Yes
+KUUU	Newport State Airport	Newport	Rhode Island	Yes
+KOQU	Quonset State Airport	North Kingstown	Rhode Island	Yes
+KPVD	TF Green Airport	Providence	Rhode Island	Yes
+KCHS	Charleston International Airport	Charleston	South Carolina	No
+KCAE	Columbia Metropolitan Airport	Columbia	South Carolina	Yes
+KGSP	Greenville-Spartanburg International Airport	Greenville	South Carolina	Yes
+KMYR	Myrtle Beach International Airport	Myrtle Beach	South Carolina	No
+KFSD	Sioux Falls Regional Airport	Sioux Falls	South Dakota	Yes
+KTRI	Tri-Cities Regional Airport	Blountsville	Tennessee	Yes
+KCHA	Chattanooga Metropolitan Airport (Lovell Field)	Chattanooga	Tennessee	Yes
+KTYS	McGhee Tyson Airport	Knoxville	Tennessee	Yes
+KMEM	Memphis International Airport	Memphis	Tennessee	Yes
+KBNA	Nashville International Airport	Nashville	Tennessee	Yes
+KAMA	Rick Husband Amarillo International Airport	Amarillo	Texas	Yes
+KAUS	Austin-Bergstrom International Airport	Austin	Texas	Yes
+KBRO	Brownsville International Airport	Brownsville	Texas	Yes
+KCXO	North Houston Regional Airport	Conroe	Texas	Yes
+KCRP	Corpus Christi International Airport	Corpus Christi	Texas	Yes
+KADS	Addison Airport	Dallas	Texas	Yes
+KDAL	Dallas Love Field	Dallas	Texas	Yes
+KDFW	Dallas/Fort Worth International Airport	Dallas	Texas	Yes
+KDRT	Del Rio International Airport	Del Rio	Texas	No
+K5T9	Maverick County Airport	Eagle Pass	Texas	No
+KEBG	South Texas International Airport	Edinburg	Texas	No
+KELP	El Paso International Airport	El Paso	Texas	Yes
+KBIF	Ft. Bliss/Biggs Army Air Field	El Paso	Texas	Yes
+KAFW	Fort Worth Alliance Airport	Fort Worth	Texas	Yes
+KFTW	Fort Worth Meacham International Airport	Fort Worth	Texas	Yes
+KGLS	Scholes International Airport at Galveston	Galveston	Texas	Yes
+KHRL	Valley International Airport	Harlingen	Texas	Yes
+KEFD	Ellington Field	Houston	Texas	Yes
+KHOU	William P. Hobby Airport	Houston	Texas	Yes
+KIAH	George Bush Intercontinental Airport	Houston	Texas	Yes
+KLRD	Laredo International Airport	Laredo	Texas	Yes
+KLBB	Lubbock Preston Smith International Airport	Lubbock	Texas	Yes
+KMFE	McAllen International Airport	McAllen	Texas	Yes
+KTKI	Collin County Regional Airport	McKinney	Texas	Yes
+KMAF	Midland International Airport	Midland	Texas	Yes
+KBPT	Jack Brooks Regional Airport	Port Arthur	Texas	No
+KPRS	Presidio-Lely International Airport	Presidio	Texas	Yes
+KSAT	San Antonio International Airport	San Antonio	Texas	Yes
+KSKF	Kelly Field Annex	San Antonio	Texas	Yes
+KSGR	Sugar Land Regional Airport	Sugar Land	Texas	Yes
+KTXW	Mid-Valley International Airport	Weslaco	Texas	No
+KSLC	Salt Lake City International Airport	Salt Lake City	Utah	Yes
+KBTV	Burlington International Airport	Burlington	Vermont	Yes
+TIST	Cyril E. King International Airport	Charlotte Amalie	Virgin Islands	Yes
+TISX	Henry E. Rohlsen Airport	Christiansted	Virgin Islands	Yes
+KJYO	Leesburg Executive Airport	Leesburg	Virginia	Yes
+KHEF	Manassas Regional Airport	Manassas	Virginia	Yes
+KPHF	Newport News/Williamsburg International Airport	Newport News	Virginia	Yes
+KORF	Norfolk International Airport	Norfolk	Virginia	Yes
+KRIC	Richmond International Airport	Richmond	Virginia	Yes
+KIAD	Dulles International Airport	Sterling	Virginia	Yes
+K74S	Anacortes Airport	Anacortes	Washington	No
+KBLI	Bellingham International Airport	Bellingham	Washington	No
+KBVS	Skagit Regional Airport	Burlington	Washington	No
+KPAE	Snohomish County Airport - Paine Field	Everett	Washington	Yes
+KFHR	Friday Harbor Airport	Friday Harbor	Washington	No
+KHQM	Bowerman Field	Hoquiam	Washington	No
+KS60	Kenmore Seaplane Base	Kenmore	Washington	No
+K69S	Avey State Field Airport	Laurier	Washington	No
+KMWH	Grant County International Airport	Moses Lake	Washington	Yes
+KOLM	Olympia Regional Airport	Olympia	Washington	No
+K0S7	Dorothy Scott Airport	Oroville	Washington	No
+KCLM	William R Fairchild International Airport	Port Angeles	Washington	No
+K0S9	Jefferson County International Airport	Port Townsend	Washington	No
+KRNT	Renton Municipal Airport, Clayton Scott Field	Renton	Washington	No
+KWA47	Will Rogers-Wiley Post Memorial Seaplane Base	Renton	Washington	No
+KBFI	King County International Airport-Boeing Field	Seattle	Washington	Yes
+KLKE	Lake Union Air Service (Seaplanes)	Seattle	Washington	No
+KSEA	Seattle-Tacoma International Airport	Seattle	Washington	No
+KGEG	Spokane International Airport	Spokane	Washington	Yes
+KSFF	Felts Field Airport	Spokane	Washington	No
+KTIW	Tacoma Narrows Airport	Tacoma	Washington	No
+KCRW	Yeager Airport	Charleston	West Virginia	Yes
+KHTS	Huntington Tri-State Airport	Huntington	West Virginia	No
+KGRB	Austin Straubel International Airport	Green Bay	Wisconsin	Yes
+KATW	Appleton International Airport	Greenville	Wisconsin	Yes
+KENW	Kenosha Regional Airport	Kenosha	Wisconsin	No
+KMKE	Milwaukee Mitchell International Airport	Milwaukee	Wisconsin	Yes
+KRAC	Batten International Airport	Racine	Wisconsin	Yes
+KSBM	Sheboygan County Memorial Airport	Sheboygan	Wisconsin	No
+KCPR	Natrona County International Airport	Casper	Wyoming	Yes
