@@ -60,12 +60,14 @@ export default function AirlineOperations() {
   useEffect(() => { loadOps(); }, []);
 
   // Grouped: unique airlines that have operations
-  const airlineMap = new Map<number, { name: string; iata: string; count: number }>();
+  const airlineMap = new Map<number, { name: string; iata: string; count: number; hasData: boolean }>();
   for (const op of ops) {
     if (!airlineMap.has(op.airlineId)) {
-      airlineMap.set(op.airlineId, { name: op.airlineName ?? "Unknown", iata: op.airlineIata ?? "?", count: 0 });
+      airlineMap.set(op.airlineId, { name: op.airlineName ?? "Unknown", iata: op.airlineIata ?? "?", count: 0, hasData: false });
     }
-    airlineMap.get(op.airlineId)!.count++;
+    const entry = airlineMap.get(op.airlineId)!;
+    if (op.airportId) entry.count++;
+    if (op.firmsCode || op.iscAmount || op.contactNumber || op.contactEmail) entry.hasData = true;
   }
   const uniqueAirlines = Array.from(airlineMap.entries())
     .filter(([, a]) => {
@@ -127,11 +129,11 @@ export default function AirlineOperations() {
   };
 
   const handleSave = async () => {
-    if (!form.airlineId || !form.airportId) { toast.error("Airline and airport are required"); return; }
+    if (!form.airlineId) { toast.error("Airline is required"); return; }
     setSaving(true);
     try {
       const body = {
-        airlineId: parseInt(form.airlineId), airportId: parseInt(form.airportId),
+        airlineId: parseInt(form.airlineId), airportId: form.airportId ? parseInt(form.airportId) : null,
         firmsCode: form.firmsCode || null, iscAmount: form.iscAmount || null,
         iscPayableAt: form.iscPayableAt || null, iscPayableTo: form.iscPayableTo || null,
         contactNumber: form.contactNumber || null, contactEmail: form.contactEmail || null,
@@ -199,9 +201,15 @@ export default function AirlineOperations() {
                 <div className="text-center w-full">
                   <p className="font-semibold text-sm text-foreground line-clamp-2 leading-tight">{info.name}</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
-                      <Building2 className="h-3 w-3" /> {info.count} airport{info.count !== 1 ? "s" : ""}
-                    </span>
+                    {info.count > 0 ? (
+                      <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
+                        <Building2 className="h-3 w-3" /> {info.count} airport{info.count !== 1 ? "s" : ""}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full font-medium">
+                        No airports
+                      </span>
+                    )}
                   </p>
                 </div>
               </button>
@@ -292,15 +300,15 @@ export default function AirlineOperations() {
                   />
                 </div>
 
-                <div className="h-10 w-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-700 font-bold font-mono text-sm shrink-0">
-                  {op.airportIata}
+                <div className={`h-10 w-10 rounded-xl flex items-center justify-center font-bold font-mono text-sm shrink-0 ${op.airportId ? "bg-orange-100 text-orange-700" : "bg-slate-100 text-slate-400"}`}>
+                  {op.airportIata ?? "—"}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm text-foreground">{op.airportName}</p>
+                  <p className="font-semibold text-sm text-foreground">{op.airportName ?? <span className="text-slate-400 italic">No airport assigned</span>}</p>
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
-                    {[op.airportCity, op.airportState].filter(Boolean).join(", ") || "—"}
+                    {op.airportId ? ([op.airportCity, op.airportState].filter(Boolean).join(", ") || "—") : "Click edit to assign an airport"}
                   </p>
                 </div>
 

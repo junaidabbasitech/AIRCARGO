@@ -88,11 +88,11 @@ router.get("/airline-operations/:id", async (req, res) => {
 router.post("/airline-operations", async (req, res) => {
   try {
     const { airlineId, airportId, firmsCode, iscAmount, iscPayableAt, iscPayableTo, contactNumber, contactEmail, notes } = req.body;
-    if (!airlineId || !airportId) return res.status(400).json({ message: "airlineId and airportId are required" });
+    if (!airlineId) return res.status(400).json({ message: "airlineId is required" });
 
     const [op] = await db.insert(airlineOperationsTable).values({
       airlineId: parseInt(airlineId),
-      airportId: parseInt(airportId),
+      airportId: airportId ? parseInt(airportId) : null,
       firmsCode: firmsCode || null,
       iscAmount: iscAmount || null,
       iscPayableAt: iscPayableAt || null,
