@@ -106,6 +106,20 @@ export default function Airlines() {
     toast.success(`Bulk rejected ${done} airline(s)`);
   };
 
+  const bulkDelete = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Permanently delete ${selected.size} airline(s)? This cannot be undone.`)) return;
+    setBulkLoading(true);
+    try {
+      const res = await fetch("/api/airlines/bulk-delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ids: Array.from(selected) }) });
+      const data = await res.json();
+      toast.success(`Deleted ${data.deleted} airline(s)`);
+      setSelected(new Set());
+      queryClient.invalidateQueries({ queryKey: ["/api/airlines"] });
+    } catch { toast.error("Bulk delete failed"); }
+    setBulkLoading(false);
+  };
+
   const renderStatus = (status: string, flagged: boolean) => {
     if (flagged) return <Badge variant="warning">Flagged</Badge>;
     if (status === "approved") return <Badge variant="success">Approved</Badge>;
@@ -160,6 +174,14 @@ export default function Airlines() {
               >
                 <X className="h-3.5 w-3.5" />
                 Reject All
+              </button>
+              <button
+                onClick={bulkDelete}
+                disabled={bulkLoading}
+                className="flex items-center gap-1.5 px-4 py-1.5 bg-slate-700 hover:bg-slate-900 active:scale-95 text-white text-xs font-bold rounded-lg transition-all duration-150 shadow disabled:opacity-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete All
               </button>
               <button onClick={() => setSelected(new Set())} className="text-xs text-slate-400 hover:text-slate-600 transition-colors px-2">Clear</button>
             </div>
