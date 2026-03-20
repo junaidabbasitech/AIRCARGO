@@ -8,6 +8,7 @@ import auditLogsRouter from "./auditLogs";
 import statsRouter from "./stats";
 import airlineOperationsRouter from "./airlineOperations";
 import importExportRouter from "./importExport";
+import duplicatesRouter from "./duplicates";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use(auditLogsRouter);
 router.use(statsRouter);
 router.use(airlineOperationsRouter);
 router.use(importExportRouter);
+router.use(duplicatesRouter);
 
 export default router;

@@ -44,7 +44,7 @@ export default function AirPublic() {
   const [customs, setCustoms] = useState<"" | "yes" | "no">("");
   const [airportFilter, setAirportFilter] = useState("");
   const [page, setPage] = useState(1);
-  const limit = 20;
+  const [limit, setLimit] = useState(20);
 
   // Airline IDs that have ISC/operations data
   const [iscAirlineIds, setIscAirlineIds] = useState<Set<number>>(new Set());
@@ -461,11 +461,24 @@ export default function AirPublic() {
             )}
 
             {/* Pagination */}
-            {((tab === "airlines" && airlines && airlines.total > limit) ||
-              (tab === "airports" && airports && airports.total > limit)) && (
-              <div className="px-5 py-3 border-t border-slate-100 flex justify-between items-center bg-slate-50">
-                <span className="text-xs font-mono text-slate-400">Page {page} of {Math.ceil((tab === "airlines" ? (airlines?.total ?? 0) : (airports?.total ?? 0)) / limit)}</span>
-                <div className="flex gap-2">
+            {((tab === "airlines" && airlines && airlines.total > 0) ||
+              (tab === "airports" && airports && airports.total > 0)) && (
+              <div className="px-5 py-3 border-t border-slate-100 flex flex-wrap justify-between items-center gap-2 bg-slate-50">
+                <span className="text-xs font-mono text-slate-400">
+                  Page {page} of {Math.ceil((tab === "airlines" ? (airlines?.total ?? 0) : (airports?.total ?? 0)) / limit)}
+                  {" "}· {tab === "airlines" ? (airlines?.total ?? 0) : (airports?.total ?? 0)} total
+                </span>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                    <span>Show</span>
+                    <select
+                      value={limit}
+                      onChange={e => { setLimit(Number(e.target.value)); setPage(1); }}
+                      className="h-7 px-1.5 rounded-lg border border-slate-200 bg-white text-xs font-mono focus:outline-none focus:ring-1 focus:ring-sky-400"
+                    >
+                      {[20, 40, 50, 100].map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
                   <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-sky-50 hover:border-sky-300 hover:text-sky-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all">← Prev</button>
                   <button disabled={page * limit >= (tab === "airlines" ? (airlines?.total ?? 0) : (airports?.total ?? 0))} onClick={() => setPage(p => p + 1)} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-sky-50 hover:border-sky-300 hover:text-sky-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all">Next →</button>
                 </div>

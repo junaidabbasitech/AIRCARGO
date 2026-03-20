@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import {
   Plane, Building2, Users, RefreshCw, ClipboardList,
   LayoutDashboard, Menu, X, ChevronDown,
-  Search, Network, LogOut, Gauge
+  Search, Network, LogOut, Gauge, GitMerge
 } from "lucide-react";
 
 const CMD_SUB_ITEMS = [
@@ -13,6 +13,7 @@ const CMD_SUB_ITEMS = [
   { href: "/airports", label: "Airports", icon: Building2 },
   { href: "/airline-operations", label: "Airline Operations", icon: Network },
   { href: "/ground-handlers", label: "Ground Handlers", icon: Users },
+  { href: "/duplicates", label: "Duplicate Detection", icon: GitMerge },
   { href: "/sync", label: "Sync Operations", icon: RefreshCw },
   { href: "/audit", label: "Audit Logs", icon: ClipboardList },
 ];

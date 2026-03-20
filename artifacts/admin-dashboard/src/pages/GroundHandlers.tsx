@@ -18,10 +18,12 @@ const formSchema = z.object({
   services: z.string().optional().nullable(),
 });
 
+const PAGE_SIZES = [20, 40, 50, 100];
+
 export default function GroundHandlers() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const limit = 20;
+  const [limit, setLimit] = useState(20);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingHandler, setEditingHandler] = useState<GroundHandler | null>(null);
@@ -139,12 +141,26 @@ export default function GroundHandlers() {
             </TableBody>
           </Table>
 
-          {data && data.total > limit && (
-             <div className="flex justify-between items-center mt-4">
-              <span className="text-sm font-mono text-muted-foreground">Page {page} of {Math.ceil(data.total/limit)}</span>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage(p => p - 1)}>Prev</Button>
-                <Button size="sm" variant="outline" disabled={page * limit >= data.total} onClick={() => setPage(p => p + 1)}>Next</Button>
+          {data && data.total > 0 && (
+            <div className="flex flex-wrap justify-between items-center mt-4 gap-2">
+              <span className="text-sm font-mono text-muted-foreground">
+                Showing {Math.min((page-1)*limit+1, data.total)}–{Math.min(page*limit, data.total)} of {data.total}
+              </span>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <span>Show</span>
+                  <select
+                    value={limit}
+                    onChange={e => { setLimit(Number(e.target.value)); setPage(1); }}
+                    className="h-7 px-1.5 rounded border border-border bg-background text-xs font-mono focus:outline-none focus:ring-1 focus:ring-primary"
+                  >
+                    {PAGE_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  <span>per page</span>
+                </div>
+                <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</Button>
+                <span className="text-xs text-muted-foreground px-1">Page {page} of {Math.ceil(data.total/limit)}</span>
+                <Button size="sm" variant="outline" disabled={page * limit >= data.total} onClick={() => setPage(p => p + 1)}>Next →</Button>
               </div>
             </div>
           )}
