@@ -3,7 +3,7 @@ import multer from "multer";
 import XLSX from "xlsx";
 import { db } from "@workspace/db";
 import { airlinesTable, airportsTable, airlineOperationsTable } from "@workspace/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 
 const router: IRouter = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
@@ -307,18 +307,37 @@ router.post("/import/airline-operations", upload.single("file"), async (req, res
         if (!airlineRow || !airportRow) { skipped++; continue; }
 
         const [existing] = await db.select({ id: airlineOperationsTable.id }).from(airlineOperationsTable)
-          .where(eq(airlineOperationsTable.airlineId, airlineRow.id))
-          .where(eq(airlineOperationsTable.airportId, airportRow.id)).limit(1);
+          .where(and(
+            eq(airlineOperationsTable.airlineId, airlineRow.id),
+            eq(airlineOperationsTable.airportId, airportRow.id)
+          )).limit(1);
+
+        // FIRMS code uniqueness check — reject if this code is already used by a different operation
+        const normalizedFirms = firmsCode ? firmsCode.trim().toUpperCase() : undefined;
+        if (normalizedFirms) {
+          const conditions = [eq(airlineOperationsTable.firmsCode, normalizedFirms)];
+          if (existing) conditions.push(ne(airlineOperationsTable.id, existing.id));
+          const [firmsConflict] = await db.select({ id: airlineOperationsTable.id })
+            .from(airlineOperationsTable)
+            .where(and(...conditions)).limit(1);
+          if (firmsConflict) {
+            errors.push(`${airlineIata}@${airportIata}: FIRMS code "${normalizedFirms}" is already in use by operation ID ${firmsConflict.id}`);
+            skipped++;
+            continue;
+          }
+        }
 
         if (existing) {
           await db.update(airlineOperationsTable).set({
-            firmsCode, iscAmount, iscPayableAt, iscPayableTo, contactNumber, contactEmail, notes,
+            firmsCode: normalizedFirms ?? null,
+            iscAmount, iscPayableAt, iscPayableTo, contactNumber, contactEmail, notes,
           }).where(eq(airlineOperationsTable.id, existing.id));
           updated++;
         } else {
           await db.insert(airlineOperationsTable).values({
             airlineId: airlineRow.id, airportId: airportRow.id,
-            firmsCode, iscAmount, iscPayableAt, iscPayableTo, contactNumber, contactEmail, notes,
+            firmsCode: normalizedFirms,
+            iscAmount, iscPayableAt, iscPayableTo, contactNumber, contactEmail, notes,
           });
           inserted++;
         }

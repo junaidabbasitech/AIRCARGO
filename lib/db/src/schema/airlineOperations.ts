@@ -8,7 +8,7 @@ export const airlineOperationsTable = pgTable("airline_operations", {
   id: serial("id").primaryKey(),
   airlineId: integer("airline_id").notNull().references(() => airlinesTable.id, { onDelete: "cascade" }),
   airportId: integer("airport_id").references(() => airportsTable.id, { onDelete: "cascade" }),
-  firmsCode: text("firms_code"),
+  firmsCode: text("firms_code").unique(),
   iscAmount: text("isc_amount"),
   iscPayableAt: text("isc_payable_at"),
   iscPayableTo: text("isc_payable_to"),

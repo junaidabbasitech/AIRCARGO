@@ -92,8 +92,11 @@ router.post("/airports", async (req, res) => {
     });
 
     res.status(201).json(airport);
-  } catch (err) {
+  } catch (err: any) {
     req.log.error(err);
+    if (err?.code === "23505") {
+      return res.status(409).json({ message: `An airport with IATA code "${req.body.iataCode?.toUpperCase()}" already exists in the registry.` });
+    }
     res.status(500).json({ message: "Internal server error" });
   }
 });

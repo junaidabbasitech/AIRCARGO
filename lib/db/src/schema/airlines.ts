@@ -7,7 +7,7 @@ export const statusEnum = pgEnum("record_status", ["pending", "approved", "rejec
 export const airlinesTable = pgTable("airlines", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  iataCode: text("iata_code"),
+  iataCode: text("iata_code").unique(),
   cbpCode: text("cbp_code"),
   icaoCode: text("icao_code"),
   country: text("country"),

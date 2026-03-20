@@ -1,9 +1,14 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { airlineOperationsTable, airlinesTable, airportsTable, auditLogsTable } from "@workspace/db/schema";
-import { eq, and, sql, ilike } from "drizzle-orm";
+import { eq, and, sql, ilike, ne } from "drizzle-orm";
 
 const router: IRouter = Router();
+
+// Helper: detect PostgreSQL unique-constraint violation (error code 23505)
+function isUniqueViolation(err: any, constraint?: string): boolean {
+  return err?.code === "23505" && (!constraint || err?.constraint === constraint);
+}
 
 // GET /api/airline-operations — list all, optionally filtered by airlineId or airportId
 router.get("/airline-operations", async (req, res) => {
@@ -90,10 +95,25 @@ router.post("/airline-operations", async (req, res) => {
     const { airlineId, airportId, firmsCode, iscAmount, iscPayableAt, iscPayableTo, contactNumber, contactEmail, notes } = req.body;
     if (!airlineId) return res.status(400).json({ message: "airlineId is required" });
 
+    // FIRMS code duplicate check
+    const normalizedFirms = firmsCode ? firmsCode.trim().toUpperCase() : null;
+    if (normalizedFirms) {
+      const [conflict] = await db.select({ id: airlineOperationsTable.id, airlineId: airlineOperationsTable.airlineId })
+        .from(airlineOperationsTable)
+        .where(eq(airlineOperationsTable.firmsCode, normalizedFirms))
+        .limit(1);
+      if (conflict) {
+        return res.status(409).json({
+          message: `FIRMS code "${normalizedFirms}" is already assigned to another operation (ID ${conflict.id}). FIRMS codes must be unique.`,
+          conflictId: conflict.id,
+        });
+      }
+    }
+
     const [op] = await db.insert(airlineOperationsTable).values({
       airlineId: parseInt(airlineId),
       airportId: airportId ? parseInt(airportId) : null,
-      firmsCode: firmsCode || null,
+      firmsCode: normalizedFirms,
       iscAmount: iscAmount || null,
       iscPayableAt: iscPayableAt || null,
       iscPayableTo: iscPayableTo || null,
@@ -112,8 +132,11 @@ router.post("/airline-operations", async (req, res) => {
     });
 
     res.status(201).json(op);
-  } catch (err) {
+  } catch (err: any) {
     req.log.error(err);
+    if (isUniqueViolation(err, "airline_operations_firms_code_unique")) {
+      return res.status(409).json({ message: "That FIRMS code is already in use. FIRMS codes must be unique." });
+    }
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -124,11 +147,29 @@ router.put("/airline-operations/:id", async (req, res) => {
     const id = parseInt(req.params.id);
     const { airlineId, airportId, firmsCode, iscAmount, iscPayableAt, iscPayableTo, contactNumber, contactEmail, notes } = req.body;
 
+    // FIRMS code duplicate check (ignore conflict with this same record)
+    const normalizedFirms = firmsCode ? firmsCode.trim().toUpperCase() : null;
+    if (normalizedFirms) {
+      const [conflict] = await db.select({ id: airlineOperationsTable.id })
+        .from(airlineOperationsTable)
+        .where(and(
+          eq(airlineOperationsTable.firmsCode, normalizedFirms),
+          ne(airlineOperationsTable.id, id)
+        ))
+        .limit(1);
+      if (conflict) {
+        return res.status(409).json({
+          message: `FIRMS code "${normalizedFirms}" is already assigned to another operation (ID ${conflict.id}). FIRMS codes must be unique.`,
+          conflictId: conflict.id,
+        });
+      }
+    }
+
     const [op] = await db.update(airlineOperationsTable)
       .set({
         airlineId: airlineId ? parseInt(airlineId) : undefined,
-        airportId: airportId ? parseInt(airportId) : undefined,
-        firmsCode: firmsCode ?? undefined,
+        airportId: airportId !== undefined ? (airportId ? parseInt(airportId) : null) : undefined,
+        firmsCode: normalizedFirms !== undefined ? normalizedFirms : undefined,
         iscAmount: iscAmount ?? undefined,
         iscPayableAt: iscPayableAt ?? undefined,
         iscPayableTo: iscPayableTo ?? undefined,
@@ -151,8 +192,11 @@ router.put("/airline-operations/:id", async (req, res) => {
     });
 
     res.json(op);
-  } catch (err) {
+  } catch (err: any) {
     req.log.error(err);
+    if (isUniqueViolation(err, "airline_operations_firms_code_unique")) {
+      return res.status(409).json({ message: "That FIRMS code is already in use. FIRMS codes must be unique." });
+    }
     res.status(500).json({ message: "Internal server error" });
   }
 });

@@ -6,7 +6,7 @@ import { statusEnum } from "./airlines";
 export const airportsTable = pgTable("airports", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  iataCode: text("iata_code"),
+  iataCode: text("iata_code").unique(),
   cbpPortCode: text("cbp_port_code"),
   city: text("city"),
   state: text("state"),
