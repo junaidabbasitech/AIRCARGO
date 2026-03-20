@@ -117,9 +117,6 @@ export default function AirPublic() {
               <button onClick={() => handleTab("airlines")} className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${tab === "airlines" ? "bg-sky-500 text-white shadow-md scale-105" : "text-slate-300 hover:text-white hover:bg-white/10"}`}>
                 <Plane className="h-4 w-4" /> Airlines
               </button>
-              <button onClick={() => handleTab("airports")} className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${tab === "airports" ? "bg-orange-500 text-white shadow-md scale-105" : "text-slate-300 hover:text-white hover:bg-white/10"}`}>
-                <Building2 className="h-4 w-4" /> Airports
-              </button>
             </div>
           </div>
 
