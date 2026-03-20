@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useListAirlines, useListAirports } from "@workspace/api-client-react";
-import { Search, Plane, Building2, MapPin, Filter, ChevronRight, ChevronDown, X, Phone, Mail, Hash, DollarSign, ArrowLeft } from "lucide-react";
+import { Search, Plane, Building2, MapPin, Filter, ChevronRight, ChevronDown, X, Phone, Mail, Hash, DollarSign, ArrowLeft, Zap } from "lucide-react";
 
 interface AirlineOperation {
   id: number;
@@ -37,10 +37,30 @@ export default function AirPublic() {
   const [tab, setTab] = useState<"airlines" | "airports">("airlines");
   const [search, setSearch] = useState("");
   const [country, setCountry] = useState("");
+  const [icaoFilter, setIcaoFilter] = useState("");
+  const [cbpFilter, setCbpFilter] = useState("");
+  const [hasIscOnly, setHasIscOnly] = useState(false);
   const [customs, setCustoms] = useState<"" | "yes" | "no">("");
   const [airportFilter, setAirportFilter] = useState("");
   const [page, setPage] = useState(1);
   const limit = 20;
+
+  // Airline IDs that have ISC/operations data
+  const [iscAirlineIds, setIscAirlineIds] = useState<Set<number>>(new Set());
+  const iscFetched = useRef(false);
+
+  useEffect(() => {
+    if (hasIscOnly && !iscFetched.current) {
+      iscFetched.current = true;
+      fetch(`${BASE}/api/airline-operations?limit=500`)
+        .then(r => r.json())
+        .then(json => {
+          const ids = new Set<number>((json.data ?? []).map((op: AirlineOperation) => op.airlineId));
+          setIscAirlineIds(ids);
+        })
+        .catch(() => {});
+    }
+  }, [hasIscOnly]);
 
   // Drilldown state
   const [selectedAirline, setSelectedAirline] = useState<{ id: number; name: string; iataCode?: string | null } | null>(null);
@@ -54,9 +74,13 @@ export default function AirPublic() {
   const airlines = airlinesQuery.data;
   const airports = airportsQuery.data;
 
-  const filteredAirlines = airlines?.data.filter(a =>
-    (!country || a.country?.toLowerCase().includes(country.toLowerCase()))
-  );
+  const filteredAirlines = airlines?.data.filter(a => {
+    if (country && !a.country?.toLowerCase().includes(country.toLowerCase())) return false;
+    if (icaoFilter && !a.icaoCode?.toLowerCase().includes(icaoFilter.toLowerCase())) return false;
+    if (cbpFilter && !a.cbpCode?.toLowerCase().includes(cbpFilter.toLowerCase())) return false;
+    if (hasIscOnly && !iscAirlineIds.has(a.id)) return false;
+    return true;
+  });
 
   const filteredAirports = airports?.data.filter(a => {
     const loc = [a.city, a.state, a.country].join(" ").toLowerCase();
@@ -76,8 +100,12 @@ export default function AirPublic() {
     setOpsLoading(false);
   };
 
+  const clearAirlineFilters = () => { setCountry(""); setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setPage(1); };
+  const hasActiveFilters = !!(country || icaoFilter || cbpFilter || hasIscOnly);
+
   const handleTab = (t: "airlines" | "airports") => {
     setTab(t); setSearch(""); setPage(1); setCountry(""); setCustoms(""); setAirportFilter("");
+    setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false);
     setSelectedAirline(null); setSelectedOp(null); setAirlineOps([]);
   };
 
@@ -136,32 +164,95 @@ export default function AirPublic() {
 
       <div className="max-w-5xl mx-auto px-6 -mt-6">
         {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-md p-3 mb-4 flex flex-wrap items-center gap-3 border border-sky-100">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
-            <Filter className="h-4 w-4 text-sky-500" /> Filters:
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-mono text-slate-500 whitespace-nowrap">Country / State:</label>
-            <input type="text" value={country} onChange={e => { setCountry(e.target.value); setPage(1); }} placeholder="e.g. US, NY" className="border border-sky-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-sky-400 bg-sky-50 hover:bg-sky-100 transition-colors w-28" />
-          </div>
-          {tab === "airports" && (
-            <div className="flex items-center gap-2">
-              <label className="text-xs font-mono text-slate-500 whitespace-nowrap">Airport:</label>
-              <input type="text" value={airportFilter} onChange={e => { setAirportFilter(e.target.value); setPage(1); }} placeholder="Name or IATA" className="border border-orange-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-orange-400 bg-orange-50 hover:bg-orange-100 transition-colors w-32" />
+        <div className="bg-white rounded-2xl shadow-md p-3 mb-4 border border-sky-100">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+              <Filter className="h-4 w-4 text-sky-500" /> Filters:
             </div>
-          )}
-          {tab === "airports" && (
+
+            {/* Country — always shown */}
             <div className="flex items-center gap-2">
-              <label className="text-xs font-mono text-slate-500 whitespace-nowrap">Customs:</label>
-              <select value={customs} onChange={e => { setCustoms(e.target.value as any); setPage(1); }} className="border border-orange-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-orange-400 bg-orange-50 hover:bg-orange-100 transition-colors cursor-pointer">
-                <option value="">All</option>
-                <option value="yes">Customs Approved</option>
-                <option value="no">Not Approved</option>
-              </select>
+              <label className="text-xs font-mono text-slate-500 whitespace-nowrap">Country:</label>
+              <input type="text" value={country} onChange={e => { setCountry(e.target.value); setPage(1); }} placeholder="e.g. US, GR" className="border border-sky-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-sky-400 bg-sky-50 hover:bg-sky-100 transition-colors w-24" />
             </div>
-          )}
-          {(search || country || customs || airportFilter) && (
-            <button onClick={() => { setSearch(""); setCountry(""); setCustoms(""); setAirportFilter(""); setPage(1); setSelectedAirline(null); setSelectedOp(null); }} className="text-xs text-red-500 hover:text-red-700 font-semibold transition-colors ml-auto">Clear All</button>
+
+            {/* Airlines-only filters */}
+            {tab === "airlines" && (
+              <>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-mono text-slate-500 whitespace-nowrap">ICAO:</label>
+                  <input type="text" value={icaoFilter} onChange={e => { setIcaoFilter(e.target.value.toUpperCase()); setPage(1); }} placeholder="e.g. DAL" className="border border-sky-200 rounded-lg px-3 py-1.5 text-sm font-mono uppercase focus:outline-none focus:border-sky-400 bg-sky-50 hover:bg-sky-100 transition-colors w-24" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-mono text-slate-500 whitespace-nowrap">CBP Code:</label>
+                  <input type="text" value={cbpFilter} onChange={e => { setCbpFilter(e.target.value.toUpperCase()); setPage(1); }} placeholder="e.g. EK" className="border border-orange-200 rounded-lg px-3 py-1.5 text-sm font-mono uppercase focus:outline-none focus:border-orange-400 bg-orange-50 hover:bg-orange-100 transition-colors w-24" />
+                </div>
+                <button
+                  onClick={() => { setHasIscOnly(v => !v); setPage(1); }}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${hasIscOnly ? "bg-green-500 border-green-500 text-white shadow-md" : "bg-green-50 border-green-200 text-green-700 hover:bg-green-100"}`}
+                >
+                  <Zap className="h-3.5 w-3.5" />
+                  Has ISC Data
+                </button>
+              </>
+            )}
+
+            {/* Airports-only filters */}
+            {tab === "airports" && (
+              <>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-mono text-slate-500 whitespace-nowrap">Airport:</label>
+                  <input type="text" value={airportFilter} onChange={e => { setAirportFilter(e.target.value); setPage(1); }} placeholder="Name or IATA" className="border border-orange-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-orange-400 bg-orange-50 hover:bg-orange-100 transition-colors w-32" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-mono text-slate-500 whitespace-nowrap">Customs:</label>
+                  <select value={customs} onChange={e => { setCustoms(e.target.value as any); setPage(1); }} className="border border-orange-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-orange-400 bg-orange-50 hover:bg-orange-100 transition-colors cursor-pointer">
+                    <option value="">All</option>
+                    <option value="yes">Customs Approved</option>
+                    <option value="no">Not Approved</option>
+                  </select>
+                </div>
+              </>
+            )}
+
+            {(search || country || customs || airportFilter || icaoFilter || cbpFilter || hasIscOnly) && (
+              <button
+                onClick={() => { setSearch(""); setCountry(""); setCustoms(""); setAirportFilter(""); setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setPage(1); setSelectedAirline(null); setSelectedOp(null); }}
+                className="ml-auto flex items-center gap-1 text-xs text-red-500 hover:text-red-700 font-semibold transition-colors"
+              >
+                <X className="h-3.5 w-3.5" /> Clear All
+              </button>
+            )}
+          </div>
+
+          {/* Active filter chips */}
+          {(icaoFilter || cbpFilter || hasIscOnly || country) && tab === "airlines" && (
+            <div className="flex flex-wrap gap-2 mt-2.5 pt-2.5 border-t border-slate-100">
+              {country && (
+                <span className="inline-flex items-center gap-1 bg-sky-100 text-sky-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                  Country: {country}
+                  <button onClick={() => { setCountry(""); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
+                </span>
+              )}
+              {icaoFilter && (
+                <span className="inline-flex items-center gap-1 bg-sky-100 text-sky-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                  ICAO: {icaoFilter}
+                  <button onClick={() => { setIcaoFilter(""); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
+                </span>
+              )}
+              {cbpFilter && (
+                <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                  CBP: {cbpFilter}
+                  <button onClick={() => { setCbpFilter(""); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
+                </span>
+              )}
+              {hasIscOnly && (
+                <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                  <Zap className="h-3 w-3" /> Has ISC Data
+                  <button onClick={() => { setHasIscOnly(false); setPage(1); }} className="hover:text-red-500"><X className="h-3 w-3" /></button>
+                </span>
+              )}
+            </div>
           )}
         </div>
 
