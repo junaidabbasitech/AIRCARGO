@@ -22,11 +22,12 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
         <button
           onClick={() => setIsDark(!isDark)}
           title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-          className={`relative h-8 w-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
-            isDark
-              ? "bg-white/8 text-yellow-400 hover:bg-white/15 hover:text-yellow-300"
-              : "bg-black/8 text-slate-600 hover:bg-black/12 hover:text-slate-800"
-          }`}
+          className="relative h-8 w-8 rounded-lg flex items-center justify-center transition-all duration-200 sidebar-item"
+          style={{
+            background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.06)",
+            color: isDark ? "#f59e0b" : "#475569",
+            border: "1px solid var(--t-border)"
+          }}
         >
           {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </button>
@@ -35,11 +36,13 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
         <button
           onClick={() => setOpen(v => !v)}
           title="Change color scheme"
-          className={`relative h-8 w-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
-            isDark
-              ? "bg-white/8 text-slate-400 hover:bg-white/15 hover:text-white"
-              : "bg-black/8 text-slate-500 hover:bg-black/12 hover:text-slate-800"
-          } ${open ? (isDark ? "bg-white/15 text-white" : "bg-black/12 text-slate-800") : ""}`}
+          className="relative h-8 w-8 rounded-lg flex items-center justify-center transition-all duration-200 sidebar-item"
+          style={{
+            background: open
+              ? "var(--t-accent-dim)"
+              : isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.06)",
+            border: `1px solid ${open ? "var(--t-accent-border)" : "var(--t-border)"}`
+          }}
         >
           {/* Active scheme dot */}
           <div

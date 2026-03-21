@@ -86,7 +86,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
           <Link
             href="/air"
             onClick={() => setIsMobileOpen(false)}
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 group"
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold group sidebar-item"
             style={isAirActive ? {
               background: "var(--t-accent-dim)",
               color: "var(--t-accent)",
@@ -113,7 +113,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
           {/* Command Center accordion */}
           <button
             onClick={() => setCmdExpanded(e => !e)}
-            className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200"
+            className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold sidebar-item"
             style={isCmdActive ? {
               background: "var(--t-accent-dim)",
               color: "var(--t-accent)",
@@ -136,7 +136,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
                     key={item.href}
                     href={item.href}
                     onClick={() => setIsMobileOpen(false)}
-                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 group"
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium group sidebar-item"
                     style={isActive ? {
                       background: "var(--t-accent-dim)",
                       color: "var(--t-accent)"

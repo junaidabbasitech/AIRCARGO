@@ -225,7 +225,7 @@ export default function AirPublic() {
     border: `1px solid var(--t-border)`,
   };
 
-  const rowHoverClass = isDark ? "hover:bg-white/5" : "hover:bg-black/3";
+  const rowHoverClass = "themed-row";
 
   const inputStyle: React.CSSProperties = {
     background: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",

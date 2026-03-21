@@ -52,8 +52,11 @@
   /* Card / glass */
   --t-card:        rgba(255,255,255,0.05);
   --t-card-hover:  rgba(255,255,255,0.08);
-  --t-border:      rgba(255,255,255,0.08);
-  --t-border-soft: rgba(255,255,255,0.05);
+  /* Dark: orange (accent2) borders */
+  --t-border:      var(--t-accent2-border);
+  --t-border-soft: var(--t-accent2-dim);
+  --t-hover-bg:    var(--t-accent2-dim);
+  --t-hover-border: var(--t-accent2);
 
   /* Text */
   --t-text:        rgba(255,255,255,0.95);
@@ -79,8 +82,11 @@
   --t-header:      hsl(0,0%,100%);
   --t-card:        rgba(255,255,255,0.85);
   --t-card-hover:  rgba(255,255,255,1);
-  --t-border:      rgba(0,0,0,0.08);
-  --t-border-soft: rgba(0,0,0,0.05);
+  /* Light: blue (accent) borders */
+  --t-border:      var(--t-accent-border);
+  --t-border-soft: var(--t-accent-dim);
+  --t-hover-bg:    var(--t-accent-dim);
+  --t-hover-border: var(--t-accent);
   --t-text:        #090c14;
   --t-text-sub:    #090c14;
   --t-text-muted:  #090c14;
@@ -156,6 +162,27 @@
 
   button, a, [role="button"] {
     @apply transition-all duration-200;
+  }
+
+  /* ── Themed interactive row (list items in AIR Search) ── */
+  .themed-row {
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+  }
+  .themed-row:hover {
+    background: var(--t-hover-bg) !important;
+    box-shadow: inset 3px 0 0 var(--t-hover-border);
+  }
+
+  /* ── Sidebar nav item hover ── */
+  .sidebar-item {
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .sidebar-item:hover {
+    background: var(--t-accent-dim) !important;
+    color: var(--t-accent) !important;
+  }
+  .sidebar-item:hover svg {
+    color: var(--t-accent) !important;
   }
 }
 
