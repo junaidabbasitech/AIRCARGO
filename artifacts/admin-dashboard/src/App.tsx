@@ -5,6 +5,8 @@ import { Toaster } from "sonner";
 import { Lock, Plane, Shield } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Watermark } from "@/components/Watermark";
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import Airlines from "@/pages/Airlines";
@@ -27,6 +29,7 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
   const [pwd, setPwd] = useState("");
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
+  const { isDark } = useTheme();
 
   const attempt = () => {
     if (pwd === CORRECT_PASSWORD) {
@@ -41,36 +44,47 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-[hsl(222,55%,9%)] to-slate-900 flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
+      style={{ background: isDark ? "hsl(222,60%,7%)" : "hsl(210,20%,96%)" }}>
       <Watermark />
 
       {/* Glow blobs */}
-      <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-sky-500/6 blur-[100px] pointer-events-none" />
-      <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-orange-500/5 blur-[80px] pointer-events-none" />
+      <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full blur-[100px] pointer-events-none" style={{ background: "var(--t-accent-dim)" }} />
+      <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-full blur-[80px] pointer-events-none" style={{ background: "var(--t-accent2-dim)" }} />
 
       <div className={`relative w-full max-w-sm ${shake ? "animate-bounce" : ""}`}>
+        {/* Theme toggle — top right */}
+        <div className="absolute -top-12 right-0">
+          <ThemeToggle />
+        </div>
+
         {/* Card */}
-        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
+        <div className="backdrop-blur-md rounded-2xl p-8 shadow-2xl" style={{
+          background: isDark ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.85)",
+          border: "1px solid var(--t-border)"
+        }}>
           {/* Logo area */}
           <div className="flex flex-col items-center gap-4 mb-8">
             <div className="relative">
-              <div className="absolute inset-0 rounded-2xl bg-sky-500/20 blur-xl" />
-              <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-700 flex items-center justify-center shadow-xl shadow-sky-500/30">
+              <div className="absolute inset-0 rounded-2xl blur-xl" style={{ background: "var(--t-accent-dim)" }} />
+              <div className="relative h-16 w-16 rounded-2xl flex items-center justify-center shadow-xl" style={{
+                background: "linear-gradient(135deg, var(--t-accent), color-mix(in srgb, var(--t-accent) 70%, #1d4ed8))"
+              }}>
                 <Lock className="h-8 w-8 text-white" />
               </div>
             </div>
             <div className="text-center">
               <div className="font-display text-xl font-black tracking-widest mb-1">
-                <span className="text-sky-300">AVIA</span><span className="text-orange-400">CBP</span>
+                <span style={{ color: "var(--t-accent)" }}>AVIA</span><span style={{ color: "var(--t-accent2)" }}>CBP</span>
               </div>
-              <h2 className="font-display text-sm text-white tracking-widest uppercase">Command Center</h2>
-              <p className="text-xs text-slate-500 mt-1.5 font-sans normal-case tracking-normal">Enter your access code to continue</p>
+              <h2 className="font-display text-sm tracking-widest uppercase" style={{ color: "var(--t-text)" }}>Command Center</h2>
+              <p className="text-xs mt-1.5 font-sans normal-case tracking-normal" style={{ color: "var(--t-text-muted)" }}>Enter your access code to continue</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="relative">
-              <Shield className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+              <Shield className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "var(--t-text-muted)" }} />
               <input
                 type="password"
                 value={pwd}
@@ -78,12 +92,17 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
                 onKeyDown={e => e.key === "Enter" && attempt()}
                 placeholder="• • • • • •"
                 autoFocus
-                className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/8 border border-white/12 text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/60 focus:bg-white/10 text-center text-xl tracking-[0.5em] font-mono transition-all"
+                className="w-full pl-11 pr-4 py-3.5 rounded-xl focus:outline-none text-center text-xl tracking-[0.5em] font-mono transition-all"
+                style={{
+                  background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
+                  border: "1px solid var(--t-border)",
+                  color: "var(--t-text)"
+                }}
               />
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5">
+              <div className="flex items-center gap-2 rounded-xl px-4 py-2.5" style={{ background: "rgba(244,63,94,0.1)", border: "1px solid rgba(244,63,94,0.2)" }}>
                 <div className="h-1.5 w-1.5 rounded-full bg-red-400 shrink-0" />
                 <p className="text-xs text-red-400 font-semibold">{error}</p>
               </div>
@@ -91,7 +110,11 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
 
             <button
               onClick={attempt}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-sm hover:from-sky-400 hover:to-blue-500 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-sky-500/25 uppercase tracking-widest"
+              className="w-full py-3.5 rounded-xl text-white font-black text-sm active:scale-[0.98] transition-all duration-200 uppercase tracking-widest"
+              style={{
+                background: "linear-gradient(135deg, var(--t-accent), color-mix(in srgb, var(--t-accent) 70%, #1d4ed8))",
+                boxShadow: "0 4px 20px var(--t-accent-glow)"
+              }}
             >
               Unlock Access
             </button>
@@ -167,22 +190,24 @@ function AppRouter() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-        <AppRouter />
-      </WouterRouter>
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          style: {
-            background: "hsl(222 55% 11%)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "hsl(210 30% 90%)",
-            fontFamily: "Manrope, sans-serif",
-          }
-        }}
-      />
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <AppRouter />
+        </WouterRouter>
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: "var(--t-bg3)",
+              border: "1px solid var(--t-border)",
+              color: "var(--t-text)",
+              fontFamily: "Manrope, sans-serif",
+            }
+          }}
+        />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 
