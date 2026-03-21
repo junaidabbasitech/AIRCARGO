@@ -73,9 +73,9 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
             <div className="font-display text-base font-black tracking-widest leading-none">
               <span style={{ color: "var(--t-accent)" }}>AVIA</span><span style={{ color: "var(--t-accent2)" }}>CBP</span>
             </div>
-            <div className="text-[8px] text-slate-600 font-mono tracking-widest uppercase mt-0.5">Aviation Registry</div>
+            <div className="text-[8px] font-mono tracking-widest uppercase mt-0.5" style={{ color: "#7a9abf" }}>Aviation Registry</div>
           </div>
-          <button className="md:hidden ml-auto text-slate-500 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-all" onClick={() => setIsMobileOpen(false)}>
+          <button className="md:hidden ml-auto hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-all" style={{ color: "#a6bee3" }} onClick={() => setIsMobileOpen(false)}>
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -92,7 +92,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
               color: "var(--t-accent)",
               border: "1px solid var(--t-accent-border)"
             } : {
-              color: "rgba(148,163,184,0.8)"
+              color: "#a6bee3"
             }}
           >
             <Search className="h-4 w-4 shrink-0 transition-colors" style={{ color: "var(--t-accent)" }} />
@@ -108,7 +108,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
 
           {/* Divider */}
           <div className="my-3 mx-1" style={{ height: 1, background: "var(--t-border-soft)" }} />
-          <p className="text-[9px] font-black uppercase tracking-widest text-slate-700 px-3 mb-2">Admin</p>
+          <p className="text-[9px] font-black uppercase tracking-widest px-3 mb-2" style={{ color: "#7a9abf" }}>Admin</p>
 
           {/* Command Center accordion */}
           <button
@@ -119,12 +119,12 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
               color: "var(--t-accent)",
               border: "1px solid var(--t-accent-border)"
             } : {
-              color: "rgba(100,116,139,1)"
+              color: "#a6bee3"
             }}
           >
-            <LayoutDashboard className="h-4 w-4 shrink-0 transition-colors" style={{ color: isCmdActive ? "var(--t-accent)" : "rgba(71,85,105,1)" }} />
+            <LayoutDashboard className="h-4 w-4 shrink-0 transition-colors" style={{ color: isCmdActive ? "var(--t-accent)" : "#a6bee3" }} />
             <span className="flex-1 text-left">Command Center</span>
-            <ChevronDown className={cn("h-3.5 w-3.5 text-slate-600 transition-transform duration-200", cmdExpanded ? "rotate-0" : "-rotate-90")} />
+            <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", cmdExpanded ? "rotate-0" : "-rotate-90")} style={{ color: "#a6bee3" }} />
           </button>
 
           {cmdExpanded && (
@@ -141,10 +141,10 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
                       background: "var(--t-accent-dim)",
                       color: "var(--t-accent)"
                     } : {
-                      color: "rgba(71,85,105,1)"
+                      color: "#a6bee3"
                     }}
                   >
-                    <item.icon className="h-3.5 w-3.5 shrink-0 transition-colors" style={{ color: isActive ? "var(--t-accent)" : "rgba(51,65,85,1)" }} />
+                    <item.icon className="h-3.5 w-3.5 shrink-0 transition-colors" style={{ color: isActive ? "var(--t-accent)" : "#7a9abf" }} />
                     <span className="flex-1">{item.label}</span>
                     {isActive && <div className="h-1.5 w-1.5 rounded-full shrink-0" style={{ background: "var(--t-accent)", boxShadow: `0 0 6px var(--t-accent)` }} />}
                   </Link>
@@ -158,7 +158,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
         <div className="relative p-3" style={{ borderTop: "1px solid var(--t-border-soft)" }}>
           {/* Theme toggle row */}
           <div className="flex items-center justify-between px-2 py-2 mb-1">
-            <span className="text-[9px] text-slate-600 font-mono tracking-widest uppercase">Theme</span>
+            <span className="text-[9px] font-mono tracking-widest uppercase" style={{ color: "#7a9abf" }}>Theme</span>
             <ThemeToggle />
           </div>
 
@@ -173,7 +173,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
           ) : (
             <div className="flex items-center gap-2 px-3 py-2">
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] text-slate-700 font-mono tracking-widest">v1.0 · LIVE</span>
+              <span className="text-[10px] font-mono tracking-widest" style={{ color: "#7a9abf" }}>v1.0 · LIVE</span>
             </div>
           )}
         </div>

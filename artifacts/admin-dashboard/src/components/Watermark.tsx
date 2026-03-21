@@ -1,10 +1,15 @@
+import { useTheme } from "@/context/ThemeContext";
+
 export function Watermark() {
+  const { isDark } = useTheme();
+  const color = isDark ? "rgba(255,255,255,0.92)" : "rgba(0,0,0,0.85)";
+
   return (
     <div className="fixed bottom-3 right-4 z-50 pointer-events-none select-none">
-      <p className="text-[10px] text-slate-400/50 font-mono tracking-wide text-right leading-tight">
+      <p className="font-mono tracking-wide text-right leading-tight text-[11px]" style={{ color }}>
         © All rights reserved
         <br />
-        <span className="font-semibold text-slate-400/60 tracking-widest uppercase text-[9px]">JUNAID ABBASI</span>
+        <span className="font-bold tracking-widest uppercase text-[10px]" style={{ color }}>JUNAID ABBASI</span>
       </p>
     </div>
   );
