@@ -34,7 +34,7 @@ const ThemeContext = createContext<ThemeCtx>({
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isDark, setIsDarkState] = useState<boolean>(() => {
     const saved = localStorage.getItem("aviacbp_dark");
-    return saved === null ? true : saved === "1";
+    return saved === null ? false : saved === "1";
   });
 
   const [scheme, setSchemeState] = useState<ColorScheme>(() => {

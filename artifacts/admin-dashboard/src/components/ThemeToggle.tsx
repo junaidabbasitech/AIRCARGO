@@ -49,10 +49,10 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
         </button>
       </div>
 
-      {/* Dropdown panel */}
+      {/* Dropdown panel — opens below */}
       {open && (
         <div
-          className={`absolute bottom-10 left-0 z-[999] w-52 rounded-2xl p-3 shadow-2xl border ${
+          className={`absolute top-full mt-2 right-0 z-[999] w-52 rounded-2xl p-3 shadow-2xl border ${
             isDark
               ? "bg-[hsl(222,60%,8%)] border-white/10"
               : "bg-white border-slate-200 shadow-slate-200/80"
