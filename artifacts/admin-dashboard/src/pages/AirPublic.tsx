@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { Watermark } from "@/components/Watermark";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { useTheme, useT } from "@/context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 
 interface AirlineOperation {
   id: number; airlineId: number; airportId: number;
@@ -22,10 +22,11 @@ interface AirlineOperation {
 
 const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
 
-async function fetchOps(airlineId?: number): Promise<AirlineOperation[]> {
-  const params = new URLSearchParams();
-  if (airlineId) params.set("airlineId", String(airlineId));
-  const res = await fetch(`${BASE}/api/airline-operations?${params}`);
+async function fetchOps(params: { airlineId?: number; airportId?: number } = {}): Promise<AirlineOperation[]> {
+  const p = new URLSearchParams();
+  if (params.airlineId) p.set("airlineId", String(params.airlineId));
+  if (params.airportId) p.set("airportId", String(params.airportId));
+  const res = await fetch(`${BASE}/api/airline-operations?${p}`);
   if (!res.ok) return [];
   return (await res.json()).data ?? [];
 }
@@ -71,9 +72,42 @@ function DetailCard({ icon, label, value, varKey, isEmail }: {
   );
 }
 
+/* ─── Ops detail panel (shared by both airline→airport and airport→airline flows) ─── */
+function OpsDetail({ op }: { op: AirlineOperation }) {
+  return (
+    <div className="p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <DetailCard icon={<Hash className="h-4 w-4" />} label="FIRMS Code" value={op.firmsCode} varKey="--t-accent" />
+        <DetailCard icon={<DollarSign className="h-4 w-4" />} label="ISC Amount" value={op.iscAmount ? `$${op.iscAmount}` : null} varKey="green" />
+        <DetailCard icon={<Building2 className="h-4 w-4" />} label="ISC Payable At" value={op.iscPayableAt} varKey="--t-accent2" />
+        <DetailCard icon={<Plane className="h-4 w-4" />} label="Ground Handler" value={op.iscPayableTo} varKey="--t-accent2" />
+        <DetailCard icon={<Phone className="h-4 w-4" />} label="Contact Number" value={op.contactNumber} varKey="--t-accent" />
+        <DetailCard icon={<Mail className="h-4 w-4" />} label="Email Address" value={op.contactEmail} varKey="red" isEmail />
+      </div>
+      {op.notes && (
+        <div className="mt-4 p-4 rounded-xl" style={{ background: "var(--t-card)", border: "1px solid var(--t-border)" }}>
+          <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Notes</p>
+          <p className="text-sm leading-relaxed" style={{ color: "var(--t-text-sub)" }}>{op.notes}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Spinner ─── */
+function Spinner() {
+  return (
+    <div className="py-14 text-center">
+      <div className="inline-flex items-center gap-3 text-sm" style={{ color: "var(--t-text-muted)" }}>
+        <div className="h-4 w-4 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "var(--t-accent)", borderTopColor: "transparent" }} />
+        Loading...
+      </div>
+    </div>
+  );
+}
+
 export default function AirPublic() {
   const { isDark } = useTheme();
-  const t = useT();
 
   const [tab, setTab] = useState<"airlines" | "airports">("airlines");
   const [search, setSearch] = useState("");
@@ -88,6 +122,7 @@ export default function AirPublic() {
   const [limit, setLimit] = useState(25);
   const [showFilters, setShowFilters] = useState(false);
 
+  /* ── Airline ISC / FIRMS pre-filter sets ── */
   const [iscAirlineIds, setIscAirlineIds] = useState<Set<number>>(new Set());
   const iscFetched = useRef(false);
   const [firmsAirlineIds, setFirmsAirlineIds] = useState<Set<number>>(new Set());
@@ -112,10 +147,17 @@ export default function AirPublic() {
       .catch(() => {});
   }, [firmsFilter]);
 
+  /* ── Airline drilldown ── */
   const [selectedAirline, setSelectedAirline] = useState<{ id: number; name: string; iataCode?: string | null } | null>(null);
   const [airlineOps, setAirlineOps] = useState<AirlineOperation[]>([]);
-  const [opsLoading, setOpsLoading] = useState(false);
-  const [selectedOp, setSelectedOp] = useState<AirlineOperation | null>(null);
+  const [airlineOpsLoading, setAirlineOpsLoading] = useState(false);
+  const [selectedAirlineOp, setSelectedAirlineOp] = useState<AirlineOperation | null>(null);
+
+  /* ── Airport drilldown ── */
+  const [selectedAirport, setSelectedAirport] = useState<{ id: number; name: string; iataCode?: string | null; city?: string | null; state?: string | null } | null>(null);
+  const [airportOps, setAirportOps] = useState<AirlineOperation[]>([]);
+  const [airportOpsLoading, setAirportOpsLoading] = useState(false);
+  const [selectedAirportOp, setSelectedAirportOp] = useState<AirlineOperation | null>(null);
 
   const airlinesQuery = useListAirlines({ search: tab === "airlines" ? search : "", status: "approved" as any, page: tab === "airlines" ? page : 1, limit });
   const airportsQuery = useListAirports({ search: tab === "airports" ? search : "", status: "approved" as any, page: tab === "airports" ? page : 1, limit });
@@ -142,21 +184,29 @@ export default function AirPublic() {
   });
 
   const handleAirlineClick = async (airline: { id: number; name: string; iataCode?: string | null }) => {
-    setSelectedAirline(airline); setSelectedOp(null); setOpsLoading(true);
-    setAirlineOps(await fetchOps(airline.id));
-    setOpsLoading(false);
+    setSelectedAirline(airline); setSelectedAirlineOp(null); setAirlineOpsLoading(true);
+    setAirlineOps(await fetchOps({ airlineId: airline.id }));
+    setAirlineOpsLoading(false);
+  };
+
+  const handleAirportClick = async (airport: { id: number; name: string; iataCode?: string | null; city?: string | null; state?: string | null }) => {
+    setSelectedAirport(airport); setSelectedAirportOp(null); setAirportOpsLoading(true);
+    setAirportOps(await fetchOps({ airportId: airport.id }));
+    setAirportOpsLoading(false);
   };
 
   const handleTab = (t: "airlines" | "airports") => {
     setTab(t); setSearch(""); setPage(1); setCountry(""); setCustoms(""); setAirportFilter("");
     setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter("");
-    setSelectedAirline(null); setSelectedOp(null); setAirlineOps([]);
+    setSelectedAirline(null); setSelectedAirlineOp(null); setAirlineOps([]);
+    setSelectedAirport(null); setSelectedAirportOp(null); setAirportOps([]);
   };
 
   const clearAll = () => {
     setSearch(""); setCountry(""); setCustoms(""); setAirportFilter("");
     setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter(""); setPage(1);
-    setSelectedAirline(null); setSelectedOp(null);
+    setSelectedAirline(null); setSelectedAirlineOp(null);
+    setSelectedAirport(null); setSelectedAirportOp(null);
   };
 
   const hasActiveFilters = !!(search || country || icaoFilter || cbpFilter || hasIscOnly || firmsFilter || airportFilter || customs);
@@ -164,7 +214,7 @@ export default function AirPublic() {
   const grandTotal = tab === "airlines" ? (airlines?.total ?? 0) : (airports?.total ?? 0);
   const totalPages = Math.ceil(grandTotal / limit);
 
-  /* ── Computed theme helpers ── */
+  /* ── Theme helpers ── */
   const heroBg = isDark
     ? "linear-gradient(135deg, hsl(222,60%,7%) 0%, hsl(222,55%,9%) 60%, hsl(222,50%,8%) 100%)"
     : "linear-gradient(135deg, hsl(210,25%,96%) 0%, hsl(0,0%,100%) 60%, hsl(220,20%,97%) 100%)";
@@ -182,6 +232,14 @@ export default function AirPublic() {
     border: `1px solid var(--t-border)`,
     color: "var(--t-text)",
   };
+
+  /* ── Breadcrumb header factory ── */
+  const BreadcrumbBar = ({ children }: { children: React.ReactNode }) => (
+    <div className="px-5 py-4 flex items-center gap-3 flex-wrap" style={{
+      background: isDark ? "linear-gradient(90deg, var(--t-accent-dim), transparent)" : "var(--t-accent-dim)",
+      borderBottom: "1px solid var(--t-accent-border)"
+    }}>{children}</div>
+  );
 
   return (
     <div className="min-h-screen relative" style={{ background: isDark ? "hsl(222,60%,7%)" : "hsl(210,20%,96%)" }}>
@@ -218,13 +276,11 @@ export default function AirPublic() {
           </div>
 
           <h1 className="font-display text-4xl sm:text-5xl font-black tracking-widest mb-3 leading-tight normal-case" style={{ color: "var(--t-text)" }}>
-            Find{" "}
-            <span style={{ color: "var(--t-accent)" }}>Aviation</span>
-            {" "}Data
+            Find{" "}<span style={{ color: "var(--t-accent)" }}>Aviation</span>{" "}Data
           </h1>
           <p className="text-sm sm:text-base mb-8 leading-relaxed" style={{ color: "var(--t-text-sub)" }}>
-            Search airlines and airports — click an airline to explore where it operates,
-            then view ISC charges, FIRMS codes and ground handler contacts.
+            Search airlines and airports — click any entry to explore operational data,
+            ISC charges, FIRMS codes, and ground handler contacts.
           </p>
 
           {/* Tab switcher */}
@@ -234,8 +290,7 @@ export default function AirPublic() {
               className="flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
               style={tab === "airlines" ? {
                 background: "linear-gradient(135deg, var(--t-accent), color-mix(in srgb, var(--t-accent) 70%, #1d4ed8))",
-                color: "#fff",
-                boxShadow: "0 4px 20px var(--t-accent-glow)"
+                color: "#fff", boxShadow: "0 4px 20px var(--t-accent-glow)"
               } : { color: "var(--t-text-sub)" }}
             >
               <Plane className="h-4 w-4" />
@@ -252,8 +307,7 @@ export default function AirPublic() {
               className="flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
               style={tab === "airports" ? {
                 background: "linear-gradient(135deg, var(--t-accent2), color-mix(in srgb, var(--t-accent2) 80%, #dc2626))",
-                color: "#fff",
-                boxShadow: "0 4px 20px var(--t-accent2-dim)"
+                color: "#fff", boxShadow: "0 4px 20px var(--t-accent2-dim)"
               } : { color: "var(--t-text-sub)" }}
             >
               <Building2 className="h-4 w-4" />
@@ -274,8 +328,7 @@ export default function AirPublic() {
             )}
             <div className="relative flex items-center rounded-2xl overflow-hidden transition-all duration-300 shadow-xl" style={{
               background: isDark ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.9)",
-              border: `1px solid var(--t-border)`,
-              backdropFilter: "blur(12px)"
+              border: `1px solid var(--t-border)`, backdropFilter: "blur(12px)"
             }}>
               <Search className="ml-5 h-5 w-5 shrink-0" style={{ color: "var(--t-text-muted)" }} />
               <input
@@ -294,13 +347,9 @@ export default function AirPublic() {
                 onClick={() => setShowFilters(v => !v)}
                 className="mr-2 flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-200"
                 style={showFilters || hasActiveFilters ? {
-                  background: "var(--t-accent)",
-                  color: "#fff",
-                  boxShadow: "0 2px 12px var(--t-accent-glow)"
+                  background: "var(--t-accent)", color: "#fff", boxShadow: "0 2px 12px var(--t-accent-glow)"
                 } : {
-                  background: "var(--t-card)",
-                  color: "var(--t-text-sub)",
-                  border: "1px solid var(--t-border)"
+                  background: "var(--t-card)", color: "var(--t-text-sub)", border: "1px solid var(--t-border)"
                 }}
               >
                 <Filter className="h-3.5 w-3.5" />
@@ -322,13 +371,11 @@ export default function AirPublic() {
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest" style={{ color: "var(--t-text-muted)" }}>
                 <Filter className="h-3.5 w-3.5" style={{ color: "var(--t-accent)" }} /> Active Filters
               </div>
-
               <div className="flex items-center gap-2">
                 <Globe className="h-3.5 w-3.5" style={{ color: "var(--t-accent)" }} />
                 <input type="text" value={country} onChange={e => { setCountry(e.target.value); setPage(1); }} placeholder="Country (e.g. US)"
                   className="w-28 px-3 py-1.5 rounded-lg text-sm focus:outline-none font-mono" style={inputStyle} />
               </div>
-
               {tab === "airlines" && (
                 <>
                   <input type="text" value={icaoFilter} onChange={e => { setIcaoFilter(e.target.value.toUpperCase()); setPage(1); }}
@@ -337,20 +384,14 @@ export default function AirPublic() {
                     placeholder="CBP Code" className="w-24 px-3 py-1.5 rounded-lg text-sm focus:outline-none font-mono uppercase" style={inputStyle} />
                   <input type="text" value={firmsFilter} onChange={e => { setFirmsFilter(e.target.value.toUpperCase()); setPage(1); }}
                     placeholder="FIRMS" className="w-28 px-3 py-1.5 rounded-lg text-sm focus:outline-none font-mono uppercase" style={inputStyle} />
-                  <button
-                    onClick={() => { setHasIscOnly(v => !v); setPage(1); }}
+                  <button onClick={() => { setHasIscOnly(v => !v); setPage(1); }}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200"
-                    style={hasIscOnly ? {
-                      background: "#10b981", color: "#fff", border: "1px solid #10b981"
-                    } : {
-                      background: "rgba(16,185,129,0.1)", color: "#10b981", border: "1px solid rgba(16,185,129,0.22)"
-                    }}
-                  >
+                    style={hasIscOnly ? { background: "#10b981", color: "#fff", border: "1px solid #10b981" }
+                      : { background: "rgba(16,185,129,0.1)", color: "#10b981", border: "1px solid rgba(16,185,129,0.22)" }}>
                     <Zap className="h-3.5 w-3.5" /> Has ISC Data
                   </button>
                 </>
               )}
-
               {tab === "airports" && (
                 <>
                   <input type="text" value={airportFilter} onChange={e => { setAirportFilter(e.target.value); setPage(1); }}
@@ -363,14 +404,12 @@ export default function AirPublic() {
                   </select>
                 </>
               )}
-
               {hasActiveFilters && (
                 <button onClick={clearAll} className="ml-auto flex items-center gap-1 text-xs font-semibold transition-colors text-red-400 hover:text-red-300">
                   <X className="h-3.5 w-3.5" /> Clear all
                 </button>
               )}
             </div>
-
             {hasActiveFilters && (
               <div className="flex flex-wrap gap-2 mt-3 pt-3" style={{ borderTop: "1px solid var(--t-border)" }}>
                 {country && <FilterChip label={`Country: ${country}`} onRemove={() => setCountry("")} />}
@@ -385,115 +424,91 @@ export default function AirPublic() {
           </div>
         )}
 
-        {/* ─── AIRLINE DRILLDOWN ─── */}
+        {/* ═══════════════════════════════════════════
+            AIRLINE DRILLDOWN  (click airline → airports)
+        ═══════════════════════════════════════════ */}
         {selectedAirline && (
           <div className="rounded-2xl overflow-hidden mb-4 shadow-xl" style={cardStyle}>
-            {/* Breadcrumb header */}
-            <div className="px-5 py-4 flex items-center gap-3 flex-wrap" style={{
-              background: isDark ? "linear-gradient(90deg, var(--t-accent-dim), transparent)" : "var(--t-accent-dim)",
-              borderBottom: "1px solid var(--t-accent-border)"
-            }}>
-              <button onClick={() => { setSelectedAirline(null); setSelectedOp(null); setAirlineOps([]); }}
+            <BreadcrumbBar>
+              <button onClick={() => { setSelectedAirline(null); setSelectedAirlineOp(null); setAirlineOps([]); }}
                 className="flex items-center gap-1.5 text-sm font-medium transition-colors" style={{ color: "var(--t-accent)" }}>
-                <ArrowLeft className="h-4 w-4" /> Back
+                <ArrowLeft className="h-4 w-4" /> Airlines
               </button>
               <span style={{ color: "var(--t-text-muted)" }}>›</span>
               <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-lg flex items-center justify-center font-black font-mono text-xs" style={{
-                  background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)", color: "var(--t-accent)"
-                }}>
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center font-black font-mono text-xs"
+                  style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)", color: "var(--t-accent)" }}>
                   {selectedAirline.iataCode || "—"}
                 </div>
                 <span className="font-bold text-sm" style={{ color: "var(--t-text)" }}>{selectedAirline.name}</span>
               </div>
-              {selectedOp && (
+              {selectedAirlineOp && (
                 <>
                   <span style={{ color: "var(--t-text-muted)" }}>›</span>
-                  <button onClick={() => setSelectedOp(null)} className="flex items-center gap-1.5 text-sm transition-colors" style={{ color: "var(--t-text-sub)" }}>
+                  <button onClick={() => setSelectedAirlineOp(null)} className="flex items-center gap-1.5 text-sm transition-colors" style={{ color: "var(--t-text-sub)" }}>
                     <Building2 className="h-3.5 w-3.5" />
-                    {selectedOp.airportIata} — {selectedOp.airportName}
+                    {selectedAirlineOp.airportIata} — {selectedAirlineOp.airportName}
                     <X className="h-3.5 w-3.5 ml-1 opacity-50" />
                   </button>
                 </>
               )}
-            </div>
+            </BreadcrumbBar>
 
-            {selectedOp ? (
-              <div className="p-6">
-                <div className="flex items-start gap-4 mb-6">
-                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center font-black font-mono text-sm shrink-0" style={{
-                    background: "var(--t-accent2-dim)", border: "1px solid var(--t-accent2-border)", color: "var(--t-accent2)"
-                  }}>
-                    {selectedOp.airportIata}
+            {selectedAirlineOp ? (
+              <>
+                {/* Op summary header */}
+                <div className="px-6 pt-5 pb-3 flex items-start gap-4">
+                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center font-black font-mono text-sm shrink-0"
+                    style={{ background: "var(--t-accent2-dim)", border: "1px solid var(--t-accent2-border)", color: "var(--t-accent2)" }}>
+                    {selectedAirlineOp.airportIata}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h2 className="text-lg font-black tracking-wide" style={{ color: "var(--t-text)" }}>{selectedOp.airportName}</h2>
-                    {(selectedOp.airportCity || selectedOp.airportState) && (
+                    <h2 className="text-lg font-black tracking-wide" style={{ color: "var(--t-text)" }}>{selectedAirlineOp.airportName}</h2>
+                    {(selectedAirlineOp.airportCity || selectedAirlineOp.airportState) && (
                       <p className="text-sm flex items-center gap-1.5 mt-0.5" style={{ color: "var(--t-text-sub)" }}>
                         <MapPin className="h-3.5 w-3.5" style={{ color: "var(--t-accent2)" }} />
-                        {[selectedOp.airportCity, selectedOp.airportState].filter(Boolean).join(", ")}
+                        {[selectedAirlineOp.airportCity, selectedAirlineOp.airportState].filter(Boolean).join(", ")}
                       </p>
                     )}
                     <div className="flex items-center gap-2 mt-2 flex-wrap">
-                      {selectedOp.firmsCode && <Badge color="accent">FIRMS: {selectedOp.firmsCode}</Badge>}
-                      {selectedOp.iscAmount && <Badge color="green">ISC: ${selectedOp.iscAmount}</Badge>}
+                      {selectedAirlineOp.firmsCode && <Badge color="accent">FIRMS: {selectedAirlineOp.firmsCode}</Badge>}
+                      {selectedAirlineOp.iscAmount && <Badge color="green">ISC: ${selectedAirlineOp.iscAmount}</Badge>}
                     </div>
                   </div>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <DetailCard icon={<Hash className="h-4 w-4" />} label="FIRMS Code" value={selectedOp.firmsCode} varKey="--t-accent" />
-                  <DetailCard icon={<DollarSign className="h-4 w-4" />} label="ISC Amount" value={selectedOp.iscAmount ? `$${selectedOp.iscAmount}` : null} varKey="green" />
-                  <DetailCard icon={<Building2 className="h-4 w-4" />} label="ISC Payable At" value={selectedOp.iscPayableAt} varKey="--t-accent2" />
-                  <DetailCard icon={<Plane className="h-4 w-4" />} label="Ground Handler" value={selectedOp.iscPayableTo} varKey="--t-accent2" />
-                  <DetailCard icon={<Phone className="h-4 w-4" />} label="Contact Number" value={selectedOp.contactNumber} varKey="--t-accent" />
-                  <DetailCard icon={<Mail className="h-4 w-4" />} label="Email Address" value={selectedOp.contactEmail} varKey="red" isEmail />
-                </div>
-
-                {selectedOp.notes && (
-                  <div className="mt-4 p-4 rounded-xl" style={{ background: "var(--t-card)", border: "1px solid var(--t-border)" }}>
-                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Notes</p>
-                    <p className="text-sm leading-relaxed" style={{ color: "var(--t-text-sub)" }}>{selectedOp.notes}</p>
-                  </div>
-                )}
-              </div>
+                <OpsDetail op={selectedAirlineOp} />
+              </>
             ) : (
               <>
-                <div className="px-5 py-3 flex items-center justify-between" style={{ borderBottom: "1px solid var(--t-border)", background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)" }}>
+                <div className="px-5 py-3 flex items-center justify-between"
+                  style={{ borderBottom: "1px solid var(--t-border)", background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)" }}>
                   <span className="text-sm font-semibold" style={{ color: "var(--t-accent)" }}>
-                    {opsLoading ? "Loading airports..." : airlineOps.length > 0
-                      ? `${airlineOps.length} airport${airlineOps.length !== 1 ? "s" : ""} — click to view ISC & contact details`
-                      : "No operational data found for this airline"}
+                    {airlineOpsLoading ? "Loading airports..." :
+                      airlineOps.length > 0
+                        ? `${airlineOps.length} airport${airlineOps.length !== 1 ? "s" : ""} — click to view ISC & contact details`
+                        : "No operational data found for this airline"}
                   </span>
                 </div>
-                {opsLoading ? (
-                  <div className="py-14 text-center">
-                    <div className="inline-flex items-center gap-3 text-sm" style={{ color: "var(--t-text-muted)" }}>
-                      <div className="h-4 w-4 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "var(--t-accent)", borderTopColor: "transparent" }} />
-                      Fetching airport operations...
-                    </div>
-                  </div>
-                ) : airlineOps.length === 0 ? (
+                {airlineOpsLoading ? <Spinner /> : airlineOps.length === 0 ? (
                   <div className="py-14 text-center text-sm" style={{ color: "var(--t-text-muted)" }}>No operational data available for this airline yet.</div>
                 ) : (
                   <div className="divide-y" style={{ borderColor: "var(--t-border-soft)" }}>
                     {airlineOps.map(op => (
-                      <button key={op.id} onClick={() => setSelectedOp(op)}
-                        className={`w-full flex items-center gap-4 px-5 py-4 transition-all duration-150 group text-left ${rowHoverClass}`}>
-                        <div className="h-11 w-11 rounded-xl flex items-center justify-center font-black font-mono text-xs shrink-0 transition-all" style={{
-                          background: "var(--t-accent2-dim)", border: "1px solid var(--t-accent2-border)", color: "var(--t-accent2)"
-                        }}>
+                      <button key={op.id} onClick={() => setSelectedAirlineOp(op)}
+                        className={`w-full flex items-center gap-4 px-5 py-4 transition-all duration-150 text-left ${rowHoverClass}`}>
+                        <div className="h-11 w-11 rounded-xl flex items-center justify-center font-black font-mono text-xs shrink-0"
+                          style={{ background: "var(--t-accent2-dim)", border: "1px solid var(--t-accent2-border)", color: "var(--t-accent2)" }}>
                           {op.airportIata}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm truncate transition-colors" style={{ color: "var(--t-text)" }}>{op.airportName}</p>
+                          <p className="font-semibold text-sm truncate" style={{ color: "var(--t-text)" }}>{op.airportName}</p>
                           <div className="flex items-center gap-2 mt-1 flex-wrap">
                             {op.airportCity && <span className="text-xs flex items-center gap-1" style={{ color: "var(--t-text-muted)" }}><MapPin className="h-3 w-3" />{[op.airportCity, op.airportState].filter(Boolean).join(", ")}</span>}
                             {op.firmsCode && <Badge color="accent">FIRMS: {op.firmsCode}</Badge>}
                             {op.iscAmount && <Badge color="green">ISC: ${op.iscAmount}</Badge>}
                           </div>
                         </div>
-                        <div className="shrink-0 flex items-center gap-1 text-xs font-semibold transition-colors" style={{ color: "var(--t-text-muted)" }}>
+                        <div className="shrink-0 flex items-center gap-1 text-xs font-semibold" style={{ color: "var(--t-text-muted)" }}>
                           View <ChevronRight className="h-4 w-4" />
                         </div>
                       </button>
@@ -505,8 +520,111 @@ export default function AirPublic() {
           </div>
         )}
 
-        {/* ─── RESULTS LIST ─── */}
-        {!selectedAirline && (
+        {/* ═══════════════════════════════════════════
+            AIRPORT DRILLDOWN  (click airport → airlines)
+        ═══════════════════════════════════════════ */}
+        {selectedAirport && (
+          <div className="rounded-2xl overflow-hidden mb-4 shadow-xl" style={cardStyle}>
+            <BreadcrumbBar>
+              <button onClick={() => { setSelectedAirport(null); setSelectedAirportOp(null); setAirportOps([]); }}
+                className="flex items-center gap-1.5 text-sm font-medium transition-colors" style={{ color: "var(--t-accent)" }}>
+                <ArrowLeft className="h-4 w-4" /> Airports
+              </button>
+              <span style={{ color: "var(--t-text-muted)" }}>›</span>
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center font-black font-mono text-xs"
+                  style={{ background: "var(--t-accent2-dim)", border: "1px solid var(--t-accent2-border)", color: "var(--t-accent2)" }}>
+                  {selectedAirport.iataCode || "—"}
+                </div>
+                <span className="font-bold text-sm" style={{ color: "var(--t-text)" }}>{selectedAirport.name}</span>
+                {(selectedAirport.city || selectedAirport.state) && (
+                  <span className="text-xs flex items-center gap-1" style={{ color: "var(--t-text-muted)" }}>
+                    <MapPin className="h-3 w-3" />{[selectedAirport.city, selectedAirport.state].filter(Boolean).join(", ")}
+                  </span>
+                )}
+              </div>
+              {selectedAirportOp && (
+                <>
+                  <span style={{ color: "var(--t-text-muted)" }}>›</span>
+                  <button onClick={() => setSelectedAirportOp(null)} className="flex items-center gap-1.5 text-sm transition-colors" style={{ color: "var(--t-text-sub)" }}>
+                    <Plane className="h-3.5 w-3.5" />
+                    {selectedAirportOp.airlineIata} — {selectedAirportOp.airlineName}
+                    <X className="h-3.5 w-3.5 ml-1 opacity-50" />
+                  </button>
+                </>
+              )}
+            </BreadcrumbBar>
+
+            {selectedAirportOp ? (
+              <>
+                {/* Op summary header */}
+                <div className="px-6 pt-5 pb-3 flex items-start gap-4">
+                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center font-black font-mono text-sm shrink-0"
+                    style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)", color: "var(--t-accent)" }}>
+                    {selectedAirportOp.airlineIata || "—"}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-lg font-black tracking-wide" style={{ color: "var(--t-text)" }}>{selectedAirportOp.airlineName}</h2>
+                    <p className="text-xs font-mono mt-0.5" style={{ color: "var(--t-text-muted)" }}>
+                      Operating at {selectedAirport.name} ({selectedAirport.iataCode})
+                    </p>
+                    <div className="flex items-center gap-2 mt-2 flex-wrap">
+                      {selectedAirportOp.firmsCode && <Badge color="accent">FIRMS: {selectedAirportOp.firmsCode}</Badge>}
+                      {selectedAirportOp.iscAmount && <Badge color="green">ISC: ${selectedAirportOp.iscAmount}</Badge>}
+                    </div>
+                  </div>
+                </div>
+                <OpsDetail op={selectedAirportOp} />
+              </>
+            ) : (
+              <>
+                <div className="px-5 py-3 flex items-center justify-between"
+                  style={{ borderBottom: "1px solid var(--t-border)", background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)" }}>
+                  <span className="text-sm font-semibold" style={{ color: "var(--t-accent2)" }}>
+                    {airportOpsLoading ? "Loading airlines..." :
+                      airportOps.length > 0
+                        ? `${airportOps.length} airline${airportOps.length !== 1 ? "s" : ""} operate here — click to view ISC & contact details`
+                        : "No airlines with operational data found for this airport"}
+                  </span>
+                </div>
+                {airportOpsLoading ? <Spinner /> : airportOps.length === 0 ? (
+                  <div className="py-14 text-center">
+                    <Plane className="h-8 w-8 mx-auto mb-3 opacity-20" style={{ color: "var(--t-text-muted)" }} />
+                    <p className="text-sm" style={{ color: "var(--t-text-muted)" }}>No operational data found for this airport.</p>
+                    <p className="text-xs mt-1" style={{ color: "var(--t-text-muted)" }}>Airlines may not have FIRMS/ISC data entered for this location yet.</p>
+                  </div>
+                ) : (
+                  <div className="divide-y" style={{ borderColor: "var(--t-border-soft)" }}>
+                    {airportOps.map(op => (
+                      <button key={op.id} onClick={() => setSelectedAirportOp(op)}
+                        className={`w-full flex items-center gap-4 px-5 py-4 transition-all duration-150 text-left ${rowHoverClass}`}>
+                        {/* Airline IATA badge */}
+                        <div className="h-11 w-11 rounded-xl flex items-center justify-center font-black font-mono text-xs shrink-0"
+                          style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)", color: "var(--t-accent)" }}>
+                          {op.airlineIata || "?"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm truncate" style={{ color: "var(--t-text)" }}>{op.airlineName}</p>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            {op.airlineIata && <Badge color="accent">IATA {op.airlineIata}</Badge>}
+                            {op.firmsCode && <Badge color="muted">FIRMS: {op.firmsCode}</Badge>}
+                            {op.iscAmount && <Badge color="green">ISC: ${op.iscAmount}</Badge>}
+                          </div>
+                        </div>
+                        <div className="shrink-0 flex items-center gap-1 text-xs font-semibold" style={{ color: "var(--t-text-muted)" }}>
+                          Details <ChevronRight className="h-4 w-4" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ─── RESULTS LIST (only shown when nothing is selected) ─── */}
+        {!selectedAirline && !selectedAirport && (
           <div className="rounded-2xl overflow-hidden shadow-xl" style={cardStyle}>
             {/* Result count header */}
             <div className="px-5 py-3.5 flex items-center justify-between" style={{
@@ -523,20 +641,13 @@ export default function AirPublic() {
                 </span>
                 {grandTotal > 0 && <span className="text-xs font-mono" style={{ color: "var(--t-text-muted)" }}>of {grandTotal} total</span>}
               </div>
-              {tab === "airlines" && (
-                <span className="text-xs font-mono hidden sm:block" style={{ color: "var(--t-text-muted)" }}>Click an airline to explore airports & ISC data</span>
-              )}
+              <span className="text-xs font-mono hidden sm:block" style={{ color: "var(--t-text-muted)" }}>
+                {tab === "airlines" ? "Click airline → view airports & ISC data" : "Click airport → view airlines operating there"}
+              </span>
             </div>
 
             {/* Loading */}
-            {(tab === "airlines" ? airlinesQuery.isLoading : airportsQuery.isLoading) && (
-              <div className="py-20 text-center">
-                <div className="inline-flex items-center gap-3 text-sm" style={{ color: "var(--t-text-muted)" }}>
-                  <div className="h-4 w-4 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "var(--t-accent)", borderTopColor: "transparent" }} />
-                  Searching registry...
-                </div>
-              </div>
-            )}
+            {(tab === "airlines" ? airlinesQuery.isLoading : airportsQuery.isLoading) && <Spinner />}
 
             {/* Empty */}
             {!((tab === "airlines" ? airlinesQuery.isLoading : airportsQuery.isLoading)) && totalShown === 0 && (
@@ -547,16 +658,15 @@ export default function AirPublic() {
               </div>
             )}
 
-            {/* Airlines */}
+            {/* Airlines list */}
             {tab === "airlines" && !airlinesQuery.isLoading && (filteredAirlines?.length ?? 0) > 0 && (
               <div>
                 {filteredAirlines?.map((airline, i) => (
                   <button key={airline.id} onClick={() => handleAirlineClick(airline)}
-                    className={`w-full flex items-center gap-4 px-5 py-4 transition-all duration-150 group text-left ${rowHoverClass}`}
+                    className={`w-full flex items-center gap-4 px-5 py-4 transition-all duration-150 text-left ${rowHoverClass}`}
                     style={{ borderBottom: i < (filteredAirlines.length - 1) ? `1px solid var(--t-border-soft)` : "none" }}>
-                    <div className="h-11 w-11 rounded-xl flex items-center justify-center font-black font-mono text-xs shrink-0 transition-all" style={{
-                      background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)", color: "var(--t-accent)"
-                    }}>
+                    <div className="h-11 w-11 rounded-xl flex items-center justify-center font-black font-mono text-xs shrink-0"
+                      style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)", color: "var(--t-accent)" }}>
                       {airline.iataCode || "?"}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -568,7 +678,7 @@ export default function AirPublic() {
                         {airline.country && <span className="text-[10px] font-mono" style={{ color: "var(--t-text-muted)" }}>{airline.country}</span>}
                       </div>
                     </div>
-                    <div className="shrink-0 flex items-center gap-1.5 text-xs font-semibold transition-colors" style={{ color: "var(--t-text-muted)" }}>
+                    <div className="shrink-0 flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--t-text-muted)" }}>
                       Airports <ChevronRight className="h-4 w-4" />
                     </div>
                   </button>
@@ -576,28 +686,33 @@ export default function AirPublic() {
               </div>
             )}
 
-            {/* Airports */}
+            {/* Airports list */}
             {tab === "airports" && !airportsQuery.isLoading && (filteredAirports?.length ?? 0) > 0 && (
               <div>
                 {filteredAirports?.map((airport, i) => (
-                  <div key={airport.id} className={`flex items-center gap-4 px-5 py-4 transition-all duration-150 group cursor-default ${rowHoverClass}`}
+                  <button key={airport.id} onClick={() => handleAirportClick({
+                    id: airport.id, name: airport.name ?? "", iataCode: airport.iataCode,
+                    city: airport.city, state: airport.state
+                  })}
+                    className={`w-full flex items-center gap-4 px-5 py-4 transition-all duration-150 text-left ${rowHoverClass}`}
                     style={{ borderBottom: i < (filteredAirports.length - 1) ? `1px solid var(--t-border-soft)` : "none" }}>
-                    <div className="h-11 w-11 rounded-xl flex items-center justify-center font-black font-mono text-xs shrink-0" style={{
-                      background: "var(--t-accent2-dim)", border: "1px solid var(--t-accent2-border)", color: "var(--t-accent2)"
-                    }}>
+                    <div className="h-11 w-11 rounded-xl flex items-center justify-center font-black font-mono text-xs shrink-0"
+                      style={{ background: "var(--t-accent2-dim)", border: "1px solid var(--t-accent2-border)", color: "var(--t-accent2)" }}>
                       {airport.iataCode || "?"}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm truncate" style={{ color: "var(--t-text)" }}>{airport.name}</p>
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        {airport.iataCode && <Badge color="accent">IATA {airport.iataCode}</Badge>}
-                        {airport.cbpPortCode && <Badge color="accent2">CBP {airport.cbpPortCode}</Badge>}
+                        {airport.iataCode && <Badge color="accent2">IATA {airport.iataCode}</Badge>}
+                        {airport.cbpPortCode && <Badge color="muted">CBP {airport.cbpPortCode}</Badge>}
                         {(airport.city || airport.state) && <span className="text-[10px] flex items-center gap-1" style={{ color: "var(--t-text-muted)" }}><MapPin className="h-3 w-3" />{[airport.city, airport.state].filter(Boolean).join(", ")}</span>}
                         {airport.customsApproved && <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-500"><Shield className="h-3 w-3" />Customs</span>}
                       </div>
                     </div>
-                    <ChevronRight className="h-4 w-4 shrink-0 transition-colors" style={{ color: "var(--t-border)" }} />
-                  </div>
+                    <div className="shrink-0 flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--t-text-muted)" }}>
+                      Airlines <ChevronRight className="h-4 w-4" />
+                    </div>
+                  </button>
                 ))}
               </div>
             )}
@@ -615,11 +730,13 @@ export default function AirPublic() {
                   <div className="flex items-center gap-1.5 text-xs" style={{ color: "var(--t-text-muted)" }}>
                     Show
                     <select value={limit} onChange={e => { setLimit(Number(e.target.value)); setPage(1); }}
-                      className="h-7 px-2 rounded-lg text-xs font-mono focus:outline-none" style={{ background: "var(--t-card)", border: "1px solid var(--t-border)", color: "var(--t-text-sub)" }}>
+                      className="h-7 px-2 rounded-lg text-xs font-mono focus:outline-none"
+                      style={{ background: "var(--t-card)", border: "1px solid var(--t-border)", color: "var(--t-text-sub)" }}>
                       {[20, 25, 50, 100].map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
-                  {[{ label: "← Prev", disabled: page === 1, fn: () => setPage(p => p - 1) }, { label: "Next →", disabled: page >= totalPages, fn: () => setPage(p => p + 1) }].map(btn => (
+                  {[{ label: "← Prev", disabled: page === 1, fn: () => setPage(p => p - 1) },
+                    { label: "Next →", disabled: page >= totalPages, fn: () => setPage(p => p + 1) }].map(btn => (
                     <button key={btn.label} disabled={btn.disabled} onClick={btn.fn}
                       className="px-3 py-1.5 rounded-lg border text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                       style={{ background: "var(--t-card)", border: "1px solid var(--t-border)", color: "var(--t-text-sub)" }}>
@@ -638,9 +755,8 @@ export default function AirPublic() {
 
 function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full" style={{
-      background: "var(--t-accent-dim)", color: "var(--t-accent)", border: "1px solid var(--t-accent-border)"
-    }}>
+    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full"
+      style={{ background: "var(--t-accent-dim)", color: "var(--t-accent)", border: "1px solid var(--t-accent-border)" }}>
       {label}
       <button onClick={onRemove} className="hover:opacity-70 transition-opacity"><X className="h-2.5 w-2.5" /></button>
     </span>
