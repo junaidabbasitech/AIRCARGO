@@ -11,6 +11,7 @@ export const airlinesTable = pgTable("airlines", {
   cbpCode: text("cbp_code"),
   icaoCode: text("icao_code"),
   country: text("country"),
+  awbPrefix: text("awb_prefix"),
   status: statusEnum("status").notNull().default("pending"),
   source: text("source"),
   flaggedForReview: boolean("flagged_for_review").notNull().default(false),

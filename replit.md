@@ -94,3 +94,37 @@ Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHea
 ### `scripts` (`@workspace/scripts`)
 
 Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+
+## Domain Data
+
+**Airlines**: 131 airlines, `awb_prefix` (3-digit text) maps AWB prefix → airline (e.g. "176" = Emirates/EK). 75 airlines have AWB prefixes set.
+
+**Airports**: 731 airports. 90 US airports have cargo handler data.
+
+**Airline Operations**: 817 records. Columns: `firms_code`, `isc_amount` (range text like "70-140"), `isc_payable_at`, `isc_payable_to` (ground handler), `contact_number`, `contact_email`, `notes`.
+
+**Seed files** in `scripts/`: `seed_airlines.sql`, `seed_airports.sql`, `seed_ground_handlers.sql`, `seed_airline_operations.sql`. Airlines seed includes `UPDATE` to set AWB prefixes after INSERT.
+
+## Key Features
+
+- **AIR Search** (`/`): Public interface. Tabs: Airlines, Airports, AWB Track.
+- **AWB Track**: `GET /api/awb-search?awb=176-12345678&airport=JFK` — decodes 3-digit prefix to airline, looks up airline_operations at destination airport.
+- **Command Center** (`/cmd`, password "332"): Admin CRUD for all entities.
+- **Excel import**: 540 rows from USA cargo handler file imported → 488 new airline_operations records (6 airlines × 90 airports).
+
+## AWB Prefix Reference (key carriers)
+| Prefix | Airline | IATA |
+|--------|---------|------|
+| 001 | American Airlines | AA |
+| 006 | Delta Air Lines | DL |
+| 016 | United Airlines | UA |
+| 020 | Lufthansa | LH |
+| 057 | Air France | AF |
+| 074 | KLM | KL |
+| 108 | Atlas Air | 5Y |
+| 125 | British Airways | BA |
+| 157 | Qatar Airways | QR |
+| 176 | Emirates | EK |
+| 205 | ANA | NH |
+| 235 | Turkish Airlines | TK |
+| 618 | Singapore Airlines | SQ |

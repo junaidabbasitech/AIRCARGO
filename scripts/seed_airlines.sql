@@ -119,7 +119,7 @@ INSERT INTO public.airlines VALUES
 	(236, 'Xiamen Airlines', 'MF', 'MF', 'CXA', 'CN', 'approved', 'xlsx_import', false, '2026-03-20 21:20:17.021777+00', '2026-03-20 21:20:17.021777+00'),
 	(237, 'Ukraine International Airlines', 'PS', 'PS', 'AUI', 'UA', 'approved', 'xlsx_import', false, '2026-03-20 21:20:17.024648+00', '2026-03-20 21:20:17.024648+00'),
 	(238, 'DHL Aviation', 'D0', 'D0', 'DHK', 'BH', 'approved', 'xlsx_import', false, '2026-03-20 21:20:17.0308+00', '2026-03-20 21:20:17.0308+00'),
-	(239, 'Nippon Cargo Airlines', 'KZ', 'KZ', 'NCA', 'JP', 'approved', 'xlsx_import', false, '2026-03-20 21:20:17.033923+00', '2026-03-20 21:20:17.033923+00'),
+	(239, 'Nippon Cargo Airlines',  'KZ', 'NCA', 'JP', 'approved', 'xlsx_import', false, '2026-03-20 21:20:17.033923+00', '2026-03-20 21:20:17.033923+00'),
 	(240, 'Suparna Airlines', 'Y8', 'Y8', 'GCR', 'CN', 'approved', 'xlsx_import', false, '2026-03-20 21:20:17.039104+00', '2026-03-20 21:20:17.039104+00'),
 	(241, 'MNG Airlines', 'MB', 'MB', 'MNB', 'TR', 'approved', 'xlsx_import', false, '2026-03-20 21:20:17.042835+00', '2026-03-20 21:20:17.042835+00'),
 	(242, 'TNT Airways', '3V', '3V', 'TAY', 'BE', 'approved', 'xlsx_import', false, '2026-03-20 21:20:17.046419+00', '2026-03-20 21:20:17.046419+00'),
@@ -167,3 +167,89 @@ SELECT pg_catalog.setval('public.airlines_id_seq', 473, true);
 --
 
 
+
+--
+-- Populate AWB prefix for known carriers
+--
+UPDATE airlines SET awb_prefix = CASE
+  WHEN iata_code = 'AA' THEN '001'
+  WHEN iata_code = 'AC' THEN '014'
+  WHEN iata_code = 'AD' THEN '577'
+  WHEN iata_code = 'AF' THEN '057'
+  WHEN iata_code = 'AH' THEN '124'
+  WHEN iata_code = 'AI' THEN '098'
+  WHEN iata_code = 'AM' THEN '139'
+  WHEN iata_code = 'AS' THEN '027'
+  WHEN iata_code = 'AT' THEN '147'
+  WHEN iata_code = 'AV' THEN '134'
+  WHEN iata_code = 'AY' THEN '105'
+  WHEN iata_code = 'AZ' THEN '055'
+  WHEN iata_code = 'B6' THEN '279'
+  WHEN iata_code = 'BA' THEN '125'
+  WHEN iata_code = 'BG' THEN '997'
+  WHEN iata_code = 'BR' THEN '695'
+  WHEN iata_code = 'BT' THEN '657'
+  WHEN iata_code = 'CA' THEN '999'
+  WHEN iata_code = 'CI' THEN '297'
+  WHEN iata_code = 'CM' THEN '230'
+  WHEN iata_code = 'CV' THEN '172'
+  WHEN iata_code = 'CX' THEN '160'
+  WHEN iata_code = 'CZ' THEN '784'
+  WHEN iata_code = 'DL' THEN '006'
+  WHEN iata_code = 'EI' THEN '053'
+  WHEN iata_code = 'EK' THEN '176'
+  WHEN iata_code = 'ET' THEN '071'
+  WHEN iata_code = 'EY' THEN '607'
+  WHEN iata_code = 'GA' THEN '126'
+  WHEN iata_code = 'GF' THEN '072'
+  WHEN iata_code = 'HA' THEN '173'
+  WHEN iata_code = 'IB' THEN '075'
+  WHEN iata_code = 'IZ' THEN '196'
+  WHEN iata_code = 'JL' THEN '131'
+  WHEN iata_code = 'JU' THEN '115'
+  WHEN iata_code = 'KE' THEN '180'
+  WHEN iata_code = 'KL' THEN '074'
+  WHEN iata_code = 'KQ' THEN '706'
+  WHEN iata_code = 'KU' THEN '229'
+  WHEN iata_code = 'LA' THEN '045'
+  WHEN iata_code = 'LH' THEN '020'
+  WHEN iata_code = 'LO' THEN '080'
+  WHEN iata_code = 'LX' THEN '724'
+  WHEN iata_code = 'LY' THEN '114'
+  WHEN iata_code = 'ME' THEN '076'
+  WHEN iata_code = 'MH' THEN '232'
+  WHEN iata_code = 'MP' THEN '129'
+  WHEN iata_code = 'MS' THEN '077'
+  WHEN iata_code = 'MU' THEN '781'
+  WHEN iata_code = 'NH' THEN '205'
+  WHEN iata_code = 'NZ' THEN '086'
+  WHEN iata_code = 'OK' THEN '064'
+  WHEN iata_code = 'OS' THEN '257'
+  WHEN iata_code = 'OZ' THEN '988'
+  WHEN iata_code = 'PK' THEN '214'
+  WHEN iata_code = 'PR' THEN '079'
+  WHEN iata_code = 'QF' THEN '081'
+  WHEN iata_code = 'QR' THEN '157'
+  WHEN iata_code = 'RJ' THEN '512'
+  WHEN iata_code = 'SA' THEN '083'
+  WHEN iata_code = 'SK' THEN '117'
+  WHEN iata_code = 'SN' THEN '082'
+  WHEN iata_code = 'SQ' THEN '618'
+  WHEN iata_code = 'SU' THEN '555'
+  WHEN iata_code = 'SV' THEN '065'
+  WHEN iata_code = 'TG' THEN '217'
+  WHEN iata_code = 'TK' THEN '235'
+  WHEN iata_code = 'TP' THEN '047'
+  WHEN iata_code = 'UA' THEN '016'
+  WHEN iata_code = 'UL' THEN '603'
+  WHEN iata_code = 'VN' THEN '738'
+  WHEN iata_code = 'WN' THEN '526'
+  WHEN iata_code = '5Y' THEN '108'
+  WHEN iata_code = 'WS' THEN '838'
+  ELSE awb_prefix
+END
+WHERE iata_code IN ('AA','AC','AD','AF','AH','AI','AM','AS','AT','AV','AY','AZ','B6',
+  'BA','BG','BR','BT','CA','CI','CM','CV','CX','CZ','DL','EI','EK','ET','EY','GA','GF',
+  'HA','IB','IZ','JL','JU','KE','KL','KQ','KU','LA','LH','LO','LX','LY','ME','MH',
+  'MP','MS','MU','NH','NZ','OK','OS','OZ','PK','PR','QF','QR','RJ','SA','SK','SN','SQ',
+  'SU','SV','TG','TK','TP','UA','UL','VN','WN','5Y','WS');

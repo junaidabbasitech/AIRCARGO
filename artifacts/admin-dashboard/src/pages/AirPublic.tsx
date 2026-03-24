@@ -3,7 +3,7 @@ import { useListAirlines, useListAirports } from "@workspace/api-client-react";
 import {
   Search, Plane, Building2, MapPin, Filter, ChevronRight, X,
   Phone, Mail, Hash, DollarSign, ArrowLeft, Zap, Globe, Radio,
-  Shield, TrendingUp, AlertCircle
+  Shield, TrendingUp, AlertCircle, ScanBarcode, Package, Loader2
 } from "lucide-react";
 import { Watermark } from "@/components/Watermark";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -109,7 +109,7 @@ function Spinner() {
 export default function AirPublic() {
   const { isDark } = useTheme();
 
-  const [tab, setTab] = useState<"airlines" | "airports">("airlines");
+  const [tab, setTab] = useState<"airlines" | "airports" | "awb">("airlines");
   const [search, setSearch] = useState("");
   const [country, setCountry] = useState("");
   const [icaoFilter, setIcaoFilter] = useState("");
@@ -121,6 +121,29 @@ export default function AirPublic() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(25);
   const [showFilters, setShowFilters] = useState(false);
+
+  /* ── AWB Search ── */
+  const [awbInput, setAwbInput] = useState("");
+  const [awbAirport, setAwbAirport] = useState("");
+  const [awbResult, setAwbResult] = useState<null | { awb: string; awbPrefix: string; airline: any; airport: any; operations: any }>(null);
+  const [awbError, setAwbError] = useState<string | null>(null);
+  const [awbLoading, setAwbLoading] = useState(false);
+
+  const handleAwbSearch = async () => {
+    const awb = awbInput.trim();
+    const airport = awbAirport.trim().toUpperCase();
+    if (!awb || !airport) { setAwbError("Please enter both an AWB number and destination airport code."); return; }
+    setAwbLoading(true); setAwbError(null); setAwbResult(null);
+    try {
+      const r = await fetch(`${BASE}/api/awb-search?awb=${encodeURIComponent(awb)}&airport=${encodeURIComponent(airport)}`);
+      const json = await r.json();
+      if (!r.ok) { setAwbError(json.message ?? "Search failed."); }
+      else { setAwbResult(json); }
+    } catch {
+      setAwbError("Network error — please try again.");
+    }
+    setAwbLoading(false);
+  };
 
   /* ── Airline ISC / FIRMS pre-filter sets ── */
   const [iscAirlineIds, setIscAirlineIds] = useState<Set<number>>(new Set());
@@ -195,11 +218,12 @@ export default function AirPublic() {
     setAirportOpsLoading(false);
   };
 
-  const handleTab = (t: "airlines" | "airports") => {
+  const handleTab = (t: "airlines" | "airports" | "awb") => {
     setTab(t); setSearch(""); setPage(1); setCountry(""); setCustoms(""); setAirportFilter("");
     setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter("");
     setSelectedAirline(null); setSelectedAirlineOp(null); setAirlineOps([]);
     setSelectedAirport(null); setSelectedAirportOp(null); setAirportOps([]);
+    setAwbResult(null); setAwbError(null); setAwbInput(""); setAwbAirport("");
   };
 
   const clearAll = () => {
@@ -279,15 +303,16 @@ export default function AirPublic() {
             Find{" "}<span style={{ color: "var(--t-accent)" }}>Aviation</span>{" "}Data
           </h1>
           <p className="text-sm sm:text-base mb-8 leading-relaxed" style={{ color: "var(--t-text-sub)" }}>
-            Search airlines and airports — click any entry to explore operational data,
-            ISC charges, FIRMS codes, and ground handler contacts.
+            {tab === "awb"
+              ? "Enter an Air Waybill number and destination airport to decode the carrier and look up ISC charges, FIRMS code, and ground handler details."
+              : "Search airlines and airports — click any entry to explore operational data, ISC charges, FIRMS codes, and ground handler contacts."}
           </p>
 
           {/* Tab switcher */}
           <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-7" style={{ background: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)", border: "1px solid var(--t-border)" }}>
             <button
               onClick={() => handleTab("airlines")}
-              className="flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
+              className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
               style={tab === "airlines" ? {
                 background: "linear-gradient(135deg, var(--t-accent), color-mix(in srgb, var(--t-accent) 70%, #1d4ed8))",
                 color: "#fff", boxShadow: "0 4px 20px var(--t-accent-glow)"
@@ -304,7 +329,7 @@ export default function AirPublic() {
             </button>
             <button
               onClick={() => handleTab("airports")}
-              className="flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
+              className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
               style={tab === "airports" ? {
                 background: "linear-gradient(135deg, var(--t-accent2), color-mix(in srgb, var(--t-accent2) 80%, #dc2626))",
                 color: "#fff", boxShadow: "0 4px 20px var(--t-accent2-dim)"
@@ -319,10 +344,21 @@ export default function AirPublic() {
                 }}>{airports.total}</span>
               )}
             </button>
+            <button
+              onClick={() => handleTab("awb")}
+              className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
+              style={tab === "awb" ? {
+                background: "linear-gradient(135deg, #059669, #047857)",
+                color: "#fff", boxShadow: "0 4px 20px rgba(5,150,105,0.35)"
+              } : { color: "var(--t-text-sub)" }}
+            >
+              <ScanBarcode className="h-4 w-4" />
+              AWB Track
+            </button>
           </div>
 
-          {/* Search bar */}
-          <div className="relative max-w-2xl mx-auto">
+          {/* Search bar — hidden on AWB tab */}
+          {tab !== "awb" && <div className="relative max-w-2xl mx-auto">
             {isDark && (
               <div className="absolute inset-0 rounded-2xl blur-xl opacity-40" style={{ background: "var(--t-accent-dim)" }} />
             )}
@@ -357,7 +393,7 @@ export default function AirPublic() {
                 {hasActiveFilters && <span className="h-4 w-4 rounded-full bg-white/30 text-[9px] flex items-center justify-center font-black">!</span>}
               </button>
             </div>
-          </div>
+          </div>}
         </div>
       </div>
 
@@ -365,7 +401,7 @@ export default function AirPublic() {
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-8 pb-20 mt-6">
 
         {/* ─── FILTER PANEL ─── */}
-        {showFilters && (
+        {showFilters && tab !== "awb" && (
           <div className="mb-4 rounded-2xl p-4 shadow-xl" style={cardStyle}>
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest" style={{ color: "var(--t-text-muted)" }}>
@@ -419,6 +455,156 @@ export default function AirPublic() {
                 {hasIscOnly && <FilterChip label="Has ISC Data" onRemove={() => setHasIscOnly(false)} />}
                 {airportFilter && <FilterChip label={`Airport: ${airportFilter}`} onRemove={() => setAirportFilter("")} />}
                 {customs && <FilterChip label={customs === "yes" ? "Customs Approved" : "No Customs"} onRemove={() => setCustoms("")} />}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════
+            AWB SEARCH PANEL
+        ═══════════════════════════════════════════ */}
+        {tab === "awb" && (
+          <div>
+            {/* Input card */}
+            <div className="rounded-2xl p-6 shadow-xl mb-6" style={{ ...cardStyle, background: isDark ? "rgba(5,150,105,0.06)" : "rgba(5,150,105,0.04)", border: "1px solid rgba(5,150,105,0.22)" }}>
+              <div className="flex items-center gap-3 mb-5">
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(5,150,105,0.15)", border: "1px solid rgba(5,150,105,0.3)" }}>
+                  <ScanBarcode className="h-5 w-5 text-emerald-400" />
+                </div>
+                <div>
+                  <h2 className="text-base font-black tracking-wide" style={{ color: "var(--t-text)" }}>AWB Lookup</h2>
+                  <p className="text-xs font-mono" style={{ color: "var(--t-text-muted)" }}>Air Waybill → Airline + ISC details at destination</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>AWB Number</label>
+                  <input
+                    type="text"
+                    value={awbInput}
+                    onChange={e => setAwbInput(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && handleAwbSearch()}
+                    placeholder="e.g. 176-12345678"
+                    className="w-full px-4 py-3 rounded-xl text-sm font-mono focus:outline-none transition-all"
+                    style={{
+                      background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
+                      border: "1px solid rgba(5,150,105,0.3)",
+                      color: "var(--t-text)"
+                    }}
+                  />
+                  <p className="text-[10px] mt-1.5" style={{ color: "var(--t-text-muted)" }}>3-digit prefix identifies the airline (e.g. 176 = Emirates)</p>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Destination Airport</label>
+                  <input
+                    type="text"
+                    value={awbAirport}
+                    onChange={e => setAwbAirport(e.target.value.toUpperCase())}
+                    onKeyDown={e => e.key === "Enter" && handleAwbSearch()}
+                    placeholder="IATA code, e.g. JFK"
+                    maxLength={4}
+                    className="w-full px-4 py-3 rounded-xl text-sm font-mono uppercase focus:outline-none transition-all"
+                    style={{
+                      background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
+                      border: "1px solid rgba(5,150,105,0.3)",
+                      color: "var(--t-text)"
+                    }}
+                  />
+                  <p className="text-[10px] mt-1.5" style={{ color: "var(--t-text-muted)" }}>Airport IATA code where cargo will arrive</p>
+                </div>
+              </div>
+
+              <button
+                onClick={handleAwbSearch}
+                disabled={awbLoading}
+                className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-sm font-black tracking-wide transition-all duration-200 disabled:opacity-50"
+                style={{ background: "linear-gradient(135deg, #059669, #047857)", color: "#fff", boxShadow: "0 4px 20px rgba(5,150,105,0.35)" }}
+              >
+                {awbLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ScanBarcode className="h-4 w-4" />}
+                {awbLoading ? "Looking up..." : "Search AWB"}
+              </button>
+
+              {awbError && (
+                <div className="mt-4 flex items-start gap-2.5 p-3.5 rounded-xl" style={{ background: "rgba(244,63,94,0.08)", border: "1px solid rgba(244,63,94,0.25)" }}>
+                  <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
+                  <p className="text-sm" style={{ color: "#f87171" }}>{awbError}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Result card */}
+            {awbResult && (
+              <div className="rounded-2xl overflow-hidden shadow-xl" style={cardStyle}>
+                {/* Header */}
+                <div className="px-6 pt-5 pb-4 flex items-start gap-4" style={{ borderBottom: "1px solid var(--t-border)", background: "rgba(5,150,105,0.06)" }}>
+                  <div className="h-16 w-16 rounded-2xl flex items-center justify-center font-black font-mono text-lg shrink-0"
+                    style={{ background: "rgba(5,150,105,0.15)", border: "1px solid rgba(5,150,105,0.35)", color: "#34d399" }}>
+                    {awbResult.airline.iataCode ?? "—"}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold" style={{ background: "rgba(5,150,105,0.15)", color: "#34d399", border: "1px solid rgba(5,150,105,0.3)" }}>
+                        AWB {awbResult.awb}
+                      </span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full" style={{ background: "var(--t-card)", color: "var(--t-text-muted)", border: "1px solid var(--t-border)" }}>
+                        Prefix {awbResult.awbPrefix}
+                      </span>
+                    </div>
+                    <h2 className="text-xl font-black tracking-wide" style={{ color: "var(--t-text)" }}>{awbResult.airline.name}</h2>
+                    <p className="text-xs font-mono mt-0.5" style={{ color: "var(--t-text-muted)" }}>
+                      {awbResult.airline.country && `${awbResult.airline.country} · `}Destination: <strong style={{ color: "var(--t-text-sub)" }}>{awbResult.airport.name} ({awbResult.airport.iataCode})</strong>
+                      {(awbResult.airport.city || awbResult.airport.state) && ` · ${[awbResult.airport.city, awbResult.airport.state].filter(Boolean).join(", ")}`}
+                    </p>
+                  </div>
+                </div>
+
+                {awbResult.operations ? (
+                  <div className="p-6">
+                    <p className="text-[10px] font-bold uppercase tracking-widest mb-4" style={{ color: "var(--t-text-muted)" }}>Operational Details at {awbResult.airport.iataCode}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <DetailCard icon={<Hash className="h-4 w-4" />} label="FIRMS Code" value={awbResult.operations.firmsCode} varKey="--t-accent" />
+                      <DetailCard icon={<DollarSign className="h-4 w-4" />} label="ISC Charges (USD)" value={awbResult.operations.iscAmount ? `$${awbResult.operations.iscAmount}` : null} varKey="green" />
+                      <DetailCard icon={<Building2 className="h-4 w-4" />} label="Ground Handler" value={awbResult.operations.iscPayableTo} varKey="--t-accent2" />
+                      <DetailCard icon={<Package className="h-4 w-4" />} label="ISC Payable At" value={awbResult.operations.iscPayableAt} varKey="--t-accent2" />
+                      <DetailCard icon={<Phone className="h-4 w-4" />} label="Contact Number" value={awbResult.operations.contactNumber} varKey="--t-accent" />
+                      <DetailCard icon={<Mail className="h-4 w-4" />} label="Email Address" value={awbResult.operations.contactEmail} varKey="red" isEmail />
+                    </div>
+                    {awbResult.operations.notes && (
+                      <div className="mt-4 p-4 rounded-xl" style={{ background: "var(--t-card)", border: "1px solid var(--t-border)" }}>
+                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Notes</p>
+                        <p className="text-sm leading-relaxed" style={{ color: "var(--t-text-sub)" }}>{awbResult.operations.notes}</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="py-14 text-center px-6">
+                    <Package className="h-10 w-10 mx-auto mb-3 opacity-20" style={{ color: "var(--t-text-muted)" }} />
+                    <p className="text-sm font-semibold" style={{ color: "var(--t-text)" }}>Airline identified — no operational data at this airport yet</p>
+                    <p className="text-xs mt-1.5" style={{ color: "var(--t-text-muted)" }}>
+                      {awbResult.airline.name} ({awbResult.airline.iataCode}) does not have ISC / FIRMS data entered for {awbResult.airport.iataCode}.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Quick reference */}
+            {!awbResult && !awbError && (
+              <div className="rounded-2xl p-5" style={{ background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)", border: "1px solid var(--t-border)" }}>
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: "var(--t-text-muted)" }}>Common AWB Prefixes</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                  {[["176","Emirates (EK)"],["157","Qatar Airways (QR)"],["020","Lufthansa (LH)"],["057","Air France (AF)"],
+                    ["235","Turkish Airlines (TK)"],["108","Atlas Air (5Y)"],["125","British Airways (BA)"],["618","Singapore Airlines (SQ)"],
+                    ["016","United Airlines (UA)"],["006","Delta Air Lines (DL)"],["001","American Airlines (AA)"],["160","Cathay Pacific (CX)"]].map(([prefix, name]) => (
+                    <button key={prefix} onClick={() => setAwbInput(`${prefix}-`)}
+                      className="text-left p-2.5 rounded-lg transition-all"
+                      style={{ background: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)", border: "1px solid var(--t-border-soft)" }}>
+                      <p className="text-sm font-black font-mono" style={{ color: "var(--t-accent)" }}>{prefix}</p>
+                      <p className="text-[10px] leading-tight mt-0.5" style={{ color: "var(--t-text-muted)" }}>{name}</p>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -624,7 +810,7 @@ export default function AirPublic() {
         )}
 
         {/* ─── RESULTS LIST (only shown when nothing is selected) ─── */}
-        {!selectedAirline && !selectedAirport && (
+        {!selectedAirline && !selectedAirport && tab !== "awb" && (
           <div className="rounded-2xl overflow-hidden shadow-xl" style={cardStyle}>
             {/* Result count header */}
             <div className="px-5 py-3.5 flex items-center justify-between" style={{
