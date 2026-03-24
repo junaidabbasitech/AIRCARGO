@@ -16,13 +16,12 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-seedIfEmpty()
-  .then(() => {
-    app.listen(port, () => {
-      logger.info({ port }, "Server listening");
-    });
-  })
-  .catch((err) => {
-    logger.error({ err }, "Startup error — aborting");
-    process.exit(1);
+// Open the port immediately so deployment health checks pass,
+// then seed the database in the background (non-blocking).
+app.listen(port, () => {
+  logger.info({ port }, "Server listening");
+
+  seedIfEmpty().catch((err) => {
+    logger.error({ err }, "Background seed failed (non-fatal)");
   });
+});
