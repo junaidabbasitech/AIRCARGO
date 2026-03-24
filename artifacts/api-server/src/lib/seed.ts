@@ -70,19 +70,28 @@ export async function seedIfEmpty(): Promise<void> {
 
   // FK dependency order — each entry is committed before the next runs
   const tables: Array<{ file: string; label: string }> = [
-    { file: "seed_airlines.sql",          label: "airlines" },
-    { file: "seed_airports.sql",          label: "airports" },
-    { file: "seed_ground_handlers.sql",   label: "ground_handlers" },
-    { file: "seed_airline_operations.sql", label: "airline_operations" },
+    { file: "seed_airlines.sql",                  label: "airlines" },
+    { file: "seed_airports.sql",                  label: "airports" },
+    { file: "seed_ground_handlers.sql",           label: "ground_handlers" },
+    { file: "seed_airline_operations.sql",        label: "airline_operations" },
+    { file: "patch_airline_operations.sql",       label: "airline_operations_patch" },
   ];
 
   logger.info({ scriptsDir }, "Running per-table seed in FK dependency order");
 
   for (const { file, label } of tables) {
     const filePath = path.join(scriptsDir, file);
-    const sql = await loadSql(filePath);
-    await runTransaction(sql, label);
-    logger.info({ table: label }, "Table seeded");
+    if (!existsSync(filePath)) {
+      logger.warn({ file }, "Seed/patch file not found — skipping");
+      continue;
+    }
+    try {
+      const sql = await loadSql(filePath);
+      await runTransaction(sql, label);
+      logger.info({ table: label }, "Table seeded/patched");
+    } catch (err) {
+      logger.error({ table: label, err }, `Seed step failed for ${label} — continuing`);
+    }
   }
 
   // Use schema-qualified names to be safe regardless of session search_path
