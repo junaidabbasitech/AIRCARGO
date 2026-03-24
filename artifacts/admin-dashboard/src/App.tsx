@@ -17,6 +17,7 @@ import AuditLogs from "@/pages/AuditLogs";
 import AirPublic from "@/pages/AirPublic";
 import AirlineOperations from "@/pages/AirlineOperations";
 import Duplicates from "@/pages/Duplicates";
+import AwbPrefixes from "@/pages/AwbPrefixes";
 
 const CORRECT_PASSWORD = "332";
 const AUTH_KEY = "aviacbp_auth";
@@ -179,6 +180,7 @@ function AppRouter() {
         <Route path="/airline-operations" component={AirlineOperations} />
         <Route path="/duplicates" component={Duplicates} />
         <Route path="/ground-handlers" component={GroundHandlers} />
+        <Route path="/awb-prefixes" component={AwbPrefixes} />
         <Route path="/sync" component={SyncData} />
         <Route path="/audit" component={AuditLogs} />
         <Route path="/" component={AirPublic} />

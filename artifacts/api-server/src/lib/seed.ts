@@ -74,6 +74,7 @@ export async function seedIfEmpty(): Promise<void> {
     { file: "seed_airports.sql",                  label: "airports" },
     { file: "seed_ground_handlers.sql",           label: "ground_handlers" },
     { file: "seed_airline_operations.sql",        label: "airline_operations" },
+    { file: "patch_airlines.sql",                 label: "airlines_patch" },
     { file: "patch_airline_operations.sql",       label: "airline_operations_patch" },
   ];
 

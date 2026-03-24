@@ -217,6 +217,99 @@ router.post("/airlines/bulk-delete", async (req, res) => {
   }
 });
 
+// GET /api/awb-prefixes — list all airlines with AWB prefix info
+router.get("/awb-prefixes", async (req, res) => {
+  try {
+    const { search, filter, page = "1", limit = "50" } = req.query as Record<string, string>;
+    const pageNum = Math.max(1, parseInt(page));
+    const limitNum = Math.min(200, Math.max(1, parseInt(limit)));
+    const offset = (pageNum - 1) * limitNum;
+
+    const conditions = [];
+    if (search) {
+      conditions.push(or(
+        ilike(airlinesTable.name, `%${search}%`),
+        ilike(airlinesTable.iataCode, `%${search}%`),
+        ilike(airlinesTable.icaoCode, `%${search}%`),
+        ilike(airlinesTable.awbPrefix, `%${search}%`),
+      ));
+    }
+    if (filter === "missing") {
+      conditions.push(sql`(awb_prefix IS NULL OR awb_prefix = '')`);
+    } else if (filter === "has") {
+      conditions.push(sql`(awb_prefix IS NOT NULL AND awb_prefix != '')`);
+    }
+
+    const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const [data, countResult] = await Promise.all([
+      db.select({
+        id: airlinesTable.id,
+        name: airlinesTable.name,
+        iataCode: airlinesTable.iataCode,
+        icaoCode: airlinesTable.icaoCode,
+        awbPrefix: airlinesTable.awbPrefix,
+        country: airlinesTable.country,
+        lastUpdated: airlinesTable.lastUpdated,
+      }).from(airlinesTable).where(where).orderBy(airlinesTable.name).limit(limitNum).offset(offset),
+      db.select({ count: sql<number>`count(*)::int` }).from(airlinesTable).where(where),
+    ]);
+
+    const [statsResult] = await db.select({
+      total: sql<number>`count(*)::int`,
+      hasPrefix: sql<number>`count(*) filter (where awb_prefix is not null and awb_prefix != '')::int`,
+    }).from(airlinesTable);
+
+    res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum, stats: statsResult });
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// PATCH /api/airlines/:id/awb-prefix — update only the AWB prefix
+router.patch("/airlines/:id/awb-prefix", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { awbPrefix } = req.body as { awbPrefix: string | null };
+
+    // Validate: must be exactly 3 digits or null/empty
+    if (awbPrefix && !/^\d{3}$/.test(awbPrefix.trim())) {
+      return res.status(400).json({ message: "AWB prefix must be exactly 3 digits (e.g. 176)" });
+    }
+
+    // Check for duplicate prefix among other airlines
+    if (awbPrefix) {
+      const [conflict] = await db.select({ id: airlinesTable.id, name: airlinesTable.name, iataCode: airlinesTable.iataCode })
+        .from(airlinesTable)
+        .where(and(eq(airlinesTable.awbPrefix, awbPrefix.trim()), sql`id != ${id}`));
+      if (conflict) {
+        return res.status(409).json({
+          message: `Prefix ${awbPrefix} is already assigned to ${conflict.name} (${conflict.iataCode || conflict.id}). Each airline must have a unique AWB prefix.`,
+          conflict,
+        });
+      }
+    }
+
+    const [airline] = await db.update(airlinesTable)
+      .set({ awbPrefix: awbPrefix ? awbPrefix.trim() : null, lastUpdated: new Date() })
+      .where(eq(airlinesTable.id, id))
+      .returning();
+
+    if (!airline) return res.status(404).json({ message: "Airline not found" });
+
+    await db.insert(auditLogsTable).values({
+      entityType: "airline", entityId: id, action: "update",
+      changes: { awbPrefix }, performedBy: "admin",
+    });
+
+    res.json(airline);
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.patch("/airlines/:id/status", async (req, res) => {
   try {
     const id = parseInt(req.params.id);
