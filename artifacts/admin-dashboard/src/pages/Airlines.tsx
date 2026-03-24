@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useListAirlines, useUpdateAirlineStatus, useCreateAirline, useUpdateAirline, useDeleteAirline, Airline, AirlineStatus, CreateAirlineRequest, UpdateAirlineRequest } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent, Button, Input, Select, Badge, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Modal, Label } from "@/components/ui";
-import { Search, Plus, Edit2, Trash2, Check, X, Filter, CheckSquare, ChevronsUpDown } from "lucide-react";
+import { Search, Plus, Edit2, Trash2, Check, X, Filter, CheckSquare, ChevronsUpDown, Hash } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+
+const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -31,8 +33,47 @@ export default function Airlines() {
   const [allFilterSelected, setAllFilterSelected] = useState(false);
   const [bulkLoading, setBulkLoading] = useState(false);
 
+  // FIRMS codes map: airlineId → string[]
+  const [firmsMap, setFirmsMap] = useState<Map<number, string[]>>(new Map());
+  // FIRMS search filter
+  const [firmsSearch, setFirmsSearch] = useState("");
+  const [firmsFilterIds, setFirmsFilterIds] = useState<Set<number> | null>(null);
+  const [firmsLoading, setFirmsLoading] = useState(false);
+
   const queryClient = useQueryClient();
   const { data, isLoading } = useListAirlines({ search, status: statusFilter as any, page, limit });
+
+  // Load FIRMS codes for all airlines (fetch all ops)
+  useEffect(() => {
+    fetch(`${BASE}/api/airline-operations?limit=2000`)
+      .then(r => r.json())
+      .then(json => {
+        const map = new Map<number, string[]>();
+        for (const op of json.data ?? []) {
+          if (!op.airlineId || !op.firmsCode) continue;
+          if (!map.has(op.airlineId)) map.set(op.airlineId, []);
+          const list = map.get(op.airlineId)!;
+          if (!list.includes(op.firmsCode)) list.push(op.firmsCode);
+        }
+        setFirmsMap(map);
+      })
+      .catch(() => {});
+  }, []);
+
+  // FIRMS search: fetch ops by FIRMS code, collect matching airline IDs
+  useEffect(() => {
+    const term = firmsSearch.trim();
+    if (!term) { setFirmsFilterIds(null); return; }
+    setFirmsLoading(true);
+    fetch(`${BASE}/api/airline-operations?search=${encodeURIComponent(term)}&limit=500`)
+      .then(r => r.json())
+      .then(json => {
+        const ids = new Set<number>((json.data ?? []).filter((op: any) => op.firmsCode).map((op: any) => op.airlineId as number));
+        setFirmsFilterIds(ids);
+      })
+      .catch(() => setFirmsFilterIds(new Set()))
+      .finally(() => setFirmsLoading(false));
+  }, [firmsSearch]);
 
   const createMut = useCreateAirline({ mutation: {
     onSuccess: () => { toast.success("Airline created"); queryClient.invalidateQueries({ queryKey: ["/api/airlines"] }); closeModal(); },
@@ -177,6 +218,24 @@ export default function Airlines() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Search by name, IATA, CBP, ICAO..." className="pl-9 hover:border-primary/50 focus:border-primary transition-colors" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); setSelected(new Set()); setAllFilterSelected(false); }} />
             </div>
+            {/* FIRMS code filter */}
+            <div className="relative w-full sm:w-52">
+              <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 z-10 text-emerald-500" />
+              <Input
+                placeholder="Filter by FIRMS code..."
+                className="pl-9 hover:border-emerald-400 focus:border-emerald-500 transition-colors font-mono text-sm"
+                value={firmsSearch}
+                onChange={e => { setFirmsSearch(e.target.value); setPage(1); }}
+              />
+              {firmsLoading && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-emerald-500 animate-pulse">…</span>
+              )}
+              {firmsSearch && !firmsLoading && (
+                <button onClick={() => { setFirmsSearch(""); setFirmsFilterIds(null); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
             <div className="relative w-full sm:w-44">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
               <Select className="pl-9 hover:border-primary/50 transition-colors cursor-pointer" value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value as any); setPage(1); setSelected(new Set()); setAllFilterSelected(false); }}>
@@ -193,6 +252,17 @@ export default function Airlines() {
               </Select>
             </div>
           </div>
+
+          {/* FIRMS filter active notice */}
+          {firmsFilterIds !== null && (
+            <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium" style={{ background: "rgba(16,185,129,0.1)", color: "#059669", border: "1px solid rgba(16,185,129,0.25)" }}>
+              <Hash className="h-4 w-4 shrink-0" />
+              {firmsFilterIds.size === 0
+                ? `No airlines found with FIRMS code matching "${firmsSearch}"`
+                : `Showing ${firmsFilterIds.size} airline${firmsFilterIds.size !== 1 ? "s" : ""} with FIRMS code matching "${firmsSearch}"`}
+              <button onClick={() => { setFirmsSearch(""); setFirmsFilterIds(null); }} className="ml-auto text-xs underline hover:no-underline">Clear</button>
+            </div>
+          )}
 
           {/* Bulk actions */}
           {selected.size > 0 && (
@@ -238,6 +308,7 @@ export default function Airlines() {
                 </TableHead>
                 <TableHead>Airline</TableHead>
                 <TableHead>Codes</TableHead>
+                <TableHead>FIRMS</TableHead>
                 <TableHead>Country</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Last Updated</TableHead>
@@ -246,10 +317,12 @@ export default function Airlines() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Loading...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Loading...</TableCell></TableRow>
               ) : data?.data.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No records found.</TableCell></TableRow>
-              ) : data?.data.map(airline => (
+                <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">No records found.</TableCell></TableRow>
+              ) : data?.data
+                  .filter(a => firmsFilterIds === null || firmsFilterIds.has(a.id))
+                  .map(airline => (
                 <TableRow key={airline.id} className={selected.has(airline.id) ? "bg-sky-50" : "hover:bg-muted/30"}>
                   <TableCell>
                     <input type="checkbox" checked={selected.has(airline.id)} onChange={() => toggleOne(airline.id)} className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
@@ -263,6 +336,20 @@ export default function Airlines() {
                       {airline.iataCode && <Badge variant="outline" className="px-1.5 py-0 text-xs">IATA: {airline.iataCode}</Badge>}
                       {airline.icaoCode && <Badge variant="outline" className="px-1.5 py-0 text-xs">ICAO: {airline.icaoCode}</Badge>}
                       {airline.cbpCode && <Badge variant="outline" className="px-1.5 py-0 text-xs border-orange-300 text-orange-600">CBP: {airline.cbpCode}</Badge>}
+                    </div>
+                  </TableCell>
+                  {/* FIRMS codes column */}
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {(firmsMap.get(airline.id) ?? []).map(code => (
+                        <span key={code} className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[11px] font-mono font-bold"
+                          style={{ background: "rgba(16,185,129,0.12)", color: "#059669", border: "1px solid rgba(16,185,129,0.25)" }}>
+                          {code}
+                        </span>
+                      ))}
+                      {(firmsMap.get(airline.id) ?? []).length === 0 && (
+                        <span className="text-xs text-muted-foreground italic">—</span>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>{airline.country || "—"}</TableCell>
