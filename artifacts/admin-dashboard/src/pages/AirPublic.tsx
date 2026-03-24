@@ -3,7 +3,8 @@ import { useListAirlines, useListAirports } from "@workspace/api-client-react";
 import {
   Search, Plane, Building2, MapPin, Filter, ChevronRight, X,
   Phone, Mail, Hash, DollarSign, ArrowLeft, Zap, Globe, Radio,
-  Shield, TrendingUp, AlertCircle, ScanBarcode, Package, Loader2
+  Shield, TrendingUp, AlertCircle, ScanBarcode, Package, Loader2,
+  MessageSquarePlus, Send, CheckCircle2
 } from "lucide-react";
 import { Watermark } from "@/components/Watermark";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -106,8 +107,178 @@ function Spinner() {
   );
 }
 
+const REQUEST_TYPES = [
+  { value: "new_airline", label: "New Airline" },
+  { value: "new_ground_handler", label: "New Ground Handler" },
+  { value: "firms_code", label: "FIRMS Code" },
+  { value: "isc_charges", label: "ISC Charges" },
+  { value: "payable_to", label: "Payable To (Ground Handler)" },
+  { value: "payable_by", label: "Payable By" },
+  { value: "contact_info", label: "Contact Info" },
+  { value: "other", label: "Other" },
+];
+
+const emptyReqForm = { type: "firms_code", subject: "", details: "", airlineName: "", airlineIata: "", airportIata: "", firmsCode: "", contactName: "", contactEmail: "" };
+
+function RequestModal({ isOpen, onClose, isDark }: { isOpen: boolean; onClose: () => void; isDark: boolean }) {
+  const [form, setForm] = useState(emptyReqForm);
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const inputStyle: React.CSSProperties = {
+    background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
+    border: "1px solid var(--t-border)",
+    color: "var(--t-text)",
+  };
+
+  const f = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    setForm(p => ({ ...p, [k]: e.target.value }));
+
+  const handleSubmit = async () => {
+    if (!form.subject.trim() || !form.details.trim()) { setError("Subject and details are required"); return; }
+    setSubmitting(true); setError("");
+    try {
+      const res = await fetch(`${BASE}/api/requests`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: form.type, subject: form.subject.trim(), details: form.details.trim(),
+          airlineName: form.airlineName || null, airlineIata: form.airlineIata || null,
+          airportIata: form.airportIata || null, firmsCode: form.firmsCode || null,
+          contactName: form.contactName || null, contactEmail: form.contactEmail || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.message ?? "Submission failed"); }
+      else { setSuccess(true); setForm(emptyReqForm); }
+    } catch { setError("Network error — please try again."); }
+    setSubmitting(false);
+  };
+
+  const handleClose = () => { setSuccess(false); setError(""); setForm(emptyReqForm); onClose(); };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={handleClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl"
+        style={{ background: isDark ? "hsl(222,55%,10%)" : "#fff", border: "1px solid var(--t-border)" }}
+        onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: "var(--t-border)" }}>
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl flex items-center justify-center"
+              style={{ background: "linear-gradient(135deg, #059669, #047857)" }}>
+              <MessageSquarePlus className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h2 className="font-black text-base" style={{ color: "var(--t-text)" }}>Submit Data Request</h2>
+              <p className="text-xs" style={{ color: "var(--t-text-muted)" }}>Request new airlines, FIRMS codes, ISC charges, or contact info</p>
+            </div>
+          </div>
+          <button onClick={handleClose} className="p-2 rounded-xl transition-all hover:opacity-70" style={{ color: "var(--t-text-muted)" }}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {success ? (
+          <div className="p-8 text-center space-y-4">
+            <div className="h-16 w-16 rounded-2xl flex items-center justify-center mx-auto" style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.3)" }}>
+              <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+            </div>
+            <h3 className="text-lg font-black" style={{ color: "var(--t-text)" }}>Request Submitted!</h3>
+            <p className="text-sm" style={{ color: "var(--t-text-muted)" }}>
+              Thank you. Our team will review your request and update the registry accordingly.
+            </p>
+            <button onClick={handleClose}
+              className="mt-4 px-6 py-2.5 rounded-xl text-sm font-bold text-white"
+              style={{ background: "linear-gradient(135deg, #059669, #047857)" }}>
+              Close
+            </button>
+          </div>
+        ) : (
+          <div className="p-5 space-y-4">
+            {/* Type */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Request Type</label>
+              <select value={form.type} onChange={f("type")} className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none" style={inputStyle}>
+                {REQUEST_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+              </select>
+            </div>
+            {/* Subject */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Subject <span className="text-red-400">*</span></label>
+              <input type="text" value={form.subject} onChange={f("subject")} placeholder="Brief description of what you need..."
+                className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none" style={inputStyle} />
+            </div>
+            {/* Details */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Details <span className="text-red-400">*</span></label>
+              <textarea value={form.details} onChange={f("details")} rows={3} placeholder="Provide as much detail as possible..."
+                className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none resize-none" style={inputStyle} />
+            </div>
+            {/* Airline + airport */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="col-span-1">
+                <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Airline IATA</label>
+                <input type="text" value={form.airlineIata} onChange={f("airlineIata")} placeholder="e.g. EK" maxLength={3}
+                  className="w-full px-3 py-2.5 rounded-xl text-sm font-mono uppercase focus:outline-none" style={inputStyle} />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Airport IATA</label>
+                <input type="text" value={form.airportIata} onChange={f("airportIata")} placeholder="e.g. JFK" maxLength={4}
+                  className="w-full px-3 py-2.5 rounded-xl text-sm font-mono uppercase focus:outline-none" style={inputStyle} />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>FIRMS Code</label>
+                <input type="text" value={form.firmsCode} onChange={f("firmsCode")} placeholder="e.g. ABCD" maxLength={6}
+                  className="w-full px-3 py-2.5 rounded-xl text-sm font-mono uppercase focus:outline-none" style={inputStyle} />
+              </div>
+            </div>
+            {/* Airline name */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Airline Name (optional)</label>
+              <input type="text" value={form.airlineName} onChange={f("airlineName")} placeholder="e.g. Emirates"
+                className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none" style={inputStyle} />
+            </div>
+            {/* Contact */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Your Name (optional)</label>
+                <input type="text" value={form.contactName} onChange={f("contactName")} placeholder="Full name"
+                  className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none" style={inputStyle} />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Your Email (optional)</label>
+                <input type="email" value={form.contactEmail} onChange={f("contactEmail")} placeholder="For follow-up"
+                  className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none" style={inputStyle} />
+              </div>
+            </div>
+
+            {error && (
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl" style={{ background: "rgba(244,63,94,0.08)", border: "1px solid rgba(244,63,94,0.2)" }}>
+                <AlertCircle className="h-4 w-4 text-red-400 shrink-0" />
+                <p className="text-xs text-red-400 font-semibold">{error}</p>
+              </div>
+            )}
+
+            <button onClick={handleSubmit} disabled={submitting}
+              className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl text-sm font-black transition-all disabled:opacity-50"
+              style={{ background: "linear-gradient(135deg, #059669, #047857)", color: "#fff", boxShadow: "0 4px 20px rgba(5,150,105,0.3)" }}>
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {submitting ? "Submitting..." : "Submit Request"}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function AirPublic() {
   const { isDark } = useTheme();
+  const [requestOpen, setRequestOpen] = useState(false);
 
   const [tab, setTab] = useState<"airlines" | "airports" | "awb">("awb");
   const [search, setSearch] = useState("");
@@ -280,16 +451,25 @@ export default function AirPublic() {
       {/* ─── HERO ─── */}
       <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16" style={{ background: heroBg }}>
         {/* Status + Theme toggle row */}
-        <div className="flex items-center justify-end gap-3 mb-10 max-w-6xl mx-auto">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)" }}>
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
-            <span className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">Live Data</span>
+        <div className="flex items-center justify-between gap-3 mb-10 max-w-6xl mx-auto">
+          <button
+            onClick={() => setRequestOpen(true)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
+            style={{ background: "rgba(5,150,105,0.15)", border: "1px solid rgba(5,150,105,0.35)", color: "#34d399" }}>
+            <MessageSquarePlus className="h-3.5 w-3.5" />
+            <span>Submit Data Request</span>
+          </button>
+          <div className="flex items-center gap-3 ml-auto">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)" }}>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
+              <span className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">Live Data</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)" }}>
+              <Radio className="h-3 w-3" style={{ color: "var(--t-accent)" }} />
+              <span className="text-[10px] font-bold tracking-widest uppercase hidden sm:inline" style={{ color: "var(--t-accent)" }}>Registry Online</span>
+            </div>
+            <ThemeToggle compact />
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)" }}>
-            <Radio className="h-3 w-3" style={{ color: "var(--t-accent)" }} />
-            <span className="text-[10px] font-bold tracking-widest uppercase hidden sm:inline" style={{ color: "var(--t-accent)" }}>Registry Online</span>
-          </div>
-          <ThemeToggle compact />
         </div>
 
         {/* Title */}
@@ -935,6 +1115,8 @@ export default function AirPublic() {
           </div>
         )}
       </div>
+
+      <RequestModal isOpen={requestOpen} onClose={() => setRequestOpen(false)} isDark={isDark} />
     </div>
   );
 }

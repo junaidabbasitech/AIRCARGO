@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { airlineOperationsTable, airlinesTable, airportsTable, auditLogsTable } from "@workspace/db/schema";
-import { eq, and, sql, ilike, ne } from "drizzle-orm";
+import { eq, and, sql, ilike, ne, or, desc } from "drizzle-orm";
 
 const router: IRouter = Router();
 
@@ -10,42 +10,78 @@ function isUniqueViolation(err: any, constraint?: string): boolean {
   return err?.code === "23505" && (!constraint || err?.constraint === constraint);
 }
 
-// GET /api/airline-operations — list all, optionally filtered by airlineId or airportId
+// GET /api/airline-operations — list all, with multi-field search + filters
 router.get("/airline-operations", async (req, res) => {
   try {
-    const { airlineId, airportId, firmsCode } = req.query as Record<string, string>;
+    const { airlineId, airportId, firmsCode, search, page = "1", limit = "500" } = req.query as Record<string, string>;
+    const pageNum = Math.max(1, parseInt(page));
+    const limitNum = Math.min(1000, Math.max(1, parseInt(limit)));
+    const offset = (pageNum - 1) * limitNum;
+
     const conditions = [];
     if (airlineId) conditions.push(eq(airlineOperationsTable.airlineId, parseInt(airlineId)));
     if (airportId) conditions.push(eq(airlineOperationsTable.airportId, parseInt(airportId)));
     if (firmsCode) conditions.push(ilike(airlineOperationsTable.firmsCode, `%${firmsCode}%`));
+    if (search) {
+      conditions.push(or(
+        ilike(airlinesTable.name, `%${search}%`),
+        ilike(airlinesTable.iataCode, `%${search}%`),
+        ilike(airportsTable.name, `%${search}%`),
+        ilike(airportsTable.iataCode, `%${search}%`),
+        ilike(airportsTable.city, `%${search}%`),
+        ilike(airlineOperationsTable.firmsCode, `%${search}%`),
+        ilike(airlineOperationsTable.iscAmount, `%${search}%`),
+        ilike(airlineOperationsTable.iscPayableAt, `%${search}%`),
+        ilike(airlineOperationsTable.iscPayableTo, `%${search}%`),
+        ilike(airlineOperationsTable.contactNumber, `%${search}%`),
+        ilike(airlineOperationsTable.contactEmail, `%${search}%`),
+        ilike(airlineOperationsTable.notes, `%${search}%`),
+      ));
+    }
     const where = conditions.length > 0 ? and(...conditions) : undefined;
 
-    const rows = await db
-      .select({
-        id: airlineOperationsTable.id,
-        airlineId: airlineOperationsTable.airlineId,
-        airportId: airlineOperationsTable.airportId,
-        firmsCode: airlineOperationsTable.firmsCode,
-        iscAmount: airlineOperationsTable.iscAmount,
-        iscPayableAt: airlineOperationsTable.iscPayableAt,
-        iscPayableTo: airlineOperationsTable.iscPayableTo,
-        contactNumber: airlineOperationsTable.contactNumber,
-        contactEmail: airlineOperationsTable.contactEmail,
-        notes: airlineOperationsTable.notes,
-        lastUpdated: airlineOperationsTable.lastUpdated,
-        airlineName: airlinesTable.name,
-        airlineIata: airlinesTable.iataCode,
-        airportName: airportsTable.name,
-        airportIata: airportsTable.iataCode,
-        airportCity: airportsTable.city,
-        airportState: airportsTable.state,
-      })
+    const colSelect = {
+      id: airlineOperationsTable.id,
+      airlineId: airlineOperationsTable.airlineId,
+      airportId: airlineOperationsTable.airportId,
+      firmsCode: airlineOperationsTable.firmsCode,
+      iscAmount: airlineOperationsTable.iscAmount,
+      iscPayableAt: airlineOperationsTable.iscPayableAt,
+      iscPayableTo: airlineOperationsTable.iscPayableTo,
+      contactNumber: airlineOperationsTable.contactNumber,
+      contactEmail: airlineOperationsTable.contactEmail,
+      notes: airlineOperationsTable.notes,
+      lastUpdated: airlineOperationsTable.lastUpdated,
+      airlineName: airlinesTable.name,
+      airlineIata: airlinesTable.iataCode,
+      airportName: airportsTable.name,
+      airportIata: airportsTable.iataCode,
+      airportCity: airportsTable.city,
+      airportState: airportsTable.state,
+    };
+
+    const base = db
+      .select(colSelect)
       .from(airlineOperationsTable)
       .leftJoin(airlinesTable, eq(airlineOperationsTable.airlineId, airlinesTable.id))
-      .leftJoin(airportsTable, eq(airlineOperationsTable.airportId, airportsTable.id))
-      .where(where)
-      .orderBy(airlinesTable.name, airportsTable.name);
+      .leftJoin(airportsTable, eq(airlineOperationsTable.airportId, airportsTable.id));
 
+    // For paginated search use offset; for backwards-compat without search/page return all
+    const usePages = !!(search || page !== "1" || parseInt(limit) < 500);
+
+    if (usePages) {
+      const [rows, countResult] = await Promise.all([
+        base.where(where).orderBy(airlinesTable.name, airportsTable.name).limit(limitNum).offset(offset),
+        db.select({ count: sql<number>`count(*)::int` })
+          .from(airlineOperationsTable)
+          .leftJoin(airlinesTable, eq(airlineOperationsTable.airlineId, airlinesTable.id))
+          .leftJoin(airportsTable, eq(airlineOperationsTable.airportId, airportsTable.id))
+          .where(where),
+      ]);
+      return res.json({ data: rows, total: countResult[0].count, page: pageNum, limit: limitNum });
+    }
+
+    const rows = await base.where(where).orderBy(airlinesTable.name, airportsTable.name).limit(limitNum).offset(offset);
     res.json({ data: rows, total: rows.length });
   } catch (err) {
     req.log.error(err);

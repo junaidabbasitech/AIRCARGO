@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useListAirlines } from "@workspace/api-client-react";
 import { Card, CardContent, Button, Input, Label, Modal, Select, Badge } from "@/components/ui";
 import { SearchableAirportSelect } from "@/components/SearchableAirportSelect";
-import { Plus, Edit2, Trash2, Search, Plane, Building2, ChevronLeft, Phone, Mail, Hash, DollarSign, MapPin, CheckSquare, X } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, Plane, Building2, ChevronLeft, Phone, Mail, Hash, DollarSign, MapPin, CheckSquare, X, Globe } from "lucide-react";
 import { toast } from "sonner";
+import { useTheme } from "@/context/ThemeContext";
 
 const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
 
@@ -36,11 +37,18 @@ async function apiFetch(path: string, opts?: RequestInit) {
 }
 
 export default function AirlineOperations() {
+  const { isDark } = useTheme();
   const [ops, setOps] = useState<AirlineOp[]>([]);
   const [loading, setLoading] = useState(true);
   const [airlineSearch, setAirlineSearch] = useState("");
   const [selectedAirlineId, setSelectedAirlineId] = useState<number | null>(null);
   const [expandedAirportId, setExpandedAirportId] = useState<number | null>(null);
+
+  // Global search mode
+  const [globalMode, setGlobalMode] = useState(false);
+  const [globalSearch, setGlobalSearch] = useState("");
+  const [globalResults, setGlobalResults] = useState<AirlineOp[]>([]);
+  const [globalLoading, setGlobalLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editing, setEditing] = useState<AirlineOp | null>(null);
   const [form, setForm] = useState(emptyForm);
@@ -58,6 +66,19 @@ export default function AirlineOperations() {
   };
 
   useEffect(() => { loadOps(); }, []);
+
+  useEffect(() => {
+    if (!globalMode) return;
+    const term = globalSearch.trim();
+    if (!term) { setGlobalResults([]); return; }
+    setGlobalLoading(true);
+    const params = new URLSearchParams({ search: term, limit: "100" });
+    fetch(`${BASE}/api/airline-operations?${params}`)
+      .then(r => r.json())
+      .then(data => setGlobalResults(data.data ?? []))
+      .catch(() => {})
+      .finally(() => setGlobalLoading(false));
+  }, [globalSearch, globalMode]);
 
   // Grouped: unique airlines that have operations
   const airlineMap = new Map<number, { name: string; iata: string; count: number; hasData: boolean }>();
@@ -162,59 +183,179 @@ export default function AirlineOperations() {
     setForm(prev => ({ ...prev, [key]: e.target.value }));
 
   // ──────────────────────────────────────────────
-  // LEVEL 1 — Airline Grid
+  // LEVEL 1 — Airline Grid OR Global Search
   // ──────────────────────────────────────────────
   if (!selectedAirlineId) {
     return (
       <div className="space-y-5">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold text-foreground">Airline Operations</h2>
-            <p className="text-sm text-muted-foreground mt-0.5">Click an airline to manage its airport operations, FIRMS codes, and ISC data</p>
+            <h2 className="text-xl font-bold" style={{ color: "var(--t-text)" }}>Airline Operations</h2>
+            <p className="text-sm mt-0.5" style={{ color: "var(--t-text-muted)" }}>Manage airport operations, FIRMS codes, and ISC data by airline</p>
           </div>
-          <Button variant="primary" onClick={() => openCreate()} className="hover:scale-105 active:scale-95 transition-all">
-            <Plus className="h-4 w-4 mr-2" /> Add Operation
-          </Button>
-        </div>
-
-        {/* Search */}
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search airline name or IATA..." className="pl-9" value={airlineSearch} onChange={e => setAirlineSearch(e.target.value)} />
-        </div>
-
-        {loading ? (
-          <div className="text-center py-16 text-muted-foreground">Loading...</div>
-        ) : uniqueAirlines.length === 0 ? (
-          <div className="text-center py-16 text-muted-foreground">No airline operations found. Click "Add Operation" to get started.</div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {uniqueAirlines.map(([airlineId, info]) => (
-              <button
-                key={airlineId}
-                onClick={() => { setSelectedAirlineId(airlineId); setExpandedAirportId(null); setSelected(new Set()); }}
-                className="group flex flex-col items-center gap-3 p-4 bg-white border border-border rounded-2xl hover:border-sky-400 hover:shadow-lg hover:shadow-sky-100 active:scale-95 transition-all duration-200 text-left"
-              >
-                <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 flex items-center justify-center text-white font-bold font-mono text-lg shadow group-hover:scale-110 transition-transform">
-                  {info.iata}
-                </div>
-                <div className="text-center w-full">
-                  <p className="font-semibold text-sm text-foreground line-clamp-2 leading-tight">{info.name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {info.count > 0 ? (
-                      <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
-                        <Building2 className="h-3 w-3" /> {info.count} airport{info.count !== 1 ? "s" : ""}
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full font-medium">
-                        No airports
-                      </span>
-                    )}
-                  </p>
-                </div>
+          <div className="flex items-center gap-2">
+            {/* Mode toggle */}
+            <div className="flex rounded-xl overflow-hidden border" style={{ borderColor: "var(--t-border)" }}>
+              <button onClick={() => setGlobalMode(false)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition-all"
+                style={!globalMode ? { background: "var(--t-accent)", color: "#fff" } : { background: "var(--t-card)", color: "var(--t-text-sub)" }}>
+                <Plane className="h-3.5 w-3.5" /> By Airline
               </button>
-            ))}
+              <button onClick={() => setGlobalMode(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition-all"
+                style={globalMode ? { background: "var(--t-accent)", color: "#fff" } : { background: "var(--t-card)", color: "var(--t-text-sub)" }}>
+                <Globe className="h-3.5 w-3.5" /> Global Search
+              </button>
+            </div>
+            <Button variant="primary" onClick={() => openCreate()} className="hover:scale-105 active:scale-95 transition-all">
+              <Plus className="h-4 w-4 mr-2" /> Add Operation
+            </Button>
           </div>
+        </div>
+
+        {globalMode ? (
+          /* ── Global Search Mode ── */
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "var(--t-text-muted)" }} />
+              <Input
+                placeholder="Search by airline, airport, FIRMS code, ISC amount, payable to, contact..."
+                className="pl-9 text-sm"
+                value={globalSearch}
+                onChange={e => setGlobalSearch(e.target.value)}
+                autoFocus
+              />
+              {globalSearch && (
+                <button onClick={() => { setGlobalSearch(""); setGlobalResults([]); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-all hover:opacity-70"
+                  style={{ color: "var(--t-text-muted)" }}>
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+            {globalSearch.trim() === "" ? (
+              <div className="text-center py-16" style={{ color: "var(--t-text-muted)" }}>
+                <Search className="h-8 w-8 mx-auto mb-3 opacity-30" />
+                <p className="text-sm font-semibold">Type to search across all operation fields</p>
+                <p className="text-xs mt-1 opacity-70">FIRMS codes, ISC amounts, airlines, airports, ground handlers, contacts...</p>
+              </div>
+            ) : globalLoading ? (
+              <div className="text-center py-16" style={{ color: "var(--t-text-muted)" }}>Searching...</div>
+            ) : globalResults.length === 0 ? (
+              <div className="text-center py-16" style={{ color: "var(--t-text-muted)" }}>No results for "{globalSearch}"</div>
+            ) : (
+              <Card>
+                <CardContent className="p-0">
+                  <div className="px-4 py-2.5 border-b flex items-center justify-between" style={{ borderColor: "var(--t-border)" }}>
+                    <span className="text-xs font-semibold" style={{ color: "var(--t-text-muted)" }}>{globalResults.length} result{globalResults.length !== 1 ? "s" : ""}</span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr style={{ borderBottom: "1px solid var(--t-border)" }}>
+                          {["Airline", "Airport", "FIRMS Code", "ISC Amount", "Payable To", "Contact", "Actions"].map(h => (
+                            <th key={h} className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--t-text-muted)" }}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {globalResults.map(op => (
+                          <tr key={op.id} className="group transition-all" style={{ borderBottom: "1px solid var(--t-border)" }}>
+                            <td className="px-3 py-3">
+                              <div className="flex items-center gap-2">
+                                <span className="px-1.5 py-0.5 rounded-lg text-xs font-mono font-bold" style={{ background: "var(--t-accent-dim)", color: "var(--t-accent)" }}>
+                                  {op.airlineIata ?? "?"}
+                                </span>
+                                <span className="text-xs font-semibold truncate max-w-[100px]" style={{ color: "var(--t-text)" }}>{op.airlineName ?? "—"}</span>
+                              </div>
+                            </td>
+                            <td className="px-3 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <span className="px-1.5 py-0.5 rounded-lg text-xs font-mono font-bold" style={{ background: "var(--t-accent2-dim)", color: "var(--t-accent2)" }}>
+                                  {op.airportIata ?? "?"}
+                                </span>
+                                <span className="text-xs truncate max-w-[80px]" style={{ color: "var(--t-text-sub)" }}>{op.airportCity ?? ""}</span>
+                              </div>
+                            </td>
+                            <td className="px-3 py-3">
+                              {op.firmsCode ? (
+                                <span className="px-2 py-0.5 rounded-lg text-xs font-mono font-bold" style={{ background: "rgba(16,185,129,0.12)", color: "#10b981" }}>
+                                  {op.firmsCode}
+                                </span>
+                              ) : <span className="text-xs italic" style={{ color: "var(--t-text-muted)" }}>—</span>}
+                            </td>
+                            <td className="px-3 py-3 text-xs font-mono" style={{ color: "var(--t-text)" }}>{op.iscAmount ?? "—"}</td>
+                            <td className="px-3 py-3 text-xs" style={{ color: "var(--t-text-sub)" }}>{op.iscPayableTo ?? "—"}</td>
+                            <td className="px-3 py-3 text-xs" style={{ color: "var(--t-text-sub)" }}>
+                              {op.contactNumber || op.contactEmail ? (
+                                <div>
+                                  {op.contactNumber && <div>{op.contactNumber}</div>}
+                                  {op.contactEmail && <div className="truncate max-w-[120px]">{op.contactEmail}</div>}
+                                </div>
+                              ) : "—"}
+                            </td>
+                            <td className="px-3 py-3">
+                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => openEdit(op)} className="p-1.5 rounded-lg transition-all" style={{ background: "var(--t-accent-dim)", color: "var(--t-accent)" }}>
+                                  <Edit2 className="h-3.5 w-3.5" />
+                                </button>
+                                <button onClick={() => handleDelete(op.id)} className="p-1.5 rounded-lg transition-all" style={{ background: "rgba(244,63,94,0.1)", color: "#f43f5e" }}>
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        ) : (
+          /* ── By Airline Mode ── */
+          <>
+            <div className="relative max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search airline name or IATA..." className="pl-9" value={airlineSearch} onChange={e => setAirlineSearch(e.target.value)} />
+            </div>
+
+            {loading ? (
+              <div className="text-center py-16" style={{ color: "var(--t-text-muted)" }}>Loading...</div>
+            ) : uniqueAirlines.length === 0 ? (
+              <div className="text-center py-16" style={{ color: "var(--t-text-muted)" }}>No airline operations found. Click "Add Operation" to get started.</div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                {uniqueAirlines.map(([airlineId, info]) => (
+                  <button
+                    key={airlineId}
+                    onClick={() => { setSelectedAirlineId(airlineId); setExpandedAirportId(null); setSelected(new Set()); }}
+                    className="group flex flex-col items-center gap-3 p-4 border rounded-2xl hover:shadow-lg active:scale-95 transition-all duration-200 text-left"
+                    style={{ background: isDark ? "rgba(255,255,255,0.04)" : "#fff", borderColor: "var(--t-border)" }}
+                  >
+                    <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 flex items-center justify-center text-white font-bold font-mono text-lg shadow group-hover:scale-110 transition-transform">
+                      {info.iata}
+                    </div>
+                    <div className="text-center w-full">
+                      <p className="font-semibold text-sm line-clamp-2 leading-tight" style={{ color: "var(--t-text)" }}>{info.name}</p>
+                      <p className="text-xs mt-1">
+                        {info.count > 0 ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-medium text-orange-700" style={{ background: "rgba(234,88,12,0.12)" }}>
+                            <Building2 className="h-3 w-3" /> {info.count} airport{info.count !== 1 ? "s" : ""}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-medium" style={{ color: "var(--t-text-muted)", background: "var(--t-card)" }}>
+                            No airports
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
         )}
 
         <OperationModal

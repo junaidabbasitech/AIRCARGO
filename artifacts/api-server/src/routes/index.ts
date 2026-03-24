@@ -10,6 +10,7 @@ import airlineOperationsRouter from "./airlineOperations";
 import importExportRouter from "./importExport";
 import duplicatesRouter from "./duplicates";
 import awbSearchRouter from "./awbSearch";
+import userRequestsRouter from "./userRequests";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use(airlineOperationsRouter);
 router.use(importExportRouter);
 router.use(duplicatesRouter);
 router.use(awbSearchRouter);
+router.use(userRequestsRouter);
 
 export default router;
