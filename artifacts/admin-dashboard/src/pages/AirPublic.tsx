@@ -109,7 +109,7 @@ function Spinner() {
 export default function AirPublic() {
   const { isDark } = useTheme();
 
-  const [tab, setTab] = useState<"airlines" | "airports" | "awb">("airlines");
+  const [tab, setTab] = useState<"airlines" | "airports" | "awb">("awb");
   const [search, setSearch] = useState("");
   const [country, setCountry] = useState("");
   const [icaoFilter, setIcaoFilter] = useState("");
@@ -311,6 +311,17 @@ export default function AirPublic() {
           {/* Tab switcher */}
           <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-7" style={{ background: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)", border: "1px solid var(--t-border)" }}>
             <button
+              onClick={() => handleTab("awb")}
+              className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
+              style={tab === "awb" ? {
+                background: "linear-gradient(135deg, #059669, #047857)",
+                color: "#fff", boxShadow: "0 4px 20px rgba(5,150,105,0.35)"
+              } : { color: "var(--t-text-sub)" }}
+            >
+              <ScanBarcode className="h-4 w-4" />
+              AWB Track
+            </button>
+            <button
               onClick={() => handleTab("airlines")}
               className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
               style={tab === "airlines" ? {
@@ -343,17 +354,6 @@ export default function AirPublic() {
                   color: tab === "airports" ? "#fff" : "var(--t-text-muted)"
                 }}>{airports.total}</span>
               )}
-            </button>
-            <button
-              onClick={() => handleTab("awb")}
-              className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
-              style={tab === "awb" ? {
-                background: "linear-gradient(135deg, #059669, #047857)",
-                color: "#fff", boxShadow: "0 4px 20px rgba(5,150,105,0.35)"
-              } : { color: "var(--t-text-sub)" }}
-            >
-              <ScanBarcode className="h-4 w-4" />
-              AWB Track
             </button>
           </div>
 
