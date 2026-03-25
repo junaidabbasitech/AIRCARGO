@@ -1,7 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSyncData, useGetSyncStatus, useGetRawData, SyncRequestSourcesItem } from "@workspace/api-client-react";
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge, Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui";
-import { RefreshCw, Database, AlertCircle, CheckCircle2, Download, Upload, FileSpreadsheet, X } from "lucide-react";
+import { RefreshCw, Database, AlertCircle, CheckCircle2, Download, Upload, FileSpreadsheet, X, CloudDownload, Zap, Clock, ShieldCheck, ShieldOff } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
