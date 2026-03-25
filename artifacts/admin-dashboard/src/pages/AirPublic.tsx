@@ -458,11 +458,11 @@ export default function AirPublic() {
             <span>Submit Data Request</span>
           </button>
           <div className="flex items-center gap-3 ml-auto">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)" }}>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(16,185,129,0.1)", border: "1px solid blue)" }}>
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
               <span className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">Live Data</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)" }}>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "var(--t-accent-dim)", border: "1px solid var(orange)" }}>
               <Radio className="h-3 w-3" style={{ color: "var(--t-accent)" }} />
               <span className="text-[10px] font-bold tracking-widest uppercase hidden sm:inline" style={{ color: "var(--t-accent)" }}>Registry Online</span>
             </div>
@@ -555,6 +555,21 @@ export default function AirPublic() {
               {search && (
                 <button onClick={() => setSearch("")} className="mr-3 p-1.5 rounded-lg transition-all" style={{ color: "var(--t-text-muted)" }}>
                   <X className="h-4 w-4" />
+                </button>
+              )}
+              {tab === "airlines" && (
+                <button
+                  onClick={() => { setAirlineGlobalMode(v => !v); setAirlineGlobalSearch(""); setAirlineGlobalResults([]); setSelectedGlobalOp(null); }}
+                  className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200"
+                  style={airlineGlobalMode ? {
+                    background: "var(--t-accent)", color: "#fff", boxShadow: "0 2px 12px var(--t-accent-glow)"
+                  } : {
+                    background: "var(--t-card)", color: "var(--t-text-sub)", border: "1px solid var(--t-border)"
+                  }}
+                  title="Search across all FIRMS codes, ISC amounts, ground handlers and contacts"
+                >
+                  <Globe className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Global</span>
                 </button>
               )}
               <button
@@ -986,8 +1001,137 @@ export default function AirPublic() {
           </div>
         )}
 
-        {/* ─── RESULTS LIST (only shown when nothing is selected) ─── */}
-        {!selectedAirline && !selectedAirport && tab !== "awb" && (
+        {/* ─── AIRLINES GLOBAL SEARCH PANEL ─── */}
+        {tab === "airlines" && !selectedAirline && airlineGlobalMode && (
+          <div className="rounded-2xl overflow-hidden shadow-xl mb-4" style={cardStyle}>
+            {/* Header */}
+            <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid var(--t-border)", background: "var(--t-accent-dim)" }}>
+              <div className="flex items-center gap-2.5">
+                <Globe className="h-4 w-4" style={{ color: "var(--t-accent)" }} />
+                <span className="text-sm font-bold" style={{ color: "var(--t-accent)" }}>Global Operations Search</span>
+              </div>
+              <span className="text-xs font-mono hidden sm:block" style={{ color: "var(--t-text-muted)" }}>
+                Search by airline, airport, FIRMS code, ISC amount, handler or contact
+              </span>
+            </div>
+            {/* Search input */}
+            <div className="p-4" style={{ borderBottom: "1px solid var(--t-border)" }}>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "var(--t-text-muted)" }} />
+                <input
+                  autoFocus
+                  type="text"
+                  value={airlineGlobalSearch}
+                  onChange={e => setAirlineGlobalSearch(e.target.value)}
+                  placeholder="e.g. Emirates, JFK, dnata, FIRMS code, 70-140..."
+                  className="w-full pl-9 pr-9 py-2.5 rounded-xl text-sm focus:outline-none"
+                  style={{ background: inputStyle.background, border: "1px solid var(--t-accent-border)", color: "var(--t-text)" }}
+                />
+                {airlineGlobalSearch && (
+                  <button onClick={() => { setAirlineGlobalSearch(""); setAirlineGlobalResults([]); setSelectedGlobalOp(null); }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: "var(--t-text-muted)" }}>
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Global search — selected op detail */}
+            {selectedGlobalOp ? (
+              <>
+                <div className="px-5 py-3 flex items-center gap-3 flex-wrap" style={{ borderBottom: "1px solid var(--t-accent-border)", background: "var(--t-accent-dim)" }}>
+                  <button onClick={() => setSelectedGlobalOp(null)} className="flex items-center gap-1.5 text-sm font-medium transition-colors" style={{ color: "var(--t-accent)" }}>
+                    <ArrowLeft className="h-4 w-4" /> Results
+                  </button>
+                  <span style={{ color: "var(--t-text-muted)" }}>›</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-sm" style={{ color: "var(--t-text)" }}>{selectedGlobalOp.airlineName}</span>
+                    <span className="text-xs font-mono" style={{ color: "var(--t-text-muted)" }}>@ {selectedGlobalOp.airportIata}</span>
+                  </div>
+                </div>
+                <div className="px-6 pt-5 pb-3 flex items-start gap-4" style={{ borderBottom: "1px solid var(--t-border)" }}>
+                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center font-black font-mono text-sm shrink-0"
+                    style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)", color: "var(--t-accent)" }}>
+                    {selectedGlobalOp.airlineIata || "—"}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-lg font-black tracking-wide" style={{ color: "var(--t-text)" }}>{selectedGlobalOp.airlineName}</h2>
+                    <p className="text-sm mt-0.5 flex items-center gap-1.5" style={{ color: "var(--t-text-sub)" }}>
+                      <Building2 className="h-3.5 w-3.5" style={{ color: "var(--t-accent2)" }} />
+                      {selectedGlobalOp.airportName} ({selectedGlobalOp.airportIata})
+                      {(selectedGlobalOp.airportCity || selectedGlobalOp.airportState) && (
+                        <span className="flex items-center gap-1 ml-1" style={{ color: "var(--t-text-muted)" }}>
+                          <MapPin className="h-3 w-3" />{[selectedGlobalOp.airportCity, selectedGlobalOp.airportState].filter(Boolean).join(", ")}
+                        </span>
+                      )}
+                    </p>
+                    <div className="flex items-center gap-2 mt-2 flex-wrap">
+                      {selectedGlobalOp.firmsCode && <Badge color="accent">FIRMS: {selectedGlobalOp.firmsCode}</Badge>}
+                      {selectedGlobalOp.iscAmount && <Badge color="green">ISC: ${selectedGlobalOp.iscAmount}</Badge>}
+                    </div>
+                  </div>
+                </div>
+                <OpsDetail op={selectedGlobalOp} />
+              </>
+            ) : airlineGlobalSearch.trim() === "" ? (
+              <div className="py-16 text-center">
+                <Globe className="h-8 w-8 mx-auto mb-3 opacity-25" style={{ color: "var(--t-text-muted)" }} />
+                <p className="text-sm font-semibold" style={{ color: "var(--t-text-muted)" }}>Type to search across all operations data</p>
+                <p className="text-xs mt-1 opacity-70" style={{ color: "var(--t-text-muted)" }}>FIRMS codes, ISC amounts, ground handlers, airline & airport names, contacts</p>
+              </div>
+            ) : airlineGlobalLoading ? (
+              <Spinner />
+            ) : airlineGlobalResults.length === 0 ? (
+              <div className="py-16 text-center">
+                <Search className="h-8 w-8 mx-auto mb-3 opacity-25" style={{ color: "var(--t-text-muted)" }} />
+                <p className="text-sm font-semibold" style={{ color: "var(--t-text-muted)" }}>No results for "{airlineGlobalSearch}"</p>
+              </div>
+            ) : (
+              <>
+                <div className="px-5 py-2 flex items-center gap-2" style={{ borderBottom: "1px solid var(--t-border)", background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.015)" }}>
+                  <span className="text-xs font-semibold" style={{ color: "var(--t-text-muted)" }}>
+                    {airlineGlobalResults.length} result{airlineGlobalResults.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+                <div className="divide-y" style={{ borderColor: "var(--t-border-soft)" }}>
+                  {airlineGlobalResults.map(op => (
+                    <button key={op.id} onClick={() => setSelectedGlobalOp(op)}
+                      className={`w-full flex items-center gap-4 px-5 py-4 transition-all duration-150 text-left ${rowHoverClass}`}>
+                      <div className="h-11 w-11 rounded-xl flex items-center justify-center font-black font-mono text-xs shrink-0"
+                        style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)", color: "var(--t-accent)" }}>
+                        {op.airlineIata ?? "?"}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-semibold text-sm" style={{ color: "var(--t-text)" }}>{op.airlineName}</p>
+                          <span className="text-xs flex items-center gap-1" style={{ color: "var(--t-text-muted)" }}>
+                            <Building2 className="h-3 w-3" /> {op.airportIata} — {op.airportName}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                          {op.firmsCode && <Badge color="accent">FIRMS: {op.firmsCode}</Badge>}
+                          {op.iscAmount && <Badge color="green">ISC: ${op.iscAmount}</Badge>}
+                          {op.iscPayableTo && <Badge color="muted">{op.iscPayableTo}</Badge>}
+                          {(op.airportCity || op.airportState) && (
+                            <span className="text-[10px] flex items-center gap-0.5" style={{ color: "var(--t-text-muted)" }}>
+                              <MapPin className="h-2.5 w-2.5" />{[op.airportCity, op.airportState].filter(Boolean).join(", ")}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="shrink-0 flex items-center gap-1 text-xs font-semibold" style={{ color: "var(--t-text-muted)" }}>
+                        View <ChevronRight className="h-4 w-4" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ─── RESULTS LIST (only shown when nothing is selected and not in global mode) ─── */}
+        {!selectedAirline && !selectedAirport && tab !== "awb" && !(tab === "airlines" && airlineGlobalMode) && (
           <div className="rounded-2xl overflow-hidden shadow-xl" style={cardStyle}>
             {/* Result count header */}
             <div className="px-5 py-3.5 flex items-center justify-between" style={{
