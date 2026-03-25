@@ -135,8 +135,151 @@ export default function SyncData() {
     if (fileInputRefs.current[label]) fileInputRefs.current[label]!.value = "";
   };
 
+  /* ── Production DB Sync ── */
+  type DbSyncStatus = {
+    status: "idle" | "running" | "success" | "error";
+    lastRun: string | null;
+    rowsSynced: { airlines: number; airports: number; groundHandlers: number; ops: number };
+    error: string | null;
+    configured: boolean;
+    autoSyncIntervalMinutes: number;
+  };
+  const [dbSyncStatus, setDbSyncStatus] = useState<DbSyncStatus | null>(null);
+  const [dbSyncing, setDbSyncing] = useState(false);
+  const [dbSyncLog, setDbSyncLog] = useState<string[]>([]);
+
+  const fetchDbSyncStatus = async () => {
+    try {
+      const res = await fetch(`${BASE}/api/db-sync/status`);
+      if (res.ok) setDbSyncStatus(await res.json());
+    } catch {}
+  };
+
+  useEffect(() => {
+    fetchDbSyncStatus();
+    const t = setInterval(fetchDbSyncStatus, 15000);
+    return () => clearInterval(t);
+  }, []);
+
+  const handleDbSync = async () => {
+    setDbSyncing(true);
+    setDbSyncLog([]);
+    try {
+      const res = await fetch(`${BASE}/api/db-sync`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error ?? "DB sync failed");
+      } else {
+        const total = (data.rowsSynced?.airlines ?? 0) + (data.rowsSynced?.airports ?? 0)
+          + (data.rowsSynced?.groundHandlers ?? 0) + (data.rowsSynced?.ops ?? 0);
+        toast.success(`Production sync complete — ${total} rows upserted`);
+        if (data.error) toast.warning(`Completed with errors: ${data.error}`);
+      }
+      if (data.log) setDbSyncLog(data.log);
+      await fetchDbSyncStatus();
+      queryClient.invalidateQueries();
+    } catch (e: any) {
+      toast.error(`DB sync error: ${e.message}`);
+    } finally {
+      setDbSyncing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* ── Production → Dev DB Sync ── */}
+      <Card className="border-primary/30 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CloudDownload className="h-5 w-5 text-primary" />
+            Production → Development DB Sync
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Pulls all changed records from the production database into this development database.
+            Uses <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">last_updated</span> timestamps
+            for incremental sync — only rows modified since the last run are transferred.
+            Auto-syncs every {dbSyncStatus?.autoSyncIntervalMinutes ?? 5} minutes when configured.
+          </p>
+
+          {/* Config status */}
+          <div className="flex flex-wrap items-center gap-3">
+            {dbSyncStatus?.configured ? (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success/10 border border-success/20 text-success text-xs font-semibold">
+                <ShieldCheck className="h-3.5 w-3.5" /> PROD_DATABASE_URL configured
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs font-semibold">
+                <ShieldOff className="h-3.5 w-3.5" /> PROD_DATABASE_URL not set — add it as an environment secret
+              </div>
+            )}
+            {dbSyncStatus?.lastRun && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" />
+                Last run: {formatDate(dbSyncStatus.lastRun)}
+              </div>
+            )}
+            {dbSyncStatus?.status === "running" && (
+              <div className="flex items-center gap-1.5 text-xs text-primary animate-pulse">
+                <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Sync in progress…
+              </div>
+            )}
+          </div>
+
+          {/* Stats grid */}
+          {dbSyncStatus?.rowsSynced && dbSyncStatus.lastRun && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: "Airlines", value: dbSyncStatus.rowsSynced.airlines, color: "text-primary" },
+                { label: "Airports", value: dbSyncStatus.rowsSynced.airports, color: "text-blue-400" },
+                { label: "Handlers", value: dbSyncStatus.rowsSynced.groundHandlers, color: "text-amber-400" },
+                { label: "Operations", value: dbSyncStatus.rowsSynced.ops, color: "text-emerald-400" },
+              ].map(s => (
+                <div key={s.label} className="rounded-xl border border-border/50 bg-background/40 p-3 text-center">
+                  <p className={`text-2xl font-black font-mono ${s.color}`}>{s.value}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Error banner */}
+          {dbSyncStatus?.status === "error" && dbSyncStatus.error && (
+            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 border border-destructive/20 px-4 py-3 text-xs text-destructive">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>{dbSyncStatus.error}</span>
+            </div>
+          )}
+
+          {/* Sync log */}
+          {dbSyncLog.length > 0 && (
+            <div className="rounded-xl bg-background/60 border border-border/50 p-3 space-y-1 max-h-32 overflow-y-auto">
+              {dbSyncLog.map((line, i) => (
+                <p key={i} className="text-xs font-mono text-muted-foreground">{line}</p>
+              ))}
+            </div>
+          )}
+
+          <div className="flex items-center gap-3">
+            <Button
+              variant="primary"
+              onClick={handleDbSync}
+              disabled={dbSyncing || !dbSyncStatus?.configured || dbSyncStatus?.status === "running"}
+              isLoading={dbSyncing}
+            >
+              <Zap className={`mr-2 h-4 w-4 ${dbSyncing ? "animate-pulse" : ""}`} />
+              {dbSyncing ? "Syncing…" : "Sync Now"}
+            </Button>
+            {dbSyncStatus?.status === "success" && (
+              <div className="flex items-center gap-1.5 text-sm text-success">
+                <CheckCircle2 className="h-4 w-4" /> Last sync succeeded
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* ── Download / Export ── */}
       <Card>
         <CardHeader>
