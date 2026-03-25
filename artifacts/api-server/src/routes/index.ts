@@ -11,7 +11,6 @@ import importExportRouter from "./importExport";
 import duplicatesRouter from "./duplicates";
 import awbSearchRouter from "./awbSearch";
 import userRequestsRouter from "./userRequests";
-import dbSyncRouter from "./dbSync";
 
 const router: IRouter = Router();
 
@@ -27,6 +26,5 @@ router.use(importExportRouter);
 router.use(duplicatesRouter);
 router.use(awbSearchRouter);
 router.use(userRequestsRouter);
-router.use(dbSyncRouter);
 
 export default router;
