@@ -76,6 +76,7 @@ export async function seedIfEmpty(): Promise<void> {
     { file: "seed_airline_operations.sql",        label: "airline_operations" },
     { file: "patch_airlines.sql",                 label: "airlines_patch" },
     { file: "patch_airline_operations.sql",       label: "airline_operations_patch" },
+    { file: "patch_isc_charges.sql",              label: "isc_charges_patch" },
   ];
 
   logger.info({ scriptsDir }, "Running per-table seed in FK dependency order");
