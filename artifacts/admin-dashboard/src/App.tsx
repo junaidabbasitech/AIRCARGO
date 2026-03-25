@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 import { Lock, Plane, Shield } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Watermark } from "@/components/Watermark";
@@ -155,6 +155,39 @@ function AppRouter() {
     setIsAuthenticated(false);
     navigate("/air");
   };
+
+  // ── Auto-lock after 10 minutes of inactivity ──
+  const INACTIVITY_MS = 10 * 60 * 1000;
+  const lastActivityRef = useRef(Date.now());
+
+  const resetTimer = useCallback(() => {
+    lastActivityRef.current = Date.now();
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+    events.forEach(e => window.addEventListener(e, resetTimer, { passive: true }));
+
+    const interval = setInterval(() => {
+      if (Date.now() - lastActivityRef.current >= INACTIVITY_MS) {
+        sessionStorage.removeItem(AUTH_KEY);
+        setIsAuthenticated(false);
+        navigate("/air");
+        toast("Session locked", {
+          description: "Locked after 10 minutes of inactivity.",
+          icon: "🔒",
+          duration: 6000,
+        });
+      }
+    }, 30_000);
+
+    return () => {
+      events.forEach(e => window.removeEventListener(e, resetTimer));
+      clearInterval(interval);
+    };
+  }, [isAuthenticated, resetTimer, navigate]);
 
   // Redirect to /air if accessing root unauthenticated
   useEffect(() => {
