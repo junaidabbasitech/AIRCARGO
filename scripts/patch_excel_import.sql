@@ -172,3 +172,5 @@ INSERT INTO airline_operations (airline_id, airport_id, isc_amount, isc_payable_
 INSERT INTO airline_operations (airline_id, airport_id, isc_payable_to, contact_number, contact_email) VALUES (70, 6, 'wfs', '718-880-3461', 'Dylan Singh (dsingh@wfs.aero, ).') ON CONFLICT DO NOTHING;
 INSERT INTO airline_operations (airline_id, airport_id, firms_code, isc_amount, contact_number, contact_email) VALUES (70, 1, 'M641', 75, '(800) 535-2345 / 404.346.9777 x29111', 'mhothi@ups.com , upsairatl@stgusa.com, nikki.sanders@stgusa.com') ON CONFLICT DO NOTHING;
 INSERT INTO airline_operations (airline_id, airport_id, firms_code, contact_number, contact_email) VALUES (241, 6, 'EAO7', '718-244-7777', 'freighterops@msnairservice.com') ON CONFLICT DO NOTHING;
+-- Fix sequence after bulk inserts
+SELECT setval('airline_operations_id_seq', GREATEST((SELECT MAX(id) FROM airline_operations), nextval('airline_operations_id_seq') - 1));
