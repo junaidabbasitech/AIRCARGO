@@ -23,6 +23,46 @@ interface AirlineOperation {
 
 const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
 
+const HERO_IMG = "https://images.unsplash.com/photo-1529074963764-98f45c47344b?w=1600&auto=format&fit=crop&q=80";
+const PLANE_IMG = "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&auto=format&fit=crop&q=80";
+const AIRPORT_IMG = "https://images.unsplash.com/photo-1559508551-44bff1de756b?w=600&auto=format&fit=crop&q=80";
+
+const AIRLINE_PALETTES = [
+  "linear-gradient(135deg,#0369a1,#1e40af)",
+  "linear-gradient(135deg,#7c3aed,#6d28d9)",
+  "linear-gradient(135deg,#059669,#047857)",
+  "linear-gradient(135deg,#b91c1c,#9f1239)",
+  "linear-gradient(135deg,#d97706,#b45309)",
+  "linear-gradient(135deg,#0891b2,#0e7490)",
+  "linear-gradient(135deg,#be185d,#9d174d)",
+  "linear-gradient(135deg,#4338ca,#3730a3)",
+  "linear-gradient(135deg,#16a34a,#166534)",
+  "linear-gradient(135deg,#c2410c,#9a3412)",
+];
+function airlineGradient(iata?: string | null) {
+  if (!iata) return AIRLINE_PALETTES[0];
+  let h = 0;
+  for (let i = 0; i < iata.length; i++) h = (h * 31 + iata.charCodeAt(i)) & 0xffff;
+  return AIRLINE_PALETTES[h % AIRLINE_PALETTES.length];
+}
+
+const AIRPORT_PALETTES = [
+  "linear-gradient(135deg,#f97316,#dc2626)",
+  "linear-gradient(135deg,#0ea5e9,#2563eb)",
+  "linear-gradient(135deg,#10b981,#0d9488)",
+  "linear-gradient(135deg,#a855f7,#7c3aed)",
+  "linear-gradient(135deg,#f59e0b,#d97706)",
+  "linear-gradient(135deg,#ef4444,#b91c1c)",
+  "linear-gradient(135deg,#06b6d4,#0284c7)",
+  "linear-gradient(135deg,#8b5cf6,#6d28d9)",
+];
+function airportGradient(iata?: string | null) {
+  if (!iata) return AIRPORT_PALETTES[0];
+  let h = 0;
+  for (let i = 0; i < iata.length; i++) h = (h * 37 + iata.charCodeAt(i)) & 0xffff;
+  return AIRPORT_PALETTES[h % AIRPORT_PALETTES.length];
+}
+
 async function fetchOps(params: { airlineId?: number; airportId?: number } = {}): Promise<AirlineOperation[]> {
   const p = new URLSearchParams();
   if (params.airlineId) p.set("airlineId", String(params.airlineId));
@@ -481,15 +521,16 @@ export default function AirPublic() {
   return (
     <div className="min-h-screen relative" style={{ background: isDark ? "hsl(222,60%,7%)" : "hsl(210,20%,96%)" }}>
       <Watermark />
-      {/* Atmospheric glow blobs (dark only) */}
-      {isDark && (
-        <div className="pointer-events-none fixed inset-0 overflow-hidden -z-0">
-          <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full blur-[120px]" style={{ background: "var(--t-accent-dim)" }} />
-          <div className="absolute top-1/3 -right-32 h-[400px] w-[400px] rounded-full blur-[100px]" style={{ background: "var(--t-accent2-dim)" }} />
-        </div>
-      )}
       {/* ─── HERO ─── */}
-      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16" style={{ background: heroBg }}>
+      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden">
+        {/* Aviation background image */}
+        <img
+          src={HERO_IMG}
+          alt="Aviation"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          style={{ opacity: isDark ? 0.18 : 0.12 }}
+        />
+        <div className="absolute inset-0" style={{ background: heroBg, opacity: isDark ? 0.85 : 0.92 }} />
         {/* Status + Theme toggle row */}
         <div className="flex items-center justify-between gap-3 mb-10 max-w-6xl mx-auto">
           <button
@@ -1337,59 +1378,105 @@ export default function AirPublic() {
               </div>
             )}
 
-            {/* Airlines list */}
+            {/* Airlines card grid */}
             {tab === "airlines" && !airlinesQuery.isLoading && (filteredAirlines?.length ?? 0) > 0 && (
-              <div>
-                {filteredAirlines?.map((airline, i) => (
-                  <button key={airline.id} onClick={() => handleAirlineClick(airline)}
-                    className={`w-full flex items-center gap-4 px-5 py-4 transition-all duration-150 text-left ${rowHoverClass}`}
-                    style={{ borderBottom: i < (filteredAirlines.length - 1) ? `1px solid var(--t-border-soft)` : "none" }}>
-                    <div className="h-11 w-11 rounded-xl flex items-center justify-center font-black font-mono text-xs shrink-0"
-                      style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)", color: "var(--t-accent)" }}>
-                      {airline.iataCode || "?"}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm truncate" style={{ color: "var(--t-text)" }}>{airline.name}</p>
-                      <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        {airline.iataCode && <Badge color="accent">IATA {airline.iataCode}</Badge>}
-                        {airline.icaoCode && <Badge color="muted">ICAO {airline.icaoCode}</Badge>}
-                        {airline.cbpCode && <Badge color="accent2">CBP {airline.cbpCode}</Badge>}
-                        {airline.country && <span className="text-[10px] font-mono" style={{ color: "var(--t-text-muted)" }}>{airline.country}</span>}
+              <div className="p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {filteredAirlines?.map((airline) => (
+                  <button
+                    key={airline.id}
+                    onClick={() => handleAirlineClick(airline)}
+                    className="avia-card group text-left rounded-2xl overflow-hidden focus:outline-none"
+                    style={{ background: "var(--t-card)", border: "1px solid var(--t-border)" }}
+                  >
+                    {/* Card image header */}
+                    <div className="relative h-20 overflow-hidden" style={{ background: airlineGradient(airline.iataCode) }}>
+                      <img
+                        src={PLANE_IMG}
+                        alt="plane"
+                        className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 group-hover:scale-110 transition-all duration-500"
+                      />
+                      <div className="absolute inset-0 flex items-end justify-between p-2.5">
+                        <span className="font-black font-mono text-2xl text-white drop-shadow-lg leading-none">
+                          {airline.iataCode || "—"}
+                        </span>
+                        <Plane className="h-5 w-5 text-white/50 group-hover:text-white/80 transition-colors duration-300" />
                       </div>
                     </div>
-                    <div className="shrink-0 flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--t-text-muted)" }}>
-                      Airports <ChevronRight className="h-4 w-4" />
+                    {/* Card body */}
+                    <div className="p-3">
+                      <p className="font-bold text-xs leading-snug truncate" style={{ color: "var(--t-text)" }}>{airline.name}</p>
+                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                        {airline.icaoCode && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded" style={{ background: "var(--t-accent-dim)", color: "var(--t-accent)" }}>
+                            {airline.icaoCode}
+                          </span>
+                        )}
+                        {airline.country && (
+                          <span className="text-[9px] font-mono truncate" style={{ color: "var(--t-text-muted)" }}>{airline.country}</span>
+                        )}
+                      </div>
+                      <div className="mt-2.5 flex items-center gap-1 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-1 group-hover:translate-y-0" style={{ color: "var(--t-accent)" }}>
+                        View Ops <ChevronRight className="h-3 w-3" />
+                      </div>
                     </div>
                   </button>
                 ))}
               </div>
             )}
 
-            {/* Airports list */}
+            {/* Airports card grid */}
             {tab === "airports" && !airportsQuery.isLoading && (filteredAirports?.length ?? 0) > 0 && (
-              <div>
-                {filteredAirports?.map((airport, i) => (
-                  <button key={airport.id} onClick={() => handleAirportClick({
-                    id: airport.id, name: airport.name ?? "", iataCode: airport.iataCode,
-                    city: airport.city, state: airport.state
-                  })}
-                    className={`w-full flex items-center gap-4 px-5 py-4 transition-all duration-150 text-left ${rowHoverClass}`}
-                    style={{ borderBottom: i < (filteredAirports.length - 1) ? `1px solid var(--t-border-soft)` : "none" }}>
-                    <div className="h-11 w-11 rounded-xl flex items-center justify-center font-black font-mono text-xs shrink-0"
-                      style={{ background: "var(--t-accent2-dim)", border: "1px solid var(--t-accent2-border)", color: "var(--t-accent2)" }}>
-                      {airport.iataCode || "?"}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm truncate" style={{ color: "var(--t-text)" }}>{airport.name}</p>
-                      <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        {airport.iataCode && <Badge color="accent2">IATA {airport.iataCode}</Badge>}
-                        {airport.cbpPortCode && <Badge color="muted">CBP {airport.cbpPortCode}</Badge>}
-                        {(airport.city || airport.state) && <span className="text-[10px] flex items-center gap-1" style={{ color: "var(--t-text-muted)" }}><MapPin className="h-3 w-3" />{[airport.city, airport.state].filter(Boolean).join(", ")}</span>}
-                        {airport.customsApproved && <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-500"><Shield className="h-3 w-3" />Customs</span>}
+              <div className="p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {filteredAirports?.map((airport) => (
+                  <button
+                    key={airport.id}
+                    onClick={() => handleAirportClick({
+                      id: airport.id, name: airport.name ?? "", iataCode: airport.iataCode,
+                      city: airport.city, state: airport.state
+                    })}
+                    className="avia-card group text-left rounded-2xl overflow-hidden focus:outline-none"
+                    style={{ background: "var(--t-card)", border: "1px solid var(--t-border)" }}
+                  >
+                    {/* Card image header */}
+                    <div className="relative h-20 overflow-hidden" style={{ background: airportGradient(airport.iataCode) }}>
+                      <img
+                        src={AIRPORT_IMG}
+                        alt="airport"
+                        className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 group-hover:scale-110 transition-all duration-500"
+                      />
+                      <div className="absolute inset-0 flex items-end justify-between p-2.5">
+                        <span className="font-black font-mono text-2xl text-white drop-shadow-lg leading-none">
+                          {airport.iataCode || "—"}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {airport.customsApproved && (
+                            <div className="h-5 w-5 rounded-full bg-emerald-400/80 flex items-center justify-center" title="Customs Approved">
+                              <Shield className="h-2.5 w-2.5 text-white" />
+                            </div>
+                          )}
+                          <Building2 className="h-5 w-5 text-white/50 group-hover:text-white/80 transition-colors duration-300" />
+                        </div>
                       </div>
                     </div>
-                    <div className="shrink-0 flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--t-text-muted)" }}>
-                      Airlines <ChevronRight className="h-4 w-4" />
+                    {/* Card body */}
+                    <div className="p-3">
+                      <p className="font-bold text-xs leading-snug truncate" style={{ color: "var(--t-text)" }}>{airport.name}</p>
+                      <div className="flex items-center gap-1 mt-1.5">
+                        {(airport.city || airport.state) && (
+                          <span className="text-[9px] font-mono flex items-center gap-0.5 truncate" style={{ color: "var(--t-text-muted)" }}>
+                            <MapPin className="h-2.5 w-2.5 shrink-0" />
+                            {[airport.city, airport.state].filter(Boolean).join(", ")}
+                          </span>
+                        )}
+                      </div>
+                      {airport.cbpPortCode && (
+                        <span className="inline-block mt-1 text-[9px] font-mono px-1.5 py-0.5 rounded" style={{ background: "var(--t-accent2-dim)", color: "var(--t-accent2)" }}>
+                          CBP {airport.cbpPortCode}
+                        </span>
+                      )}
+                      <div className="mt-2 flex items-center gap-1 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-1 group-hover:translate-y-0" style={{ color: "var(--t-accent2)" }}>
+                        View Airlines <ChevronRight className="h-3 w-3" />
+                      </div>
                     </div>
                   </button>
                 ))}
