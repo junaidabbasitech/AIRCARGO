@@ -5,11 +5,6 @@ import { eq, and, sql, ilike, ne, or, desc } from "drizzle-orm";
 
 const router: IRouter = Router();
 
-// Helper: detect PostgreSQL unique-constraint violation (error code 23505)
-function isUniqueViolation(err: any, constraint?: string): boolean {
-  return err?.code === "23505" && (!constraint || err?.constraint === constraint);
-}
-
 // GET /api/airline-operations — list all, with multi-field search + filters
 router.get("/airline-operations", async (req, res) => {
   try {
@@ -66,7 +61,6 @@ router.get("/airline-operations", async (req, res) => {
       .leftJoin(airlinesTable, eq(airlineOperationsTable.airlineId, airlinesTable.id))
       .leftJoin(airportsTable, eq(airlineOperationsTable.airportId, airportsTable.id));
 
-    // For paginated search use offset; for backwards-compat without search/page return all
     const usePages = !!(search || page !== "1" || parseInt(limit) < 500);
 
     if (usePages) {
@@ -131,16 +125,20 @@ router.post("/airline-operations", async (req, res) => {
     const { airlineId, airportId, firmsCode, iscAmount, iscPayableAt, iscPayableTo, contactNumber, contactEmail, notes } = req.body;
     if (!airlineId) return res.status(400).json({ message: "airlineId is required" });
 
-    // FIRMS code duplicate check
     const normalizedFirms = firmsCode ? firmsCode.trim().toUpperCase() : null;
-    if (normalizedFirms) {
-      const [conflict] = await db.select({ id: airlineOperationsTable.id, airlineId: airlineOperationsTable.airlineId })
+
+    // Airline + Airport pair duplicate check (same airport cannot appear twice for same airline)
+    if (airportId) {
+      const [conflict] = await db.select({ id: airlineOperationsTable.id })
         .from(airlineOperationsTable)
-        .where(eq(airlineOperationsTable.firmsCode, normalizedFirms))
+        .where(and(
+          eq(airlineOperationsTable.airlineId, parseInt(airlineId)),
+          eq(airlineOperationsTable.airportId, parseInt(airportId))
+        ))
         .limit(1);
       if (conflict) {
         return res.status(409).json({
-          message: `FIRMS code "${normalizedFirms}" is already assigned to another operation (ID ${conflict.id}). FIRMS codes must be unique.`,
+          message: `This airline already has an operation record for that airport (ID ${conflict.id}). Each airport can only appear once per airline.`,
           conflictId: conflict.id,
         });
       }
@@ -170,9 +168,6 @@ router.post("/airline-operations", async (req, res) => {
     res.status(201).json(op);
   } catch (err: any) {
     req.log.error(err);
-    if (isUniqueViolation(err, "airline_operations_firms_code_unique")) {
-      return res.status(409).json({ message: "That FIRMS code is already in use. FIRMS codes must be unique." });
-    }
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -183,19 +178,21 @@ router.put("/airline-operations/:id", async (req, res) => {
     const id = parseInt(req.params.id);
     const { airlineId, airportId, firmsCode, iscAmount, iscPayableAt, iscPayableTo, contactNumber, contactEmail, notes } = req.body;
 
-    // FIRMS code duplicate check (ignore conflict with this same record)
     const normalizedFirms = firmsCode ? firmsCode.trim().toUpperCase() : null;
-    if (normalizedFirms) {
+
+    // Airline + Airport pair duplicate check (ignore this record itself)
+    if (airlineId && airportId) {
       const [conflict] = await db.select({ id: airlineOperationsTable.id })
         .from(airlineOperationsTable)
         .where(and(
-          eq(airlineOperationsTable.firmsCode, normalizedFirms),
+          eq(airlineOperationsTable.airlineId, parseInt(airlineId)),
+          eq(airlineOperationsTable.airportId, parseInt(airportId)),
           ne(airlineOperationsTable.id, id)
         ))
         .limit(1);
       if (conflict) {
         return res.status(409).json({
-          message: `FIRMS code "${normalizedFirms}" is already assigned to another operation (ID ${conflict.id}). FIRMS codes must be unique.`,
+          message: `This airline already has an operation record for that airport (ID ${conflict.id}). Each airport can only appear once per airline.`,
           conflictId: conflict.id,
         });
       }
@@ -230,9 +227,6 @@ router.put("/airline-operations/:id", async (req, res) => {
     res.json(op);
   } catch (err: any) {
     req.log.error(err);
-    if (isUniqueViolation(err, "airline_operations_firms_code_unique")) {
-      return res.status(409).json({ message: "That FIRMS code is already in use. FIRMS codes must be unique." });
-    }
     res.status(500).json({ message: "Internal server error" });
   }
 });

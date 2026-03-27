@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import {
   Plane, Building2, Users, RefreshCw, ClipboardList,
   LayoutDashboard, Menu, X, ChevronDown,
-  Search, Network, LogOut, Gauge, GitMerge, Shield, ScanBarcode, MessageSquarePlus
+  Search, Network, LogOut, Gauge, GitMerge, Shield, ScanBarcode, MessageSquarePlus, Database
 } from "lucide-react";
 import { Watermark } from "@/components/Watermark";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -19,6 +19,7 @@ const CMD_SUB_ITEMS = [
   { href: "/awb-prefixes", label: "AWB Prefixes", icon: ScanBarcode },
   { href: "/requests", label: "Data Requests", icon: MessageSquarePlus },
   { href: "/duplicates", label: "Duplicate Detection", icon: GitMerge },
+  { href: "/database", label: "Database Admin", icon: Database },
   { href: "/sync", label: "Sync Operations", icon: RefreshCw },
   { href: "/audit", label: "Audit Logs", icon: ClipboardList },
 ];

@@ -280,7 +280,7 @@ export default function AirPublic() {
   const { isDark } = useTheme();
   const [requestOpen, setRequestOpen] = useState(false);
 
-  const [tab, setTab] = useState<"airlines" | "airports" | "awb">("awb");
+  const [tab, setTab] = useState<"airlines" | "airports" | "awb" | "firms">("awb");
   const [search, setSearch] = useState("");
   const [country, setCountry] = useState("");
   const [icaoFilter, setIcaoFilter] = useState("");
@@ -299,6 +299,26 @@ export default function AirPublic() {
   const [awbResult, setAwbResult] = useState<null | { awb: string; awbPrefix: string; airline: any; airport: any; operations: any }>(null);
   const [awbError, setAwbError] = useState<string | null>(null);
   const [awbLoading, setAwbLoading] = useState(false);
+
+  /* ── FIRMS Code Search ── */
+  const [firmsInput, setFirmsInput] = useState("");
+  const [firmsResults, setFirmsResults] = useState<AirlineOperation[]>([]);
+  const [firmsLoading, setFirmsLoading] = useState(false);
+  const [firmsSearched, setFirmsSearched] = useState(false);
+  const [firmsSelectedOp, setFirmsSelectedOp] = useState<AirlineOperation | null>(null);
+
+  const handleFirmsSearch = async () => {
+    const code = firmsInput.trim().toUpperCase();
+    if (!code) return;
+    setFirmsLoading(true); setFirmsSearched(false); setFirmsResults([]); setFirmsSelectedOp(null);
+    try {
+      const r = await fetch(`${BASE}/api/airline-operations?firmsCode=${encodeURIComponent(code)}&limit=200`);
+      const json = await r.json();
+      setFirmsResults(json.data ?? []);
+      setFirmsSearched(true);
+    } catch { setFirmsResults([]); setFirmsSearched(true); }
+    finally { setFirmsLoading(false); }
+  };
 
   /* ── Global Search (Airlines tab) ── */
   const [globalMode, setGlobalMode] = useState(false);
@@ -409,13 +429,14 @@ export default function AirPublic() {
     setAirportOpsLoading(false);
   };
 
-  const handleTab = (t: "airlines" | "airports" | "awb") => {
+  const handleTab = (t: "airlines" | "airports" | "awb" | "firms") => {
     setTab(t); setSearch(""); setPage(1); setCountry(""); setCustoms(""); setAirportFilter("");
     setIcaoFilter(""); setCbpFilter(""); setHasIscOnly(false); setFirmsFilter("");
     setSelectedAirline(null); setSelectedAirlineOp(null); setAirlineOps([]);
     setSelectedAirport(null); setSelectedAirportOp(null); setAirportOps([]);
     setAwbResult(null); setAwbError(null); setAwbInput(""); setAwbAirport("");
     setGlobalMode(false); setGlobalSearch(""); setGlobalResults([]); setSelectedGlobalOp(null);
+    setFirmsInput(""); setFirmsResults([]); setFirmsSearched(false); setFirmsSelectedOp(null);
   };
 
   const clearAll = () => {
@@ -504,6 +525,8 @@ export default function AirPublic() {
           <p className="text-sm sm:text-base mb-8 leading-relaxed" style={{ color: "var(--t-text-sub)" }}>
             {tab === "awb"
               ? "Enter an Air Waybill number and destination airport to decode the carrier and look up ISC charges, FIRMS code, and ground handler details."
+              : tab === "firms"
+              ? "Enter a FIRMS code to find all airlines and airports linked to it, including ISC charges, ground handler contacts, and operational details."
               : "Search airlines and airports — click any entry to explore operational data, ISC charges, FIRMS codes, and ground handler contacts."}
           </p>
 
@@ -554,10 +577,21 @@ export default function AirPublic() {
                 }}>{airports.total}</span>
               )}
             </button>
+            <button
+              onClick={() => handleTab("firms")}
+              className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
+              style={tab === "firms" ? {
+                background: "linear-gradient(135deg, #7c3aed, #6d28d9)",
+                color: "#fff", boxShadow: "0 4px 20px rgba(124,58,237,0.35)"
+              } : { color: "var(--t-text-sub)" }}
+            >
+              <Hash className="h-4 w-4" />
+              FIRMS Lookup
+            </button>
           </div>
 
-          {/* Search bar — hidden on AWB tab */}
-          {tab !== "awb" && <div className="relative max-w-2xl mx-auto">
+          {/* Search bar — hidden on AWB and FIRMS tabs */}
+          {tab !== "awb" && tab !== "firms" && <div className="relative max-w-2xl mx-auto">
             {isDark && (
               <div className="absolute inset-0 rounded-2xl blur-xl opacity-40" style={{ background: "var(--t-accent-dim)" }} />
             )}
@@ -599,7 +633,7 @@ export default function AirPublic() {
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-8 pb-20 mt-6">
 
         {/* ─── FILTER PANEL ─── */}
-        {showFilters && tab !== "awb" && (
+        {showFilters && tab !== "awb" && tab !== "firms" && (
           <div className="mb-4 rounded-2xl p-4 shadow-xl" style={cardStyle}>
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest" style={{ color: "var(--t-text-muted)" }}>
@@ -1007,8 +1041,123 @@ export default function AirPublic() {
           </div>
         )}
 
+        {/* ═══════════════════════════════════════════
+            FIRMS LOOKUP PANEL
+        ═══════════════════════════════════════════ */}
+        {tab === "firms" && (
+          <div>
+            {/* Search card */}
+            <div className="rounded-2xl p-6 shadow-xl mb-6" style={{ ...cardStyle, background: isDark ? "rgba(124,58,237,0.06)" : "rgba(124,58,237,0.04)", border: "1px solid rgba(124,58,237,0.22)" }}>
+              <div className="flex items-center gap-3 mb-5">
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)" }}>
+                  <Hash className="h-5 w-5" style={{ color: "#7c3aed" }} />
+                </div>
+                <div>
+                  <h2 className="text-base font-black tracking-wide" style={{ color: "var(--t-text)" }}>FIRMS Code Lookup</h2>
+                  <p className="text-xs" style={{ color: "var(--t-text-muted)" }}>Find airlines and operational details by FIRMS code</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>FIRMS Code</label>
+                  <input
+                    type="text"
+                    value={firmsInput}
+                    onChange={e => setFirmsInput(e.target.value.toUpperCase())}
+                    onKeyDown={e => e.key === "Enter" && handleFirmsSearch()}
+                    placeholder="e.g. ABCD, XY12"
+                    maxLength={10}
+                    className="w-full px-4 py-3 rounded-xl font-mono text-sm focus:outline-none focus:ring-2"
+                    style={{ ...inputStyle, focusRingColor: "#7c3aed" }}
+                  />
+                </div>
+                <div className="flex items-end">
+                  <button
+                    onClick={handleFirmsSearch}
+                    disabled={firmsLoading || !firmsInput.trim()}
+                    className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
+                    style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "#fff", boxShadow: "0 4px 20px rgba(124,58,237,0.35)" }}
+                  >
+                    {firmsLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                    {firmsLoading ? "Searching..." : "Lookup"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Results */}
+            {firmsSearched && (
+              firmsResults.length === 0 ? (
+                <div className="rounded-2xl p-12 text-center" style={cardStyle}>
+                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.2)" }}>
+                    <Hash className="h-7 w-7" style={{ color: "#7c3aed" }} />
+                  </div>
+                  <h3 className="font-bold mb-1" style={{ color: "var(--t-text)" }}>No results for "{firmsInput}"</h3>
+                  <p className="text-sm" style={{ color: "var(--t-text-muted)" }}>No airline operations found with this FIRMS code. Try a different code.</p>
+                </div>
+              ) : (
+                <div className="rounded-2xl overflow-hidden shadow-xl" style={cardStyle}>
+                  <div className="px-5 py-3.5 flex items-center gap-3" style={{ borderBottom: "1px solid var(--t-border)", background: isDark ? "rgba(124,58,237,0.08)" : "rgba(124,58,237,0.04)" }}>
+                    <Hash className="h-4 w-4" style={{ color: "#7c3aed" }} />
+                    <span className="font-bold text-sm" style={{ color: "var(--t-text)" }}>FIRMS: <span className="font-mono">{firmsInput}</span></span>
+                    <span className="ml-auto text-xs font-mono px-2 py-1 rounded-lg" style={{ background: "rgba(124,58,237,0.1)", color: "#7c3aed" }}>{firmsResults.length} match{firmsResults.length !== 1 ? "es" : ""}</span>
+                    {firmsSelectedOp && (
+                      <button onClick={() => setFirmsSelectedOp(null)} className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg" style={{ background: "var(--t-card)", border: "1px solid var(--t-border)", color: "var(--t-text-sub)" }}>
+                        <ArrowLeft className="h-3.5 w-3.5" /> Back
+                      </button>
+                    )}
+                  </div>
+
+                  {firmsSelectedOp ? (
+                    <div>
+                      <div className="px-5 py-3 flex items-center gap-2 flex-wrap" style={{ background: isDark ? "rgba(124,58,237,0.06)" : "rgba(124,58,237,0.03)", borderBottom: "1px solid var(--t-border)" }}>
+                        <Hash className="h-3.5 w-3.5" style={{ color: "#7c3aed" }} />
+                        <span className="text-sm font-bold" style={{ color: "#7c3aed" }}>{firmsSelectedOp.airlineName}</span>
+                        <ChevronRight className="h-3.5 w-3.5" style={{ color: "var(--t-text-muted)" }} />
+                        <span className="text-sm font-semibold" style={{ color: "var(--t-text)" }}>{firmsSelectedOp.airportName} ({firmsSelectedOp.airportIata})</span>
+                        {firmsSelectedOp.airportCity && <span className="text-xs" style={{ color: "var(--t-text-muted)" }}>— {firmsSelectedOp.airportCity}{firmsSelectedOp.airportState ? `, ${firmsSelectedOp.airportState}` : ""}</span>}
+                      </div>
+                      <OpsDetail op={firmsSelectedOp} />
+                    </div>
+                  ) : (
+                    <div className="divide-y" style={{ borderColor: "var(--t-border)" }}>
+                      {firmsResults.map(op => (
+                        <button
+                          key={op.id}
+                          onClick={() => setFirmsSelectedOp(op)}
+                          className={`w-full text-left flex items-center gap-4 px-5 py-4 transition-all duration-150 ${rowHoverClass}`}
+                        >
+                          <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.2)" }}>
+                            <Plane className="h-4 w-4" style={{ color: "#7c3aed" }} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-bold text-sm" style={{ color: "var(--t-text)" }}>{op.airlineName}</span>
+                              {op.airlineIata && <Badge color="accent">{op.airlineIata}</Badge>}
+                            </div>
+                            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                              <MapPin className="h-3 w-3" style={{ color: "var(--t-text-muted)" }} />
+                              <span className="text-xs" style={{ color: "var(--t-text-sub)" }}>{op.airportName} ({op.airportIata})</span>
+                              {op.airportCity && <span className="text-xs" style={{ color: "var(--t-text-muted)" }}>· {op.airportCity}{op.airportState ? `, ${op.airportState}` : ""}</span>}
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            {op.iscAmount && <p className="text-xs font-bold" style={{ color: "#059669" }}>${op.iscAmount}</p>}
+                            {op.firmsCode && <p className="text-[10px] font-mono" style={{ color: "#7c3aed" }}>{op.firmsCode}</p>}
+                          </div>
+                          <ChevronRight className="h-4 w-4 shrink-0" style={{ color: "var(--t-text-muted)" }} />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            )}
+          </div>
+        )}
+
         {/* ─── RESULTS LIST (only shown when nothing is selected) ─── */}
-        {!selectedAirline && !selectedAirport && tab !== "awb" && (
+        {!selectedAirline && !selectedAirport && tab !== "awb" && tab !== "firms" && (
           <div className="rounded-2xl overflow-hidden shadow-xl" style={cardStyle}>
             {/* By Airline / Global Search toggle — only on airlines tab */}
             {tab === "airlines" && (

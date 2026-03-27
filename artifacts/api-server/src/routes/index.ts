@@ -11,6 +11,7 @@ import importExportRouter from "./importExport";
 import duplicatesRouter from "./duplicates";
 import awbSearchRouter from "./awbSearch";
 import userRequestsRouter from "./userRequests";
+import dbAdminRouter from "./dbAdmin";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.use(importExportRouter);
 router.use(duplicatesRouter);
 router.use(awbSearchRouter);
 router.use(userRequestsRouter);
+router.use(dbAdminRouter);
 
 export default router;

@@ -5,7 +5,7 @@ import { sql, eq, inArray } from "drizzle-orm";
 
 const router: IRouter = Router();
 
-// GET /api/duplicates — detect duplicate airlines and airports
+// GET /api/duplicates — detect duplicate airlines, airports, and airline-airport ops
 router.get("/duplicates", async (req, res) => {
   try {
     // Duplicate airlines — same IATA code
@@ -81,8 +81,38 @@ router.get("/duplicates", async (req, res) => {
       ORDER BY COUNT(*) DESC, a.iata_code
     `);
 
+    // Duplicate airline_operations — same airline+airport pair
+    const opsDupRows = await db.execute(sql`
+      SELECT 
+        CONCAT(al.name, ' @ ', ap.iata_code) as key_field,
+        'airline_airport_pair' as match_field,
+        json_agg(json_build_object(
+          'id', ao.id,
+          'airlineId', ao.airline_id,
+          'airportId', ao.airport_id,
+          'airlineName', al.name,
+          'airlineIata', al.iata_code,
+          'airportName', ap.name,
+          'airportIata', ap.iata_code,
+          'firmsCode', ao.firms_code,
+          'iscAmount', ao.isc_amount,
+          'iscPayableTo', ao.isc_payable_to,
+          'contactNumber', ao.contact_number,
+          'contactEmail', ao.contact_email,
+          'lastUpdated', ao.last_updated
+        ) ORDER BY ao.id) as records
+      FROM airline_operations ao
+      JOIN airlines al ON al.id = ao.airline_id
+      JOIN airports ap ON ap.id = ao.airport_id
+      WHERE ao.airport_id IS NOT NULL
+      GROUP BY ao.airline_id, ao.airport_id, al.name, ap.iata_code
+      HAVING COUNT(*) > 1
+      ORDER BY COUNT(*) DESC
+    `);
+
     const airlineDups = [...airlineDupRows.rows, ...airlineNameDups.rows];
     const airportDups = airportDupRows.rows;
+    const opsDups = opsDupRows.rows;
 
     res.json({
       airlines: {
@@ -95,6 +125,11 @@ router.get("/duplicates", async (req, res) => {
         totalGroups: airportDups.length,
         totalDuplicates: airportDups.reduce((sum, r: any) => sum + (r.records?.length ?? 0) - 1, 0),
       },
+      operations: {
+        groups: opsDups,
+        totalGroups: opsDups.length,
+        totalDuplicates: opsDups.reduce((sum, r: any) => sum + (r.records?.length ?? 0) - 1, 0),
+      },
     });
   } catch (err) {
     req.log.error(err);
@@ -103,7 +138,6 @@ router.get("/duplicates", async (req, res) => {
 });
 
 // POST /api/duplicates/airlines/merge
-// body: { keepId, deleteIds }
 router.post("/duplicates/airlines/merge", async (req, res) => {
   try {
     const { keepId, deleteIds } = req.body as { keepId: number; deleteIds: number[] };
@@ -111,23 +145,19 @@ router.post("/duplicates/airlines/merge", async (req, res) => {
       return res.status(400).json({ message: "keepId and deleteIds are required" });
     }
 
-    // Get all records (keep + delete)
     const allIds = [keepId, ...deleteIds];
     const records = await db.select().from(airlinesTable).where(inArray(airlinesTable.id, allIds));
-
     if (records.length === 0) return res.status(404).json({ message: "Records not found" });
 
     const keepRecord = records.find(r => r.id === keepId);
     if (!keepRecord) return res.status(404).json({ message: "Keep record not found" });
 
-    // Merge: pick best non-null value from all records for each field
     const mergedName = records.map(r => r.name).find(v => v) ?? keepRecord.name;
     const mergedIcao = records.map(r => r.icaoCode).find(v => v) ?? keepRecord.icaoCode;
     const mergedCbp = records.map(r => r.cbpCode).find(v => v) ?? keepRecord.cbpCode;
     const mergedCountry = records.map(r => r.country).find(v => v) ?? keepRecord.country;
     const mergedStatus = records.some(r => r.status === "approved") ? "approved" : keepRecord.status;
 
-    // Update keep record with merged data
     await db.update(airlinesTable).set({
       name: mergedName,
       icaoCode: mergedIcao,
@@ -137,12 +167,10 @@ router.post("/duplicates/airlines/merge", async (req, res) => {
       lastUpdated: new Date(),
     }).where(eq(airlinesTable.id, keepId));
 
-    // Re-point airline_operations from deleteIds to keepId
     let opsRepointed = 0;
     for (const delId of deleteIds) {
       const ops = await db.select().from(airlineOperationsTable).where(eq(airlineOperationsTable.airlineId, delId));
       for (const op of ops) {
-        // Check if keepId already has an op for the same airport
         if (op.airportId) {
           const conflict = await db.select({ id: airlineOperationsTable.id })
             .from(airlineOperationsTable)
@@ -153,7 +181,6 @@ router.post("/duplicates/airlines/merge", async (req, res) => {
             continue;
           }
         } else {
-          // Null airport placeholder — just delete since keepId already has one
           const conflict = await db.select({ id: airlineOperationsTable.id })
             .from(airlineOperationsTable)
             .where(sql`airline_id = ${keepId} AND airport_id IS NULL`)
@@ -168,9 +195,7 @@ router.post("/duplicates/airlines/merge", async (req, res) => {
       }
     }
 
-    // Delete duplicate records
     await db.delete(airlinesTable).where(inArray(airlinesTable.id, deleteIds));
-
     res.json({ message: `Merged ${deleteIds.length} record(s) into ID ${keepId}. Re-pointed ${opsRepointed} operations.`, keepId, deleted: deleteIds.length });
   } catch (err) {
     req.log.error(err);
@@ -179,7 +204,6 @@ router.post("/duplicates/airlines/merge", async (req, res) => {
 });
 
 // POST /api/duplicates/airlines/delete
-// body: { ids }
 router.post("/duplicates/airlines/delete", async (req, res) => {
   try {
     const { ids } = req.body as { ids: number[] };
@@ -202,7 +226,6 @@ router.post("/duplicates/airports/merge", async (req, res) => {
 
     const allIds = [keepId, ...deleteIds];
     const records = await db.select().from(airportsTable).where(inArray(airportsTable.id, allIds));
-
     const keepRecord = records.find(r => r.id === keepId);
     if (!keepRecord) return res.status(404).json({ message: "Keep record not found" });
 
@@ -226,7 +249,6 @@ router.post("/duplicates/airports/merge", async (req, res) => {
     }).where(eq(airportsTable.id, keepId));
 
     await db.delete(airportsTable).where(inArray(airportsTable.id, deleteIds));
-
     res.json({ message: `Merged ${deleteIds.length} airport(s) into ID ${keepId}`, keepId, deleted: deleteIds.length });
   } catch (err) {
     req.log.error(err);
@@ -241,6 +263,54 @@ router.post("/duplicates/airports/delete", async (req, res) => {
     if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ message: "ids required" });
     await db.delete(airportsTable).where(inArray(airportsTable.id, ids));
     res.json({ message: `Deleted ${ids.length} airport(s)`, deleted: ids.length });
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// POST /api/duplicates/operations/delete — delete duplicate airline_operation records
+router.post("/duplicates/operations/delete", async (req, res) => {
+  try {
+    const { ids } = req.body as { ids: number[] };
+    if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ message: "ids required" });
+    await db.delete(airlineOperationsTable).where(inArray(airlineOperationsTable.id, ids));
+    res.json({ message: `Deleted ${ids.length} operation(s)`, deleted: ids.length });
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// POST /api/duplicates/operations/merge — keep one op, merge fields from others, delete rest
+router.post("/duplicates/operations/merge", async (req, res) => {
+  try {
+    const { keepId, deleteIds } = req.body as { keepId: number; deleteIds: number[] };
+    if (!keepId || !Array.isArray(deleteIds) || deleteIds.length === 0) {
+      return res.status(400).json({ message: "keepId and deleteIds are required" });
+    }
+
+    const allIds = [keepId, ...deleteIds];
+    const records = await db.select().from(airlineOperationsTable).where(inArray(airlineOperationsTable.id, allIds));
+    const keepRecord = records.find(r => r.id === keepId);
+    if (!keepRecord) return res.status(404).json({ message: "Keep record not found" });
+
+    // Merge: pick first non-null value for each field
+    const merged = {
+      firmsCode: records.map(r => r.firmsCode).find(v => v) ?? keepRecord.firmsCode,
+      iscAmount: records.map(r => r.iscAmount).find(v => v) ?? keepRecord.iscAmount,
+      iscPayableAt: records.map(r => r.iscPayableAt).find(v => v) ?? keepRecord.iscPayableAt,
+      iscPayableTo: records.map(r => r.iscPayableTo).find(v => v) ?? keepRecord.iscPayableTo,
+      contactNumber: records.map(r => r.contactNumber).find(v => v) ?? keepRecord.contactNumber,
+      contactEmail: records.map(r => r.contactEmail).find(v => v) ?? keepRecord.contactEmail,
+      notes: records.map(r => r.notes).find(v => v) ?? keepRecord.notes,
+      lastUpdated: new Date(),
+    };
+
+    await db.update(airlineOperationsTable).set(merged).where(eq(airlineOperationsTable.id, keepId));
+    await db.delete(airlineOperationsTable).where(inArray(airlineOperationsTable.id, deleteIds));
+
+    res.json({ message: `Merged ${deleteIds.length} operation(s) into ID ${keepId}`, keepId, deleted: deleteIds.length });
   } catch (err) {
     req.log.error(err);
     res.status(500).json({ message: "Internal server error" });

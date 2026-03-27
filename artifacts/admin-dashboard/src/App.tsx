@@ -19,6 +19,7 @@ import AirlineOperations from "@/pages/AirlineOperations";
 import Duplicates from "@/pages/Duplicates";
 import AwbPrefixes from "@/pages/AwbPrefixes";
 import Requests from "@/pages/Requests";
+import Database from "@/pages/Database";
 
 const CORRECT_PASSWORD = "332";
 const AUTH_KEY = "aviacbp_auth";
@@ -213,6 +214,7 @@ function AppRouter() {
         <Route path="/airports" component={Airports} />
         <Route path="/airline-operations" component={AirlineOperations} />
         <Route path="/duplicates" component={Duplicates} />
+        <Route path="/database" component={Database} />
         <Route path="/ground-handlers" component={GroundHandlers} />
         <Route path="/awb-prefixes" component={AwbPrefixes} />
         <Route path="/requests" component={Requests} />
