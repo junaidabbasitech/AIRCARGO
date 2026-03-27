@@ -31,10 +31,10 @@ router.get("/airlines", async (req, res) => {
       db.select({ count: sql<number>`count(*)::int` }).from(airlinesTable).where(where),
     ]);
 
-    res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum });
+    return res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -91,13 +91,13 @@ router.post("/airlines", async (req, res) => {
       performedBy: "admin",
     });
 
-    res.status(201).json(airline);
+    return res.status(201).json(airline);
   } catch (err: any) {
     req.log.error(err);
     if (err?.code === "23505") {
       return res.status(409).json({ message: `An airline with IATA code "${req.body.iataCode?.toUpperCase()}" already exists in the registry.` });
     }
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -119,10 +119,10 @@ router.get("/airlines/all-ids", async (req, res) => {
     }
     const where = conditions.length > 0 ? and(...conditions) : undefined;
     const rows = await db.select({ id: airlinesTable.id }).from(airlinesTable).where(where).orderBy(airlinesTable.name);
-    res.json({ ids: rows.map(r => r.id), total: rows.length });
+    return res.json({ ids: rows.map(r => r.id), total: rows.length });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -133,10 +133,10 @@ router.post("/airlines/bulk-status", async (req, res) => {
     if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ message: "ids array is required" });
     if (!["approved", "rejected"].includes(status)) return res.status(400).json({ message: "Invalid status" });
     await db.update(airlinesTable).set({ status: status as "approved" | "rejected", lastUpdated: new Date() }).where(inArray(airlinesTable.id, ids));
-    res.json({ updated: ids.length });
+    return res.json({ updated: ids.length });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -145,10 +145,10 @@ router.get("/airlines/:id", async (req, res) => {
     const id = parseInt(req.params.id);
     const [airline] = await db.select().from(airlinesTable).where(eq(airlinesTable.id, id));
     if (!airline) return res.status(404).json({ message: "Not found" });
-    res.json(airline);
+    return res.json(airline);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -181,10 +181,10 @@ router.put("/airlines/:id", async (req, res) => {
       entityType: "airline", entityId: id, action: "update", changes: req.body, performedBy: "admin",
     });
 
-    res.json(airline);
+    return res.json(airline);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -193,10 +193,10 @@ router.delete("/airlines/:id", async (req, res) => {
     const id = parseInt(req.params.id);
     await db.delete(airlinesTable).where(eq(airlinesTable.id, id));
     await db.insert(auditLogsTable).values({ entityType: "airline", entityId: id, action: "delete", performedBy: "admin" });
-    res.json({ message: "Deleted" });
+    return res.json({ message: "Deleted" });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -210,10 +210,10 @@ router.post("/airlines/bulk-delete", async (req, res) => {
     await db.insert(auditLogsTable).values({
       entityType: "airline", entityId: 0, action: "bulk_delete", changes: { ids }, performedBy: "admin",
     });
-    res.json({ deleted: ids.length });
+    return res.json({ deleted: ids.length });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -260,10 +260,10 @@ router.get("/awb-prefixes", async (req, res) => {
       hasPrefix: sql<number>`count(*) filter (where awb_prefix is not null and awb_prefix != '')::int`,
     }).from(airlinesTable);
 
-    res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum, stats: statsResult });
+    return res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum, stats: statsResult });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -303,10 +303,10 @@ router.patch("/airlines/:id/awb-prefix", async (req, res) => {
       changes: { awbPrefix }, performedBy: "admin",
     });
 
-    res.json(airline);
+    return res.json(airline);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -327,10 +327,10 @@ router.patch("/airlines/:id/status", async (req, res) => {
       entityType: "airline", entityId: id, action: status, changes: { status }, performedBy: "admin",
     });
 
-    res.json(airline);
+    return res.json(airline);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

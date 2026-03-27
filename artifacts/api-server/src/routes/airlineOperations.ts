@@ -76,10 +76,10 @@ router.get("/airline-operations", async (req, res) => {
     }
 
     const rows = await base.where(where).orderBy(airlinesTable.name, airportsTable.name).limit(limitNum).offset(offset);
-    res.json({ data: rows, total: rows.length });
+    return res.json({ data: rows, total: rows.length });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -112,10 +112,10 @@ router.get("/airline-operations/:id", async (req, res) => {
       .leftJoin(airportsTable, eq(airlineOperationsTable.airportId, airportsTable.id))
       .where(eq(airlineOperationsTable.id, id));
     if (!row) return res.status(404).json({ message: "Not found" });
-    res.json(row);
+    return res.json(row);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -165,10 +165,10 @@ router.post("/airline-operations", async (req, res) => {
       performedBy: "admin",
     });
 
-    res.status(201).json(op);
+    return res.status(201).json(op);
   } catch (err: any) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -224,10 +224,10 @@ router.put("/airline-operations/:id", async (req, res) => {
       performedBy: "admin",
     });
 
-    res.json(op);
+    return res.json(op);
   } catch (err: any) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -244,10 +244,10 @@ router.delete("/airline-operations/:id", async (req, res) => {
       performedBy: "admin",
     });
 
-    res.json({ message: "Deleted" });
+    return res.json({ message: "Deleted" });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

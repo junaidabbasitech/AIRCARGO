@@ -46,10 +46,10 @@ router.get("/db-admin/tables", async (req, res) => {
       columnCount: parseInt(r.column_count),
     }));
 
-    res.json({ tables });
+    return res.json({ tables });
   } catch (err: any) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -91,10 +91,10 @@ router.get("/db-admin/tables/:table/schema", async (req, res) => {
       isPrimary: pkCols.has(c.column_name),
     }));
 
-    res.json({ table, schema });
+    return res.json({ table, schema });
   } catch (err: any) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -140,10 +140,10 @@ router.get("/db-admin/tables/:table/rows", async (req, res) => {
       params
     );
 
-    res.json({ rows: rows.rows, total, page, limit });
+    return res.json({ rows: rows.rows, total, page, limit });
   } catch (err: any) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -193,10 +193,10 @@ router.put("/db-admin/tables/:table/rows/:id", async (req, res) => {
       params
     );
     if (result.rows.length === 0) return res.status(404).json({ message: "Row not found" });
-    res.json(result.rows[0]);
+    return res.json(result.rows[0]);
   } catch (err: any) {
     req.log.error(err);
-    res.status(500).json({ message: err.message || "Internal server error" });
+    return res.status(500).json({ message: err.message || "Internal server error" });
   }
 });
 
@@ -208,10 +208,10 @@ router.delete("/db-admin/tables/:table/rows/:id", async (req, res) => {
   try {
     const result = await pool.query(`DELETE FROM ${table} WHERE id = $1 RETURNING id`, [id]);
     if (result.rows.length === 0) return res.status(404).json({ message: "Row not found" });
-    res.json({ message: "Deleted", id: result.rows[0].id });
+    return res.json({ message: "Deleted", id: result.rows[0].id });
   } catch (err: any) {
     req.log.error(err);
-    res.status(500).json({ message: err.message || "Internal server error" });
+    return res.status(500).json({ message: err.message || "Internal server error" });
   }
 });
 

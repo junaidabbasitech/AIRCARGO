@@ -64,7 +64,7 @@ router.post("/sync", async (req, res) => {
     performedBy: "admin",
   });
 
-  res.json({
+  return res.json({
     success: errors.length === 0,
     airlinesAdded,
     airportsAdded,
@@ -86,7 +86,7 @@ router.get("/sync/status", async (req, res) => {
       .from(airportsTable)
       .where(sql`status = 'pending'`);
 
-    res.json({
+    return res.json({
       lastSyncAt: lastSync?.syncedAt?.toISOString() ?? null,
       lastSyncSources: lastSync?.sources ?? [],
       totalAirlines: airlineCount.count,
@@ -95,7 +95,7 @@ router.get("/sync/status", async (req, res) => {
     });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -113,10 +113,10 @@ router.get("/sync/raw-data", async (req, res) => {
       db.select({ count: sql<number>`count(*)::int` }).from(rawImportsTable).where(where),
     ]);
 
-    res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum });
+    return res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

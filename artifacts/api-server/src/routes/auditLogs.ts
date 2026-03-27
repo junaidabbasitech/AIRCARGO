@@ -38,10 +38,10 @@ router.get("/audit-logs", async (req, res) => {
       }).from(auditLogsTable),
     ]);
 
-    res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum, stats: statsResult[0] });
+    return res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum, stats: statsResult[0] });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

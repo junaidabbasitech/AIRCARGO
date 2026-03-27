@@ -49,10 +49,10 @@ router.get("/ground-handlers", async (req, res) => {
       db.select({ count: sql<number>`count(*)::int` }).from(groundHandlersTable).where(where),
     ]);
 
-    res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum });
+    return res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -79,10 +79,10 @@ router.post("/ground-handlers", async (req, res) => {
       performedBy: "admin",
     });
 
-    res.status(201).json(handler);
+    return res.status(201).json(handler);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -106,10 +106,10 @@ router.put("/ground-handlers/:id", async (req, res) => {
       performedBy: "admin",
     });
 
-    res.json(handler);
+    return res.json(handler);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -125,10 +125,10 @@ router.delete("/ground-handlers/:id", async (req, res) => {
       performedBy: "admin",
     });
 
-    res.json({ message: "Deleted" });
+    return res.json({ message: "Deleted" });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -183,10 +183,10 @@ router.post("/ground-handlers/bulk-upload", async (req, res) => {
       performedBy: "admin",
     });
 
-    res.json({ inserted, skipped, errors, message: `Uploaded ${inserted} records, skipped ${skipped}` });
+    return res.json({ inserted, skipped, errors, message: `Uploaded ${inserted} records, skipped ${skipped}` });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

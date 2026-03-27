@@ -114,7 +114,7 @@ router.get("/duplicates", async (req, res) => {
     const airportDups = airportDupRows.rows;
     const opsDups = opsDupRows.rows;
 
-    res.json({
+    return res.json({
       airlines: {
         groups: airlineDups,
         totalGroups: airlineDups.length,
@@ -133,7 +133,7 @@ router.get("/duplicates", async (req, res) => {
     });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -196,10 +196,10 @@ router.post("/duplicates/airlines/merge", async (req, res) => {
     }
 
     await db.delete(airlinesTable).where(inArray(airlinesTable.id, deleteIds));
-    res.json({ message: `Merged ${deleteIds.length} record(s) into ID ${keepId}. Re-pointed ${opsRepointed} operations.`, keepId, deleted: deleteIds.length });
+    return res.json({ message: `Merged ${deleteIds.length} record(s) into ID ${keepId}. Re-pointed ${opsRepointed} operations.`, keepId, deleted: deleteIds.length });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -209,10 +209,10 @@ router.post("/duplicates/airlines/delete", async (req, res) => {
     const { ids } = req.body as { ids: number[] };
     if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ message: "ids required" });
     await db.delete(airlinesTable).where(inArray(airlinesTable.id, ids));
-    res.json({ message: `Deleted ${ids.length} airline(s)`, deleted: ids.length });
+    return res.json({ message: `Deleted ${ids.length} airline(s)`, deleted: ids.length });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -249,10 +249,10 @@ router.post("/duplicates/airports/merge", async (req, res) => {
     }).where(eq(airportsTable.id, keepId));
 
     await db.delete(airportsTable).where(inArray(airportsTable.id, deleteIds));
-    res.json({ message: `Merged ${deleteIds.length} airport(s) into ID ${keepId}`, keepId, deleted: deleteIds.length });
+    return res.json({ message: `Merged ${deleteIds.length} airport(s) into ID ${keepId}`, keepId, deleted: deleteIds.length });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -262,10 +262,10 @@ router.post("/duplicates/airports/delete", async (req, res) => {
     const { ids } = req.body as { ids: number[] };
     if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ message: "ids required" });
     await db.delete(airportsTable).where(inArray(airportsTable.id, ids));
-    res.json({ message: `Deleted ${ids.length} airport(s)`, deleted: ids.length });
+    return res.json({ message: `Deleted ${ids.length} airport(s)`, deleted: ids.length });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -275,10 +275,10 @@ router.post("/duplicates/operations/delete", async (req, res) => {
     const { ids } = req.body as { ids: number[] };
     if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ message: "ids required" });
     await db.delete(airlineOperationsTable).where(inArray(airlineOperationsTable.id, ids));
-    res.json({ message: `Deleted ${ids.length} operation(s)`, deleted: ids.length });
+    return res.json({ message: `Deleted ${ids.length} operation(s)`, deleted: ids.length });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -310,10 +310,10 @@ router.post("/duplicates/operations/merge", async (req, res) => {
     await db.update(airlineOperationsTable).set(merged).where(eq(airlineOperationsTable.id, keepId));
     await db.delete(airlineOperationsTable).where(inArray(airlineOperationsTable.id, deleteIds));
 
-    res.json({ message: `Merged ${deleteIds.length} operation(s) into ID ${keepId}`, keepId, deleted: deleteIds.length });
+    return res.json({ message: `Merged ${deleteIds.length} operation(s) into ID ${keepId}`, keepId, deleted: deleteIds.length });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

@@ -36,10 +36,10 @@ router.get("/export/airports", async (req, res) => {
     const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
     res.setHeader("Content-Disposition", "attachment; filename=airports.xlsx");
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    res.send(buf);
+    return res.send(buf);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Export failed" });
+    return res.status(500).json({ message: "Export failed" });
   }
 });
 
@@ -59,10 +59,10 @@ router.get("/export/airlines", async (req, res) => {
     const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
     res.setHeader("Content-Disposition", "attachment; filename=airlines.xlsx");
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    res.send(buf);
+    return res.send(buf);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Export failed" });
+    return res.status(500).json({ message: "Export failed" });
   }
 });
 
@@ -109,10 +109,10 @@ router.get("/export/airline-operations", async (req, res) => {
     const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
     res.setHeader("Content-Disposition", "attachment; filename=airline-operations.xlsx");
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    res.send(buf);
+    return res.send(buf);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Export failed" });
+    return res.status(500).json({ message: "Export failed" });
   }
 });
 
@@ -165,10 +165,10 @@ router.get("/export/all", async (req, res) => {
     const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
     res.setHeader("Content-Disposition", "attachment; filename=aviacbp-export.xlsx");
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    res.send(buf);
+    return res.send(buf);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Export failed" });
+    return res.status(500).json({ message: "Export failed" });
   }
 });
 
@@ -221,10 +221,10 @@ router.post("/import/airports", upload.single("file"), async (req, res) => {
       }
     }
 
-    res.json({ inserted, updated, skipped, errors: errors.slice(0, 10), total: rows.length });
+    return res.json({ inserted, updated, skipped, errors: errors.slice(0, 10), total: rows.length });
   } catch (err: any) {
     req.log.error(err);
-    res.status(400).json({ message: `Failed to parse file: ${err.message}` });
+    return res.status(400).json({ message: `Failed to parse file: ${err.message}` });
   }
 });
 
@@ -268,10 +268,10 @@ router.post("/import/airlines", upload.single("file"), async (req, res) => {
       }
     }
 
-    res.json({ inserted, updated, skipped, errors: errors.slice(0, 10), total: rows.length });
+    return res.json({ inserted, updated, skipped, errors: errors.slice(0, 10), total: rows.length });
   } catch (err: any) {
     req.log.error(err);
-    res.status(400).json({ message: `Failed to parse file: ${err.message}` });
+    return res.status(400).json({ message: `Failed to parse file: ${err.message}` });
   }
 });
 
@@ -346,10 +346,10 @@ router.post("/import/airline-operations", upload.single("file"), async (req, res
       }
     }
 
-    res.json({ inserted, updated, skipped, errors: errors.slice(0, 10), total: rows.length });
+    return res.json({ inserted, updated, skipped, errors: errors.slice(0, 10), total: rows.length });
   } catch (err: any) {
     req.log.error(err);
-    res.status(400).json({ message: `Failed to parse file: ${err.message}` });
+    return res.status(400).json({ message: `Failed to parse file: ${err.message}` });
   }
 });
 

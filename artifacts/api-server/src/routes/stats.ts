@@ -30,7 +30,7 @@ router.get("/stats", async (req, res) => {
       db.select().from(syncLogsTable).orderBy(desc(syncLogsTable.syncedAt)).limit(1),
     ]);
 
-    res.json({
+    return res.json({
       totalAirlines: airlineStats[0].total,
       approvedAirlines: airlineStats[0].approved ?? 0,
       pendingAirlines: airlineStats[0].pending ?? 0,
@@ -45,7 +45,7 @@ router.get("/stats", async (req, res) => {
     });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

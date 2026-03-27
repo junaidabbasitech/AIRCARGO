@@ -34,10 +34,10 @@ router.post("/requests", async (req, res) => {
       status: "pending",
     }).returning();
 
-    res.status(201).json({ id: row.id, message: "Request submitted successfully. Our team will review it shortly." });
+    return res.status(201).json({ id: row.id, message: "Request submitted successfully. Our team will review it shortly." });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -78,10 +78,10 @@ router.get("/requests", async (req, res) => {
       }).from(userRequestsTable),
     ]);
 
-    res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum, stats: statsResult[0] });
+    return res.json({ data, total: countResult[0].count, page: pageNum, limit: limitNum, stats: statsResult[0] });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -91,10 +91,10 @@ router.get("/requests/:id", async (req, res) => {
     const id = parseInt(req.params.id);
     const [row] = await db.select().from(userRequestsTable).where(eq(userRequestsTable.id, id));
     if (!row) return res.status(404).json({ message: "Request not found" });
-    res.json(row);
+    return res.json(row);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -128,10 +128,10 @@ router.patch("/requests/:id", async (req, res) => {
       performedBy: "admin",
     });
 
-    res.json(row);
+    return res.json(row);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -140,10 +140,10 @@ router.delete("/requests/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     await db.delete(userRequestsTable).where(eq(userRequestsTable.id, id));
-    res.json({ message: "Deleted" });
+    return res.json({ message: "Deleted" });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

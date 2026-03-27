@@ -97,7 +97,7 @@ router.get("/awb-search", async (req, res) => {
     });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
