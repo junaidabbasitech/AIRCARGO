@@ -184,23 +184,6 @@
   .sidebar-item:hover svg {
     color: var(--t-accent) !important;
   }
-
-  /* ── Aviation card lift + glow on hover ── */
-  .avia-card {
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.25s ease,
-                border-color 0.2s ease;
-    will-change: transform;
-  }
-  .avia-card:hover {
-    transform: translateY(-6px) scale(1.01);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.12);
-    border-color: var(--t-accent-border) !important;
-  }
-  .avia-card:active {
-    transform: translateY(-2px) scale(1.005);
-    transition-duration: 0.1s;
-  }
 }
 
 ::-webkit-scrollbar { width: 7px; height: 7px; }
