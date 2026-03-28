@@ -5,6 +5,7 @@ import { Toaster, toast } from "sonner";
 import { Lock, Plane, Shield } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Watermark } from "@/components/Watermark";
+import { AviationBg } from "@/components/AviationBg";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import NotFound from "@/pages/not-found";
@@ -48,46 +49,36 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-      style={{ background: isDark ? "hsl(222,60%,7%)" : "hsl(210,20%,96%)" }}>
+      style={{ background: "#f6fafe" }}>
+      <AviationBg />
       <Watermark />
 
-      {/* Glow blobs */}
-      <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full blur-[100px] pointer-events-none" style={{ background: "var(--t-accent-dim)" }} />
-      <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-full blur-[80px] pointer-events-none" style={{ background: "var(--t-accent2-dim)" }} />
-
-      <div className={`relative w-full max-w-sm ${shake ? "animate-bounce" : ""}`}>
-        {/* Theme toggle — top right */}
+      <div className={`relative w-full max-w-sm z-10 ${shake ? "animate-bounce" : ""}`}>
+        {/* Theme toggle */}
         <div className="absolute -top-12 right-0">
           <ThemeToggle />
         </div>
 
         {/* Card */}
-        <div className="backdrop-blur-md rounded-2xl p-8 shadow-2xl" style={{
-          background: isDark ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.85)",
-          border: "1px solid var(--t-border)"
-        }}>
+        <div className="bg-white rounded-2xl p-8 shadow-2xl" style={{ boxShadow: "0 24px 80px rgba(11,33,71,0.12)" }}>
           {/* Logo area */}
           <div className="flex flex-col items-center gap-4 mb-8">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-2xl blur-xl" style={{ background: "var(--t-accent-dim)" }} />
-              <div className="relative h-16 w-16 rounded-2xl flex items-center justify-center shadow-xl" style={{
-                background: "linear-gradient(135deg, var(--t-accent), color-mix(in srgb, var(--t-accent) 70%, #1d4ed8))"
-              }}>
-                <Lock className="h-8 w-8 text-white" />
-              </div>
+            <div className="h-16 w-16 rounded-2xl flex items-center justify-center shadow-lg"
+              style={{ background: "linear-gradient(135deg, #0b2147, #000b25)" }}>
+              <Lock className="h-8 w-8 text-white" />
             </div>
             <div className="text-center">
-              <div className="font-display text-xl font-black tracking-widest mb-1">
-                <span style={{ color: "var(--t-accent)" }}>AVIA</span><span style={{ color: "var(--t-accent2)" }}>CBP</span>
+              <div className="text-xl font-black tracking-widest mb-1">
+                <span style={{ color: "#3b5fad" }}>AVIA</span><span style={{ color: "#009d6c" }}>CBP</span>
               </div>
-              <h2 className="font-display text-sm tracking-widest uppercase" style={{ color: "var(--t-text)" }}>Command Center</h2>
-              <p className="text-xs mt-1.5 font-sans normal-case tracking-normal" style={{ color: "var(--t-text-muted)" }}>Enter your access code to continue</p>
+              <h2 className="text-sm font-bold tracking-widest uppercase" style={{ color: "#0b2147" }}>Command Center</h2>
+              <p className="text-xs mt-1.5 font-medium" style={{ color: "rgba(11,33,71,0.50)" }}>Enter your access code to continue</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="relative">
-              <Shield className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "var(--t-text-muted)" }} />
+              <Shield className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "rgba(11,33,71,0.30)" }} />
               <input
                 type="password"
                 value={pwd}
@@ -97,46 +88,43 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
                 autoFocus
                 className="w-full pl-11 pr-4 py-3.5 rounded-xl focus:outline-none text-center text-xl tracking-[0.5em] font-mono transition-all"
                 style={{
-                  background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
-                  border: "1px solid var(--t-border)",
-                  color: "var(--t-text)"
+                  background: "#f6fafe",
+                  border: "1px solid rgba(197,198,207,0.50)",
+                  color: "#0b2147"
                 }}
               />
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 rounded-xl px-4 py-2.5" style={{ background: "rgba(244,63,94,0.1)", border: "1px solid rgba(244,63,94,0.2)" }}>
-                <div className="h-1.5 w-1.5 rounded-full bg-red-400 shrink-0" />
-                <p className="text-xs text-red-400 font-semibold">{error}</p>
+              <div className="flex items-center gap-2 rounded-xl px-4 py-2.5"
+                style={{ background: "rgba(186,26,26,0.08)", border: "1px solid rgba(186,26,26,0.20)" }}>
+                <div className="h-1.5 w-1.5 rounded-full bg-red-500 shrink-0" />
+                <p className="text-xs font-semibold" style={{ color: "#ba1a1a" }}>{error}</p>
               </div>
             )}
 
             <button
               onClick={attempt}
-              className="w-full py-3.5 rounded-xl text-white font-black text-sm active:scale-[0.98] transition-all duration-200 uppercase tracking-widest"
-              style={{
-                background: "linear-gradient(135deg, var(--t-accent), color-mix(in srgb, var(--t-accent) 70%, #1d4ed8))",
-                boxShadow: "0 4px 20px var(--t-accent-glow)"
-              }}
+              className="btn-primary w-full py-3.5 rounded-xl uppercase tracking-widest"
             >
               Unlock Access
             </button>
 
             <div className="text-center pt-1">
-              <a
-                href="/air"
-                className="text-xs text-slate-600 hover:text-sky-400 transition-colors font-medium"
-              >
+              <a href="/air" className="text-xs font-semibold transition-colors hover:opacity-70"
+                style={{ color: "rgba(11,33,71,0.45)" }}>
                 ← Return to AIR Search (public)
               </a>
             </div>
           </div>
         </div>
 
-        {/* Footer brand */}
+        {/* Footer */}
         <div className="flex items-center justify-center gap-2 mt-6">
-          <Plane className="h-3.5 w-3.5 text-slate-700" />
-          <span className="text-[10px] text-slate-700 font-mono tracking-widest uppercase">Aviation CBP Registry System</span>
+          <Plane className="h-3.5 w-3.5" style={{ color: "rgba(11,33,71,0.35)" }} />
+          <span className="text-[10px] font-semibold tracking-widest uppercase" style={{ color: "rgba(11,33,71,0.35)" }}>
+            Aviation CBP Registry System
+          </span>
         </div>
       </div>
     </div>

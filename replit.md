@@ -107,10 +107,25 @@ Utility scripts package. Each script is a `.ts` file in `src/` with a correspond
 
 ## Key Features
 
-- **AIR Search** (`/`): Public interface. Tabs: Airlines, Airports, AWB Track.
+- **AIR Search** (`/air`): Public interface. Tabs: AWB Track, Airlines, Airports, FIRMS Lookup.
 - **AWB Track**: `GET /api/awb-search?awb=176-12345678&airport=JFK` — decodes 3-digit prefix to airline, looks up airline_operations at destination airport.
-- **Command Center** (`/cmd`, password "332"): Admin CRUD for all entities.
+- **Command Center** (`/cmd`, password "332"): Admin CRUD for all entities. Auto-locks after 10 min inactivity.
 - **Excel import**: 540 rows from USA cargo handler file imported → 488 new airline_operations records (6 airlines × 90 airports).
+- **FIRMS Lookup** (AirPublic tab): Search by FIRMS code across all operations.
+- **Duplicate Detection** (`/duplicates`): Admin-only duplicate detection for airline_operations.
+- **Database Admin** (`/database`): Table-level view/edit for allowed tables.
+
+## UI Design System (AeroControl)
+
+- **Fonts**: Manrope (all weights) + JetBrains Mono (monospace)
+- **Sidebar**: Always deep navy (#0b2147), flat nav items, no accordion, `sidebar-active` / `sidebar-item` CSS classes
+- **Background**: Light #f6fafe (default), `aero-card` class for white cards with ambient shadow + hover lift
+- **Accents**: `--t-accent: #3b5fad` (medium blue), `--t-accent2: #009d6c` (emerald)
+- **Aviation watermarks**: `AviationBg` component uses SVG airplane + control tower silhouettes at very low opacity
+- **Buttons**: `btn-primary` class → navy gradient (0b2147 → 000b25)
+- **Cards**: `aero-card` class → white bg + `0 12px 40px rgba(11,33,71,0.06)` shadow, lifts on hover
+- **Status chips**: `chip-emerald`, `chip-amber`, `chip-blue`, `chip-red` CSS classes
+- **Theme**: Light by default. `[data-mode="dark"]` overrides in CSS. ThemeProvider sets attribute on `<html>`.
 
 ## AWB Prefix Reference (key carriers)
 | Prefix | Airline | IATA |

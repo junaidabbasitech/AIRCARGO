@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registry Explorer | Editorial Aviation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-error": "#ffffff",
+              "primary-fixed": "#d8e2ff",
+              "on-secondary-container": "#566677",
+              "tertiary-container": "#002819",
+              "error-container": "#ffdad6",
+              "primary-fixed-dim": "#b3c6f5",
+              "surface": "#f6fafe",
+              "surface-container-high": "#e4e9ed",
+              "outline": "#75777f",
+              "on-secondary": "#ffffff",
+              "inverse-on-surface": "#edf1f5",
+              "secondary-fixed": "#d3e4f9",
+              "secondary-container": "#d3e4f9",
+              "on-primary-container": "#7789b5",
+              "on-background": "#171c1f",
+              "surface-container-highest": "#dfe3e7",
+              "primary": "#000b25",
+              "on-secondary-fixed": "#0c1d2b",
+              "tertiary-fixed-dim": "#4edea3",
+              "background": "#f6fafe",
+              "surface-variant": "#dfe3e7",
+              "on-tertiary-fixed": "#002113",
+              "tertiary": "#000f07",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#6ffbbe",
+              "surface-bright": "#f6fafe",
+              "on-primary-fixed": "#031a40",
+              "secondary": "#506071",
+              "on-surface-variant": "#44474e",
+              "on-primary-fixed-variant": "#33466e",
+              "on-tertiary-container": "#009d6c",
+              "inverse-surface": "#2c3134",
+              "outline-variant": "#c5c6cf",
+              "on-tertiary-fixed-variant": "#005236",
+              "surface-container-low": "#f0f4f8",
+              "on-surface": "#171c1f",
+              "on-error-container": "#93000a",
+              "error": "#ba1a1a",
+              "on-primary": "#ffffff",
+              "secondary-fixed-dim": "#b7c8dc",
+              "surface-container-lowest": "#ffffff",
+              "inverse-primary": "#b3c6f5",
+              "surface-container": "#eaeef2",
+              "primary-container": "#0b2147",
+              "surface-tint": "#4b5e87",
+              "surface-dim": "#d6dade",
+              "on-secondary-fixed-variant": "#384858"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-pill {
+            background: rgba(179, 198, 245, 0.1);
+            backdrop-filter: blur(12px);
+        }
+        .signature-gradient {
+            background: linear-gradient(135deg, #0b2147 0%, #000b25 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-background antialiased">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#0b2147] dark:bg-[#050c1a] font-['Manrope'] antialiased tracking-tight flex flex-col py-6 no-border shadow-[12px_0_40px_rgba(11,33,71,0.06)] z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary-fixed-dim rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-xl">account_balance</span>
+</div>
+<div>
+<h1 class="text-lg font-bold tracking-widest text-white uppercase">Editorial Aviation</h1>
+<p class="text-[10px] text-slate-400 uppercase tracking-[0.2em]">Registry Authority</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-2">
+<!-- Dashboard (Inactive) -->
+<a class="flex items-center gap-3 text-slate-400 hover:text-white transition-colors duration-200 px-4 py-3 hover:bg-white/5 group" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<!-- Fleet Registry (Active - Mapping to current context) -->
+<a class="flex items-center gap-3 bg-white/10 backdrop-blur-md text-[#b3c6f5] rounded-lg mx-2 my-1 px-4 py-3 group scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-xl">flight</span>
+<span class="text-sm font-medium">Fleet Registry</span>
+</a>
+<!-- Flight Logs -->
+<a class="flex items-center gap-3 text-slate-400 hover:text-white transition-colors duration-200 px-4 py-3 hover:bg-white/5 group" href="#">
+<span class="material-symbols-outlined text-xl">history_edu</span>
+<span class="text-sm font-medium">Flight Logs</span>
+</a>
+<!-- Safety Compliance -->
+<a class="flex items-center gap-3 text-slate-400 hover:text-white transition-colors duration-200 px-4 py-3 hover:bg-white/5 group" href="#">
+<span class="material-symbols-outlined text-xl">verified_user</span>
+<span class="text-sm font-medium">Safety Compliance</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-3 text-slate-400 hover:text-white transition-colors duration-200 px-4 py-3 hover:bg-white/5 group" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full signature-gradient text-white py-3 rounded-lg flex items-center justify-center gap-2 font-semibold shadow-xl hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm">add</span>
+<span class="text-xs uppercase tracking-widest">New Registration</span>
+</button>
+</div>
+</aside>
+<!-- TopNavBar Component -->
+<header class="sticky top-0 z-40 w-[calc(100%-16rem)] ml-64 flex items-center justify-between px-8 h-20 bg-[#f6fafe]/80 backdrop-blur-xl dark:bg-[#000b25]/80 font-['Manrope'] font-medium text-sm bg-gradient-to-b from-[#f0f4f8] to-transparent">
+<div class="flex items-center gap-8 flex-1">
+<h2 class="font-semibold text-[#0b2147] dark:text-white text-lg">Registry Explorer</h2>
+<div class="relative w-96 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-highest border-none rounded-full py-2 pl-10 pr-4 text-xs focus:ring-2 focus:ring-[#b3c6f5] transition-all outline-none" placeholder="Search airlines, ICAO, or regions..." type="text"/>
+</div>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-[#0b2147] border-b-2 border-[#b3c6f5] pb-1" href="#">Directives</a>
+<a class="text-slate-500 hover:text-[#0b2147] transition-all" href="#">Operators</a>
+<a class="text-slate-500 hover:text-[#0b2147] transition-all" href="#">Airframes</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-outline-variant/15 text-xs font-semibold text-primary shadow-sm hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-sm">download</span>
+                Export Data
+            </button>
+<div class="flex items-center gap-1">
+<button class="p-2 hover:bg-slate-100/50 rounded-full transition-all text-slate-500">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 hover:bg-slate-100/50 rounded-full transition-all text-slate-500">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border-2 border-primary-fixed ml-2">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="professional portrait of a senior aviation logistics director in a modern office with glass windows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2u2J5LunuzcU1M-O-v6QBUPDPFqXNFgBC6HwQXHKeSAV23Sc_5FhRnfqCk8EOznLq06ChBy_hXOSXNiqNMgEaEOtqV5G6YuC0A3FegRMmEH92R9SCMCSxelj9hXIm-Wwi7EUUHrGJYsy5HbOo_sKL9PKMOr1qSbXQ9RLaiQqIWDjjy3K-VvJPpGbPj2mMEIYnupTpuoLWDMm4OAnTzHFknvhal206wwZ4lkOZ0OcydksRF40NSSxR_uocIP4JEHC2IF4LtD6Pk1hM"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 p-8 min-h-[calc(100vh-5rem)]">
+<!-- Filter Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div>
+<h3 class="text-label-sm font-bold uppercase tracking-[0.15em] text-on-primary-container mb-1">Global Operator Index</h3>
+<p class="text-headline-sm font-semibold text-primary">Airlines Registry</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex bg-surface-container-low rounded-lg p-1">
+<button class="px-4 py-1.5 rounded bg-surface-container-lowest shadow-sm text-xs font-semibold text-primary transition-all">All</button>
+<button class="px-4 py-1.5 rounded text-xs font-medium text-slate-500 hover:text-primary transition-all">Approved</button>
+<button class="px-4 py-1.5 rounded text-xs font-medium text-slate-500 hover:text-primary transition-all">Pending</button>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-low rounded-lg text-xs font-semibold hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                    More Filters
+                </button>
+<button class="signature-gradient text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-xs font-bold uppercase tracking-wider shadow-lg">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+                    Add Airline
+                </button>
+</div>
+</div>
+<!-- Registry Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
+<!-- Airline Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_12px_40px_rgba(11,33,71,0.06)] relative overflow-hidden group">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg bg-surface-container-low flex items-center justify-center border border-outline-variant/10 overflow-hidden">
+<img alt="Lufthansa" class="w-full h-full object-cover" data-alt="minimalist logo of a commercial airline with a stylized bird icon in blue and yellow colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB43lrSX4xIxytQJru1FctDOsmJu0wTnaF3nfF3Si3ap2pobRW8LiHGiBprsGw_gz5R8naKqKOnx8JisWkUpO1ZxOudiEOLeBOsvhlB-sLYyRIqovmVaHkM9lIZp5gZZeeXk04JjFM5Z0GZm9bv3s7jp-cAvzbFVdzh8cvqLoRT61z2c_OkwKaqtMvtAagbvLJvUcw3OLp9OOsrY4f_Q2dFl0ey1Wv8c-uPkHZrG5K16YTNv9hoSMm2L6t-KV3GNh1d53fHWJc3CS7"/>
+</div>
+<div>
+<h4 class="font-bold text-lg text-primary leading-tight">Lufthansa</h4>
+<div class="flex items-center gap-1.5 text-slate-500 text-xs mt-1">
+<span class="material-symbols-outlined text-[14px]">public</span>
+                                Germany / Europe
+                            </div>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-on-tertiary-container/10 text-on-tertiary-container text-[10px] font-bold uppercase tracking-wider">Approved</span>
+</div>
+<div class="grid grid-cols-3 gap-4 mb-6">
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">IATA</p>
+<p class="font-bold text-primary font-mono tracking-tighter">LH</p>
+</div>
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">ICAO</p>
+<p class="font-bold text-primary font-mono tracking-tighter">DLH</p>
+</div>
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">CBP ID</p>
+<p class="font-bold text-primary font-mono tracking-tighter">2044</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<p class="text-[10px] text-slate-400">Last updated: 24 Oct 2023</p>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500 hover:text-primary">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-2 hover:bg-red-50 rounded-full transition-colors text-slate-400 hover:text-error">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Airline Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_12px_40px_rgba(11,33,71,0.06)] relative overflow-hidden group">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg bg-surface-container-low flex items-center justify-center border border-outline-variant/10 overflow-hidden">
+<div class="text-xl font-bold text-primary-fixed-dim">EK</div>
+</div>
+<div>
+<h4 class="font-bold text-lg text-primary leading-tight">Emirates</h4>
+<div class="flex items-center gap-1.5 text-slate-500 text-xs mt-1">
+<span class="material-symbols-outlined text-[14px]">public</span>
+                                UAE / Middle East
+                            </div>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-on-error-container/10 text-on-error-container text-[10px] font-bold uppercase tracking-wider">Pending</span>
+</div>
+<div class="grid grid-cols-3 gap-4 mb-6">
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">IATA</p>
+<p class="font-bold text-primary font-mono tracking-tighter">EK</p>
+</div>
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">ICAO</p>
+<p class="font-bold text-primary font-mono tracking-tighter">UAE</p>
+</div>
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">CBP ID</p>
+<p class="font-bold text-primary font-mono tracking-tighter">9128</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<p class="text-[10px] text-slate-400">Last updated: 12 Nov 2023</p>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500 hover:text-primary">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-2 hover:bg-red-50 rounded-full transition-colors text-slate-400 hover:text-error">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Airline Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_12px_40px_rgba(11,33,71,0.06)] relative overflow-hidden group border border-on-error-container/10">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg bg-surface-container-low flex items-center justify-center border border-outline-variant/10 overflow-hidden">
+<img alt="SkyLink" class="w-full h-full object-cover" data-alt="close-up detail of an aircraft tail fin with modern geometric branding in orange and white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEx3Y7Vgk2NxSqHIHXdZr9QhlNe7tnzYrt0Gb6oRyNZQPWHQhggMPGYzl4Rw0SG8eg-tviHNfwK-iIEZ3aca876hp4xtGPV76w5imztZEOblhbWiUYzihFOuyvvw9mn4JZniD1dDp3PhsIkoha36Y6FZrd74PEPIpWzF8HCSbrb4LIlsDPypChdnylutKrXihVxTWEdwLkEghOVagq-w3ART0DQbwkDjtnuwlFtHe1r08aFAzAY7r2ifpZhoIPGw4pOVPLDcmzLZWH"/>
+</div>
+<div>
+<h4 class="font-bold text-lg text-primary leading-tight">SkyLink Cargo</h4>
+<div class="flex items-center gap-1.5 text-slate-500 text-xs mt-1">
+<span class="material-symbols-outlined text-[14px]">public</span>
+                                USA / North America
+                            </div>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-error-container text-error text-[10px] font-bold uppercase tracking-wider">Action Required</span>
+</div>
+<div class="grid grid-cols-3 gap-4 mb-6">
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">IATA</p>
+<p class="font-bold text-primary font-mono tracking-tighter">SL</p>
+</div>
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">ICAO</p>
+<p class="font-bold text-primary font-mono tracking-tighter">SKY</p>
+</div>
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">CBP ID</p>
+<p class="font-bold text-primary font-mono tracking-tighter">--</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<p class="text-[10px] text-error font-medium">Compliance window closing</p>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500 hover:text-primary">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-2 hover:bg-red-50 rounded-full transition-colors text-slate-400 hover:text-error">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Airline Card 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_12px_40px_rgba(11,33,71,0.06)] relative overflow-hidden group">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg bg-surface-container-low flex items-center justify-center border border-outline-variant/10 overflow-hidden text-2xl font-black text-slate-300">
+                            AF
+                        </div>
+<div>
+<h4 class="font-bold text-lg text-primary leading-tight">Air France</h4>
+<div class="flex items-center gap-1.5 text-slate-500 text-xs mt-1">
+<span class="material-symbols-outlined text-[14px]">public</span>
+                                France / Europe
+                            </div>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-on-tertiary-container/10 text-on-tertiary-container text-[10px] font-bold uppercase tracking-wider">Approved</span>
+</div>
+<div class="grid grid-cols-3 gap-4 mb-6">
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">IATA</p>
+<p class="font-bold text-primary font-mono tracking-tighter">AF</p>
+</div>
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">ICAO</p>
+<p class="font-bold text-primary font-mono tracking-tighter">AFR</p>
+</div>
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">CBP ID</p>
+<p class="font-bold text-primary font-mono tracking-tighter">1155</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<p class="text-[10px] text-slate-400">Last updated: 05 Jan 2024</p>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500 hover:text-primary">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-2 hover:bg-red-50 rounded-full transition-colors text-slate-400 hover:text-error">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Airline Card 5 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_12px_40px_rgba(11,33,71,0.06)] relative overflow-hidden group">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg bg-surface-container-low flex items-center justify-center border border-outline-variant/10 overflow-hidden">
+<div class="text-xl font-bold text-primary-fixed-dim">SQ</div>
+</div>
+<div>
+<h4 class="font-bold text-lg text-primary leading-tight">Singapore Airlines</h4>
+<div class="flex items-center gap-1.5 text-slate-500 text-xs mt-1">
+<span class="material-symbols-outlined text-[14px]">public</span>
+                                Singapore / SE Asia
+                            </div>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-on-tertiary-container/10 text-on-tertiary-container text-[10px] font-bold uppercase tracking-wider">Approved</span>
+</div>
+<div class="grid grid-cols-3 gap-4 mb-6">
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">IATA</p>
+<p class="font-bold text-primary font-mono tracking-tighter">SQ</p>
+</div>
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">ICAO</p>
+<p class="font-bold text-primary font-mono tracking-tighter">SIA</p>
+</div>
+<div class="bg-surface-container-low/50 p-3 rounded-lg border border-outline-variant/5">
+<p class="text-[9px] uppercase tracking-widest text-slate-500 mb-1">CBP ID</p>
+<p class="font-bold text-primary font-mono tracking-tighter">5542</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<p class="text-[10px] text-slate-400">Last updated: 18 Dec 2023</p>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500 hover:text-primary">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-2 hover:bg-red-50 rounded-full transition-colors text-slate-400 hover:text-error">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Empty State / Add Placeholder -->
+<div class="rounded-xl border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center p-6 text-center group cursor-pointer hover:border-primary-fixed-dim/50 transition-all bg-surface-container-low/20">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary-fixed-dim">add</span>
+</div>
+<h5 class="text-xs font-bold uppercase tracking-widest text-slate-400">Register New Entity</h5>
+<p class="text-[10px] text-slate-400 mt-1 max-w-[140px]">Initialize registry process for a new commercial operator</p>
+</div>
+</div>
+<!-- Pagination / Status Footer -->
+<div class="mt-12 flex items-center justify-between py-6 border-t border-outline-variant/15">
+<div class="flex items-center gap-4">
+<p class="text-xs text-slate-500">Showing 1-18 of 244 Operators</p>
+<div class="h-1 w-24 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full w-1/3 signature-gradient"></div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/20 text-slate-400 hover:text-primary transition-all">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-container text-white text-xs font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-high text-xs font-medium text-slate-600 transition-all">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-high text-xs font-medium text-slate-600 transition-all">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/20 text-slate-400 hover:text-primary transition-all">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+</body></html>

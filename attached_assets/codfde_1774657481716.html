@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AeroControl Registry - Ground Handlers Directory</title>
+<!-- Google Fonts: Manrope -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-container": "#009d6c",
+              "tertiary-container": "#002819",
+              "on-surface": "#171c1f",
+              "secondary-fixed": "#d3e4f9",
+              "surface-container-high": "#e4e9ed",
+              "outline-variant": "#c5c6cf",
+              "on-primary-container": "#7789b5",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#edf1f5",
+              "surface-container-highest": "#dfe3e7",
+              "primary-fixed-dim": "#b3c6f5",
+              "primary-fixed": "#d8e2ff",
+              "on-secondary-fixed": "#0c1d2b",
+              "surface-container-low": "#f0f4f8",
+              "secondary-container": "#d3e4f9",
+              "on-background": "#171c1f",
+              "on-tertiary-fixed-variant": "#005236",
+              "on-surface-variant": "#44474e",
+              "on-error": "#ffffff",
+              "primary-container": "#0b2147",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "on-secondary": "#ffffff",
+              "secondary": "#506071",
+              "on-secondary-fixed-variant": "#384858",
+              "surface-container": "#eaeef2",
+              "surface-bright": "#f6fafe",
+              "tertiary": "#000f07",
+              "on-primary-fixed": "#031a40",
+              "on-primary-fixed-variant": "#33466e",
+              "tertiary-fixed": "#6ffbbe",
+              "on-error-container": "#93000a",
+              "tertiary-fixed-dim": "#4edea3",
+              "on-tertiary-fixed": "#002113",
+              "error-container": "#ffdad6",
+              "surface-variant": "#dfe3e7",
+              "surface": "#f6fafe",
+              "surface-dim": "#d6dade",
+              "surface-tint": "#4b5e87",
+              "outline": "#75777f",
+              "on-secondary-container": "#566677",
+              "inverse-surface": "#2c3134",
+              "inverse-primary": "#b3c6f5",
+              "secondary-fixed-dim": "#b7c8dc",
+              "primary": "#000b25",
+              "error": "#ba1a1a",
+              "background": "#f6fafe"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Manrope", "sans-serif"],
+              "label": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Manrope', sans-serif;
+      }
+      .glass-effect {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .signature-gradient {
+        background: linear-gradient(135deg, #0b2147 0%, #000b25 100%);
+      }
+      /* Custom shadow for cards */
+      .ambient-shadow {
+        box-shadow: 0 12px 40px rgba(11, 33, 71, 0.06);
+      }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#0b2147] dark:bg-[#000514] shadow-2xl flex flex-col py-6 px-4 gap-2 z-50">
+<!-- Logo Area -->
+<div class="flex items-center gap-3 px-2 mb-8">
+<div class="w-10 h-10 rounded-lg signature-gradient flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
+</div>
+<div>
+<h1 class="text-lg font-black text-white leading-none">Registry</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-[#b3c6f5] font-bold mt-1">Technical Authority</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-300/70 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg font-manrope text-xs font-medium uppercase tracking-wider group" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-300/70 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg font-manrope text-xs font-medium uppercase tracking-wider group" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="flight_takeoff">flight_takeoff</span>
+                Airlines
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-300/70 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg font-manrope text-xs font-medium uppercase tracking-wider group" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="local_airport">local_airport</span>
+                Airports
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-300/70 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg font-manrope text-xs font-medium uppercase tracking-wider group" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="settings_applications">settings_applications</span>
+                Airline Operations
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 bg-white/10 glass-effect text-[#b3c6f5] rounded-lg border-l-4 border-[#b3c6f5] font-manrope text-xs font-medium uppercase tracking-wider group" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="transfer_within_a_station">transfer_within_a_station</span>
+                Ground Handlers
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-300/70 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg font-manrope text-xs font-medium uppercase tracking-wider group" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="pin">pin</span>
+                AWB Prefixes
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-300/70 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg font-manrope text-xs font-medium uppercase tracking-wider group" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="mark_as_unread">mark_as_unread</span>
+                Data Requests
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-300/70 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg font-manrope text-xs font-medium uppercase tracking-wider group" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="filter_none">filter_none</span>
+                Duplicate Detection
+            </a>
+</nav>
+<!-- Footer Links -->
+<div class="mt-auto pt-6 border-t border-white/5 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-300/70 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg font-manrope text-xs font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="help">help</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-300/70 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg font-manrope text-xs font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- Top App Bar -->
+<header class="bg-[#f6fafe] dark:bg-[#000b25] sticky top-0 z-40 w-full h-16 flex justify-between items-center px-8 shadow-[0_12px_40px_rgba(11,33,71,0.06)]">
+<div class="flex items-center gap-4">
+<h2 class="text-xl font-bold tracking-tight text-[#0b2147] dark:text-[#b3c6f5] font-manrope">Ground Handlers</h2>
+<div class="h-6 w-px bg-outline-variant/30"></div>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-400">
+<span>Registry</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary-container">Ground Handlers</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-slate-100 transition-colors active:scale-95 duration-200 text-slate-500">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-slate-100 transition-colors active:scale-95 duration-200 text-slate-500">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/20 ml-2">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Professional portrait of a male executive in a dark suit with a clean background and soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8XY7bhDhTtR4uwGmZkOvBd8m64GIk-_xrAy7RnehB6WeNno0rmax-I_z2txSEo9c35x5ta-lCiD1j3trm_oGNopIQan9aR4F8vWRT6XhIck6w65RfitpZ61YWzjMQooKAk1suJHOXWZoCt-WtzpDWBXi2B_FuzfzOVjbAogoaAcMqD1iGy9tN8DivTX-hEh3k0haohCfZG5rZDHX8f_XN0d7fcnxM22MFxMf6zFbT25iV_MhuEGRm2EhYdm3OvzFdv93Xamnl1uzr"/>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-8 max-w-7xl mx-auto space-y-8">
+<!-- Actions & Search Bar Section -->
+<div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-highest/50 border-none rounded-xl focus:ring-2 focus:ring-primary-fixed-dim transition-all text-sm placeholder:text-slate-400" placeholder="Search by operator or airport..." type="text"/>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-full border border-outline-variant/30 hover:bg-white transition-colors text-sm font-semibold text-primary-container">
+<span class="material-symbols-outlined text-[20px]">file_upload</span>
+                        Bulk Upload
+                    </button>
+<button class="flex-1 md:flex-none signature-gradient text-white flex items-center justify-center gap-2 px-6 py-2.5 rounded-full shadow-lg shadow-primary-container/20 hover:opacity-90 transition-all active:scale-[0.98] text-sm font-semibold">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">add</span>
+                        Add Handler
+                    </button>
+</div>
+</div>
+<!-- Directory Grid/Table -->
+<div class="bg-surface-container-lowest ambient-shadow rounded-xl overflow-hidden border border-outline-variant/10">
+<!-- Directory Header -->
+<div class="bg-surface-container-low/50 px-6 py-4 flex items-center justify-between border-b border-outline-variant/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-container text-sm">list_alt</span>
+</div>
+<h3 class="text-sm font-bold text-primary-container uppercase tracking-wider">Handler Registry List</h3>
+</div>
+<span class="text-xs font-medium text-slate-500 bg-surface-container-high px-3 py-1 rounded-full">Showing 128 Operators</span>
+</div>
+<!-- Table Content -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/20">
+<th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest border-b border-outline-variant/10">Operator Details</th>
+<th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest border-b border-outline-variant/10">Primary Contact</th>
+<th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest border-b border-outline-variant/10">Services</th>
+<th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest border-b border-outline-variant/10">Last Updated</th>
+<th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest border-b border-outline-variant/10 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs">AL</div>
+<div>
+<div class="text-sm font-bold text-primary-container">Airport Logistics Ltd</div>
+<div class="text-xs text-slate-400 mt-0.5">LHR, LGW, MAN (UK)</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm text-on-surface">ops@airportlogistics.co.uk</div>
+<div class="text-xs text-slate-400 mt-0.5">+44 20 8897 4321</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-on-tertiary-container text-[10px] font-bold uppercase rounded-full">Cargo Handling</span>
+<span class="px-2 py-0.5 bg-secondary-container/20 text-on-secondary-container text-[10px] font-bold uppercase rounded-full">Warehousing</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm text-slate-600">Oct 24, 2023</div>
+<div class="text-[10px] text-on-tertiary-container font-semibold mt-0.5 flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-on-tertiary-container"></span> Verified
+                                    </div>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-slate-400 hover:text-primary-container transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
+<button class="p-2 text-slate-400 hover:text-error transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed font-bold text-xs">AG</div>
+<div>
+<div class="text-sm font-bold text-primary-container">Alliance Ground International</div>
+<div class="text-xs text-slate-400 mt-0.5">JFK, ORD, LAX (USA)</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm text-on-surface">registry@agi.aero</div>
+<div class="text-xs text-slate-400 mt-0.5">+1 (516) 453-2000</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-on-tertiary-container text-[10px] font-bold uppercase rounded-full">Ramp Services</span>
+<span class="px-2 py-0.5 bg-secondary-container/20 text-on-secondary-container text-[10px] font-bold uppercase rounded-full">Technical</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm text-slate-600">Nov 12, 2023</div>
+<div class="text-[10px] text-on-error-container font-semibold mt-0.5 flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-on-error-container"></span> Pending Audit
+                                    </div>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-slate-400 hover:text-primary-container transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
+<button class="p-2 text-slate-400 hover:text-error transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-[#dfe3e7] flex items-center justify-center text-primary font-bold text-xs">DN</div>
+<div>
+<div class="text-sm font-bold text-primary-container">Dnata Handling</div>
+<div class="text-xs text-slate-400 mt-0.5">DXB, DWC (UAE)</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm text-on-surface">contact@dnata.com</div>
+<div class="text-xs text-slate-400 mt-0.5">+971 4 606 4000</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-on-tertiary-container text-[10px] font-bold uppercase rounded-full">Logistics</span>
+<span class="px-2 py-0.5 bg-secondary-container/20 text-on-secondary-container text-[10px] font-bold uppercase rounded-full">Passenger</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm text-slate-600">Oct 01, 2023</div>
+<div class="text-[10px] text-on-tertiary-container font-semibold mt-0.5 flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-on-tertiary-container"></span> Verified
+                                    </div>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-slate-400 hover:text-primary-container transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
+<button class="p-2 text-slate-400 hover:text-error transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs">SW</div>
+<div>
+<div class="text-sm font-bold text-primary-container">Swissport Global</div>
+<div class="text-xs text-slate-400 mt-0.5">ZRH, GVA, BSL (CHE)</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm text-on-surface">ops.center@swissport.com</div>
+<div class="text-xs text-slate-400 mt-0.5">+41 43 815 00 00</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-on-tertiary-container text-[10px] font-bold uppercase rounded-full">Full Service</span>
+<span class="px-2 py-0.5 bg-secondary-container/20 text-on-secondary-container text-[10px] font-bold uppercase rounded-full">Fueling</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm text-slate-600">Sep 28, 2023</div>
+<div class="text-[10px] text-on-tertiary-container font-semibold mt-0.5 flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-on-tertiary-container"></span> Verified
+                                    </div>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-slate-400 hover:text-primary-container transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
+<button class="p-2 text-slate-400 hover:text-error transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="px-6 py-4 flex items-center justify-between bg-surface-container-low/30 border-t border-outline-variant/10">
+<p class="text-xs font-medium text-slate-500">Showing 1-10 of 128 results</p>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded-lg hover:bg-white text-slate-400 disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded-lg bg-primary-container text-white text-xs font-bold">1</button>
+<button class="px-3 py-1 rounded-lg hover:bg-white text-slate-500 text-xs font-bold">2</button>
+<button class="px-3 py-1 rounded-lg hover:bg-white text-slate-500 text-xs font-bold">3</button>
+<span class="px-2 text-slate-400">...</span>
+<button class="px-3 py-1 rounded-lg hover:bg-white text-slate-500 text-xs font-bold">13</button>
+<button class="p-1 rounded-lg hover:bg-white text-slate-400">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dashboard Stats Summary (Asymmetric Layout Element) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="md:col-span-2 bg-primary-container rounded-xl p-6 text-white ambient-shadow relative overflow-hidden">
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#b3c6f5]">Registry Insights</span>
+<h4 class="text-2xl font-bold mt-2">Active Handlers Expansion</h4>
+<p class="text-sm text-slate-300 mt-2 max-w-xs">Global ground handling capacity has increased by 12.4% this quarter across all monitored hubs.</p>
+</div>
+<button class="mt-8 flex items-center gap-2 text-xs font-bold text-[#b3c6f5] hover:text-white transition-colors">
+                            View Full Capacity Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Aesthetic Gradient Overlay -->
+<div class="absolute right-0 top-0 w-1/2 h-full opacity-20 pointer-events-none">
+<svg class="h-full w-full" viewbox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<path d="M47.7,-64.3C61.4,-56.3,71.7,-42.1,76.4,-26.3C81.1,-10.5,80.1,6.8,74.3,21.9C68.4,37.1,57.7,50.1,44,59.3C30.4,68.4,13.8,73.8,-3.7,78.8C-21.2,83.9,-39.5,88.5,-53.4,80.9C-67.4,73.3,-77.1,53.4,-81.2,34.4C-85.3,15.4,-83.8,-2.8,-77.6,-18.8C-71.3,-34.8,-60.3,-48.6,-46.8,-56.6C-33.4,-64.7,-17.5,-67.1,-0.4,-66.6C16.8,-66.1,33.9,-72.3,47.7,-64.3Z" fill="#b3c6f5" transform="translate(100 100)"></path>
+</svg>
+</div>
+</div>
+<div class="bg-surface-container-lowest ambient-shadow rounded-xl p-6 border border-outline-variant/10 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-on-tertiary-container bg-tertiary-container/10 p-2 rounded-lg">verified</span>
+<p class="text-xs font-bold text-slate-400 uppercase mt-4 tracking-wider">Verified Registry</p>
+<h4 class="text-3xl font-black text-primary-container mt-1">94%</h4>
+</div>
+<div class="mt-4 w-full bg-slate-100 h-1 rounded-full overflow-hidden">
+<div class="bg-on-tertiary-container h-full w-[94%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest ambient-shadow rounded-xl p-6 border border-outline-variant/10 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-on-error-container bg-error-container/20 p-2 rounded-lg">priority_high</span>
+<p class="text-xs font-bold text-slate-400 uppercase mt-4 tracking-wider">Pending Audit</p>
+<h4 class="text-3xl font-black text-primary-container mt-1">08</h4>
+</div>
+<button class="text-xs font-bold text-primary-container underline underline-offset-4 mt-4">Review Required</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

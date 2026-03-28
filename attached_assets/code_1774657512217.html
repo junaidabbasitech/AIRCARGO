@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Airports Registry | Aviation Intelligence</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-tint": "#0c56d0",
+              "on-primary-fixed-variant": "#0040a2",
+              "secondary-container": "#d0e1fb",
+              "on-secondary-fixed": "#0b1c30",
+              "on-secondary-container": "#54647a",
+              "on-primary-fixed": "#001848",
+              "on-primary-container": "#4f83fe",
+              "tertiary-fixed": "#ffdcc6",
+              "on-background": "#191c1e",
+              "surface": "#f7f9fb",
+              "error": "#ba1a1a",
+              "surface-container-highest": "#e0e3e5",
+              "surface-container": "#eceef0",
+              "outline-variant": "#c5c6cf",
+              "tertiary-fixed-dim": "#f8b990",
+              "tertiary-container": "#3b1900",
+              "primary": "#000a28",
+              "primary-container": "#001e56",
+              "on-secondary": "#ffffff",
+              "outline": "#75777f",
+              "inverse-on-surface": "#eff1f3",
+              "primary-fixed": "#dae2ff",
+              "tertiary": "#1a0700",
+              "inverse-surface": "#2d3133",
+              "secondary-fixed": "#d3e4fe",
+              "on-surface-variant": "#44474e",
+              "background": "#f7f9fb",
+              "surface-container-high": "#e6e8ea",
+              "on-tertiary": "#ffffff",
+              "secondary": "#505f76",
+              "surface-dim": "#d8dadc",
+              "on-error": "#ffffff",
+              "primary-fixed-dim": "#b2c5ff",
+              "error-container": "#ffdad6",
+              "on-error-container": "#93000a",
+              "inverse-primary": "#b2c5ff",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed-variant": "#673c1d",
+              "on-surface": "#191c1e",
+              "surface-variant": "#e0e3e5",
+              "on-tertiary-container": "#b47e59",
+              "surface-container-low": "#f2f4f6",
+              "secondary-fixed-dim": "#b7c8e1",
+              "on-primary": "#ffffff",
+              "surface-bright": "#f7f9fb",
+              "on-secondary-fixed-variant": "#38485d",
+              "on-tertiary-fixed": "#311300"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased overflow-hidden">
+<div class="flex h-screen w-full">
+<!-- Side Navigation (Shared Component Integration) -->
+<aside class="bg-[#f2f4f6] dark:bg-[#000a28] docked left-0 h-screen w-64 flex flex-col py-6 px-4 gap-2 font-['Inter'] text-[0.875rem] font-medium transition-all duration-200 ease-in-out">
+<div class="flex items-center gap-3 px-2 mb-8">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="flight_takeoff">flight_takeoff</span>
+</div>
+<div>
+<h1 class="text-lg font-bold text-[#0B2147] dark:text-white leading-tight">Precision Navigator</h1>
+<p class="text-xs text-slate-500">Global Registry</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-[#0B2147] dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-white dark:bg-[#0B2147] text-[#0B2147] dark:text-white shadow-sm rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="layers">layers</span>
+<span>Registry</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-[#0B2147] dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="flight_takeoff">flight_takeoff</span>
+<span>Flight Ops</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-[#0B2147] dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-[#0B2147] dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-200 dark:border-slate-800 space-y-1">
+<button class="w-full bg-gradient-to-br from-on-primary-container to-primary text-white rounded-lg py-3 px-4 flex items-center justify-center gap-2 mb-4 font-semibold shadow-md active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+<span>New Flight Plan</span>
+</button>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-[#0B2147] dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-[#0B2147] dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-surface">
+<!-- Header (Inspired by TopNavBar Shared Component) -->
+<header class="h-20 flex items-center justify-between px-10 border-b border-surface-container">
+<div>
+<h2 class="font-headline text-2xl font-extrabold text-primary tracking-tight">Airports Registry</h2>
+<p class="text-sm text-on-surface-variant font-medium">Global Database • 1,248 Entries</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl" data-icon="search">search</span>
+<input class="w-full pl-12 pr-4 py-2.5 bg-surface-container-high rounded-full border-none focus:ring-2 focus:ring-surface-tint text-sm transition-all" placeholder="Search airports, codes, or locations..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/30 mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
+<div class="text-right">
+<p class="text-xs font-bold text-primary leading-none">Capt. Sarah Jenkins</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Flight Admin</p>
+</div>
+<img alt="User avatar" class="w-10 h-10 rounded-full object-cover border-2 border-surface-container-highest group-hover:border-surface-tint transition-all" data-alt="Professional headshot of a female aviation administrator in a clean office setting, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9qbaGA3kHaxZCr1KMfKaiBROzv1il9JF8gC8o8ssPSEfs7E35GzAiPWHm_IDseGva_OQlOEoVm4u3Y7obERunqCNmwgmqZYcbQMcTe6uXD-IrnvPWmcbJrD43GJ3ETVK0-iPtmETMXGr1z0-SWYcpXuCjElp-l11Km7dytOD2Hnh67uWlZnzzUyY1HSpwIKdcNOlXWBzhdOCiCR5yxnnCYDw8-K86aGNDSBwMA-bnGp-dkkHSMwGFPDVZ2WwKksUaLCNUA741efYq"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Filters & Actions Area -->
+<section class="px-10 py-6 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-lowest text-on-surface font-semibold text-sm rounded-lg border border-outline-variant/20 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="filter_list">filter_list</span>
+<span>Filters</span>
+<span class="bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full">3</span>
+</button>
+<div class="flex items-center gap-1.5 p-1 bg-surface-container-low rounded-lg">
+<button class="px-4 py-1.5 bg-surface-container-lowest text-primary text-xs font-bold rounded-md shadow-sm">All Entries</button>
+<button class="px-4 py-1.5 text-on-surface-variant text-xs font-bold hover:bg-surface-container-high rounded-md transition-all">Commercial</button>
+<button class="px-4 py-1.5 text-on-surface-variant text-xs font-bold hover:bg-surface-container-high rounded-md transition-all">Private</button>
+<button class="px-4 py-1.5 text-on-surface-variant text-xs font-bold hover:bg-surface-container-high rounded-md transition-all">Military</button>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 text-on-surface-variant hover:text-primary font-semibold text-sm transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="ios_share">ios_share</span>
+<span>Export Data</span>
+</button>
+<button class="flex items-center gap-2 px-6 py-2.5 bg-primary text-white font-bold text-sm rounded-lg hover:opacity-90 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-lg" data-icon="add_circle">add_circle</span>
+<span>Add Airport</span>
+</button>
+</div>
+</section>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto px-10 pb-12">
+<!-- Data Grid (Editorial Layout) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Card Template 1: Approved -->
+<div class="group relative bg-surface-container-lowest rounded-xl p-6 transition-all duration-300 hover:shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)] overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-surface-tint"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-extrabold px-2 py-1 rounded tracking-widest uppercase">ABR / KABR</span>
+<div class="flex items-center gap-1.5 text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+<span class="text-[10px] font-bold uppercase">Approved</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-lg text-primary leading-snug group-hover:text-surface-tint transition-colors">Aberdeen Regional Airport</h3>
+<p class="text-sm text-on-surface-variant mb-4">Aberdeen, SD, US</p>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-medium">Registry ID</span>
+<span class="text-primary font-mono font-bold">REG-2024-8812</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-medium">Customs Access</span>
+<span class="bg-primary-container/10 text-on-primary-container px-2 py-0.5 rounded font-bold">Yes / 24H</span>
+</div>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<button class="text-[11px] font-extrabold text-surface-tint uppercase tracking-wider hover:underline">View Map</button>
+<button class="p-1.5 hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-lg text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Card Template 2: Pending -->
+<div class="group relative bg-surface-container-lowest rounded-xl p-6 transition-all duration-300 hover:shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)] overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-tertiary-fixed-dim"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-extrabold px-2 py-1 rounded tracking-widest uppercase">ORD / KORD</span>
+<div class="flex items-center gap-1.5 text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-orange-600 animate-pulse"></span>
+<span class="text-[10px] font-bold uppercase">Pending</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-lg text-primary leading-snug group-hover:text-surface-tint transition-colors">O'Hare International</h3>
+<p class="text-sm text-on-surface-variant mb-4">Chicago, IL, US</p>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-medium">Registry ID</span>
+<span class="text-primary font-mono font-bold">REG-2024-0014</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-medium">Customs Access</span>
+<span class="bg-primary-container/10 text-on-primary-container px-2 py-0.5 rounded font-bold">Yes / 24H</span>
+</div>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<button class="text-[11px] font-extrabold text-surface-tint uppercase tracking-wider hover:underline">View Map</button>
+<button class="p-1.5 hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-lg text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Card Template 3 -->
+<div class="group relative bg-surface-container-lowest rounded-xl p-6 transition-all duration-300 hover:shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)] overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-surface-tint"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-extrabold px-2 py-1 rounded tracking-widest uppercase">LHR / EGLL</span>
+<div class="flex items-center gap-1.5 text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+<span class="text-[10px] font-bold uppercase">Approved</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-lg text-primary leading-snug group-hover:text-surface-tint transition-colors">London Heathrow</h3>
+<p class="text-sm text-on-surface-variant mb-4">Hillingdon, UK</p>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-medium">Registry ID</span>
+<span class="text-primary font-mono font-bold">REG-2024-5509</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-medium">Customs Access</span>
+<span class="bg-primary-container/10 text-on-primary-container px-2 py-0.5 rounded font-bold">Yes / 24H</span>
+</div>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<button class="text-[11px] font-extrabold text-surface-tint uppercase tracking-wider hover:underline">View Map</button>
+<button class="p-1.5 hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-lg text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Card Template 4: No Customs -->
+<div class="group relative bg-surface-container-lowest rounded-xl p-6 transition-all duration-300 hover:shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)] overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-surface-tint"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-extrabold px-2 py-1 rounded tracking-widest uppercase">ASE / KASE</span>
+<div class="flex items-center gap-1.5 text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+<span class="text-[10px] font-bold uppercase">Approved</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-lg text-primary leading-snug group-hover:text-surface-tint transition-colors">Aspen/Pitkin County</h3>
+<p class="text-sm text-on-surface-variant mb-4">Aspen, CO, US</p>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-medium">Registry ID</span>
+<span class="text-primary font-mono font-bold">REG-2024-2110</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-medium">Customs Access</span>
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded font-bold">No Entry</span>
+</div>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<button class="text-[11px] font-extrabold text-surface-tint uppercase tracking-wider hover:underline">View Map</button>
+<button class="p-1.5 hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-lg text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Repeats for density -->
+<!-- Airport 5 -->
+<div class="group relative bg-surface-container-lowest rounded-xl p-6 transition-all duration-300 hover:shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)] overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-surface-tint"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-extrabold px-2 py-1 rounded tracking-widest uppercase">HND / RJTT</span>
+<div class="flex items-center gap-1.5 text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+<span class="text-[10px] font-bold uppercase">Approved</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-lg text-primary leading-snug group-hover:text-surface-tint transition-colors">Haneda International</h3>
+<p class="text-sm text-on-surface-variant mb-4">Tokyo, JP</p>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-medium">Registry ID</span>
+<span class="text-primary font-mono font-bold">REG-2024-9901</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-medium">Customs Access</span>
+<span class="bg-primary-container/10 text-on-primary-container px-2 py-0.5 rounded font-bold">Yes / 24H</span>
+</div>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<button class="text-[11px] font-extrabold text-surface-tint uppercase tracking-wider hover:underline">View Map</button>
+<button class="p-1.5 hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-lg text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Airport 6 -->
+<div class="group relative bg-surface-container-lowest rounded-xl p-6 transition-all duration-300 hover:shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)] overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-extrabold px-2 py-1 rounded tracking-widest uppercase">VKO / UUWW</span>
+<div class="flex items-center gap-1.5 text-error bg-error-container px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span class="text-[10px] font-bold uppercase">Restricted</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-lg text-primary leading-snug group-hover:text-surface-tint transition-colors">Vnukovo International</h3>
+<p class="text-sm text-on-surface-variant mb-4">Moscow, RU</p>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-medium">Registry ID</span>
+<span class="text-primary font-mono font-bold">REG-2023-1102</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-medium">Customs Access</span>
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded font-bold">Suspended</span>
+</div>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<button class="text-[11px] font-extrabold text-surface-tint uppercase tracking-wider hover:underline">View Map</button>
+<button class="p-1.5 hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-lg text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Card with data visualization aspect (Bento style) -->
+<div class="group lg:col-span-2 relative bg-primary-container rounded-xl p-8 flex flex-col justify-between overflow-hidden shadow-xl">
+<div class="absolute top-0 right-0 w-64 h-64 bg-surface-tint/20 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+<div class="relative z-10">
+<h3 class="text-2xl font-headline font-extrabold text-white mb-2">Fleet Management Insights</h3>
+<p class="text-primary-fixed-dim max-w-sm mb-6">Real-time tracking of airfield availability and customs workload across 12 strategic hubs.</p>
+<div class="flex gap-8">
+<div>
+<p class="text-[10px] text-white/60 font-bold uppercase tracking-widest mb-1">Peak Traffic Hub</p>
+<p class="text-xl font-headline font-bold text-white">KJFK / New York</p>
+</div>
+<div>
+<p class="text-[10px] text-white/60 font-bold uppercase tracking-widest mb-1">Avg Clearance</p>
+<p class="text-xl font-headline font-bold text-white">12.4m</p>
+</div>
+</div>
+</div>
+<div class="relative z-10 flex items-center justify-between mt-8">
+<div class="flex -space-x-3">
+<img alt="Team member" class="w-10 h-10 rounded-full border-4 border-primary-container" data-alt="Portrait of a male pilot in uniform, outdoor airfield background, soft daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAok4CFi3h05dlKBJFB8q59VYLFGg7BTXk8qpf0PiQ3DJ-8f4eIxMaTZMW26DuAwzOz7c5p9ApMBmWO4u2-mKLdkjQZgUH65Put412L2bVAJB82qh9sT4ap2hEKc8AvMxqILG_e5tVSJFKl0QZnY3dBFtg8LJ4LbZ56LebLywAOW-qR-bobBEg6Zkw8CKxqaNuDAth6mhno3_6udJXC_RpCxugjRVwAnz0DiOZlBHIBLiFxq2jGgeouZmBtAdR3zkwaFSksFFuV4uTt"/>
+<img alt="Team member" class="w-10 h-10 rounded-full border-4 border-primary-container" data-alt="Close up of a female flight controller wearing professional headset, tech office environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoJa3HhwoF-ELIDBFxzaAOcZfhOt3R5Hbi7rUoNR05d9urWGEHMjEs0aCh4VO-sfTD2N4rsCFrg6cIltdrABVdE2eSWB1APryBBioDfWByAjCtkFd1sOoM3X3HhrsstPQJMoApFY3F6BVllKLxAccoe7bZdAPWJ8c7Uv30Eyv6lchpPAxIho0ETOa_nZ5qndHI4ZdrsdlJi6WcTiE1d0gttm-gOhgb78VdtsrP2RZ3kJ0GGGpRkVSwVjuywIwjdU2U_7eE39Al0Vq9"/>
+<img alt="Team member" class="w-10 h-10 rounded-full border-4 border-primary-container" data-alt="Studio portrait of a logistics manager, neutral background, professional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBq0JvJiLm-tL-k9-0ml4MvyGaD1h9IQtO4PqvOxtFX2UvNWPTFHX_-yhFmjxYktYy7n5sUJLcapgQ7RlyH5D0FvKrtLro9ODMn-E3nZ26OPRbqtAZvSRjoqIzEtiCWgL6QtJZzIXlWbFUCDph9lfX4GK4weAgIJPrSJ_kNLkaD3oFMWz1uZIntsEiB99ICN_uzfExhmO9ZY6kYieO-_QbCbU-fQpUd49NHAxFqh6Ulzr0zL_KXKCupMRsq57HBz9DI6yfMxcFws0pJ"/>
+<div class="w-10 h-10 rounded-full border-4 border-primary-container bg-surface-tint flex items-center justify-center text-[10px] text-white font-bold">+18</div>
+</div>
+<button class="px-6 py-2 bg-white text-primary font-bold rounded-lg text-sm hover:bg-secondary-fixed transition-colors">Generate Report</button>
+</div>
+</div>
+<!-- Card Template 7 -->
+<div class="group relative bg-surface-container-lowest rounded-xl p-6 transition-all duration-300 hover:shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)] overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-surface-tint"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-extrabold px-2 py-1 rounded tracking-widest uppercase">SYD / YSSY</span>
+<div class="flex items-center gap-1.5 text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+<span class="text-[10px] font-bold uppercase">Approved</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-lg text-primary leading-snug group-hover:text-surface-tint transition-colors">Kingsford Smith</h3>
+<p class="text-sm text-on-surface-variant mb-4">Sydney, AU</p>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-medium">Registry ID</span>
+<span class="text-primary font-mono font-bold">REG-2024-4004</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-medium">Customs Access</span>
+<span class="bg-primary-container/10 text-on-primary-container px-2 py-0.5 rounded font-bold">Yes / 24H</span>
+</div>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<button class="text-[11px] font-extrabold text-surface-tint uppercase tracking-wider hover:underline">View Map</button>
+<button class="p-1.5 hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-lg text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Final card: Statistics -->
+<div class="group relative bg-surface-container-low rounded-xl p-6 border border-outline-variant/30 flex flex-col justify-center items-center text-center">
+<div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-surface-tint mb-4 shadow-sm">
+<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
+</div>
+<h3 class="font-headline font-bold text-primary mb-1">Expand Database</h3>
+<p class="text-xs text-on-surface-variant">Bulk upload airport registry files via CSV or JSON format.</p>
+<button class="mt-4 px-4 py-2 border border-outline-variant text-primary text-xs font-bold rounded-lg hover:bg-white transition-all">Upload Registry</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Floating Action for Quick Add (Contextual FAB Suppression would normally hide this on detail screens, but this is the primary registry screen) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined" data-icon="rocket_launch">rocket_launch</span>
+</button>
+</body></html>
