@@ -93,7 +93,23 @@ export default function GroundHandlers() {
           <CardTitle>Ground Handlers Directory</CardTitle>
           <div className="flex gap-3">
             <Button variant="outline" onClick={() => setIsBulkModalOpen(true)}><Upload className="h-4 w-4 mr-2" /> Bulk Upload</Button>
-            <Button variant="primary" onClick={() => openModal()}><Plus className="h-4 w-4 mr-2" /> Add Handler</Button>
+            <Button variant="primary" onClick={() => openModal()} className="flex items-center
+                  px-3 py-1.5 text-xs font-bold
+                   text-white
+                  rounded-xl
+                  shadow-md
+
+                  transition-all duration-200 ease-in-out
+
+                  hover:bg-orange-600
+                  hover:shadow-lg
+                  hover:scale-110
+
+                  active:scale-85
+
+                  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
+                "
+              ><Plus className="h-4 w-4 mr-2" /> Add Handler</Button>
           </div>
         </CardHeader>
         <CardContent>

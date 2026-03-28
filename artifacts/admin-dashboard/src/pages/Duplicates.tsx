@@ -370,7 +370,23 @@ export default function Duplicates() {
           <h2 className="text-xl font-black text-slate-800 tracking-tight">Duplicate Detection</h2>
           <p className="text-sm text-slate-500 mt-0.5">Scan for duplicate airlines, airports, and airline-airport operation records</p>
         </div>
-        <Button variant="primary" onClick={checkDuplicates} isLoading={loading} className="shrink-0 hover:scale-105 active:scale-95 transition-all">
+        <Button variant="primary" onClick={checkDuplicates} isLoading={loading} className="flex items-center
+              px-3 py-1.5 text-xs font-bold
+               text-white
+              rounded-xl
+              shadow-md
+
+              transition-all duration-200 ease-in-out
+
+              hover:bg-orange-600
+              hover:shadow-lg
+              hover:scale-110
+
+              active:scale-85
+
+              focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
+            "
+          >
           <Search className="h-4 w-4 mr-2" />
           {checked ? "Re-Scan Database" : "Check for Duplicates"}
         </Button>

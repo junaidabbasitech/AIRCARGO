@@ -198,17 +198,33 @@ export default function AirlineOperations() {
             {/* Mode toggle */}
             <div className="flex rounded-xl overflow-hidden border" style={{ borderColor: "var(--t-border)" }}>
               <button onClick={() => setGlobalMode(false)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition-all hover:bg-orange-600 hover:shadow-lg hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
                 style={!globalMode ? { background: "var(--t-accent)", color: "#fff" } : { background: "var(--t-card)", color: "var(--t-text-sub)" }}>
                 <Plane className="h-3.5 w-3.5" /> By Airline
               </button>
               <button onClick={() => setGlobalMode(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-xl font-bold transition-all hover:bg-orange-600 hover:shadow-lg hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
                 style={globalMode ? { background: "var(--t-accent)", color: "#fff" } : { background: "var(--t-card)", color: "var(--t-text-sub)" }}>
                 <Globe className="h-3.5 w-3.5" /> Global Search
               </button>
             </div>
-            <Button variant="primary" onClick={() => openCreate()} className="hover:scale-105 active:scale-95 transition-all">
+            <Button variant="primary" onClick={() => openCreate()} className="flex items-center
+                  px-3 py-1.5 text-xs font-bold
+                   text-white
+                  rounded-xl
+                  shadow-md
+
+                  transition-all duration-200 ease-in-out
+
+                  hover:bg-orange-600
+                  hover:shadow-lg
+                  hover:scale-110
+
+                  active:scale-85
+
+                  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
+                "
+              >
               <Plus className="h-4 w-4 mr-2" /> Add Operation
             </Button>
           </div>

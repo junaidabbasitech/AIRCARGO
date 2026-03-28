@@ -159,7 +159,23 @@ export default function Airports() {
         <CardWatermark variant="tower" size={110} opacity={0.04} position="bottom-right" />
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <CardTitle>Airports Registry</CardTitle>
-          <Button variant="primary" onClick={() => openModal()} className="hover:scale-105 active:scale-95 transition-all">
+          <Button variant="primary" onClick={() => openModal()} className="flex items-center
+                px-3 py-1.5 text-xs font-bold
+                 text-white
+                rounded-xl
+                shadow-md
+
+                transition-all duration-200 ease-in-out
+
+                hover:bg-orange-600
+                hover:shadow-lg
+                hover:scale-110
+
+                active:scale-85
+
+                focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
+              "
+            >
             <Plus className="h-4 w-4 mr-2" /> Add Airport
           </Button>
         </CardHeader>

@@ -274,7 +274,23 @@ export default function SyncData() {
 
             <Button
               variant="primary"
-              className="w-full h-12 text-base shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all duration-500"
+              className="flex items-center
+                  px-3 py-1.5 text-xs font-bold
+                   text-white
+                  rounded-xl
+                  shadow-md
+
+                  transition-all duration-200 ease-in-out
+
+                  hover:bg-orange-600
+                  hover:shadow-lg
+                  hover:scale-110
+
+                  active:scale-85
+
+                  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
+                "
+              
               onClick={handleSync}
               isLoading={syncMut.isPending}
             >
