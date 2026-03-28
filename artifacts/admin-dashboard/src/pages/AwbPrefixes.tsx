@@ -6,6 +6,7 @@ import {
   Button, Input, Table, TableHeader, TableBody,
   TableRow, TableHead, TableCell, Modal, Label, Badge
 } from "@/components/ui";
+import { CardWatermark } from "@/components/CardWatermark";
 import { Search, Edit2, ScanBarcode, CheckCircle2, AlertCircle, X, Save, Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -154,6 +155,7 @@ export default function AwbPrefixes() {
 
       {/* Controls */}
       <Card>
+        <CardWatermark variant="route" size={100} opacity={0.04} position="bottom-right" />
         <CardContent className="pt-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">

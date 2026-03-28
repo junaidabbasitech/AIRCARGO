@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useListAirlines } from "@workspace/api-client-react";
 import { Card, CardContent, Button, Input, Label, Modal, Select, Badge } from "@/components/ui";
+import { CardWatermark } from "@/components/CardWatermark";
 import { SearchableAirportSelect } from "@/components/SearchableAirportSelect";
 import { Plus, Edit2, Trash2, Search, Plane, Building2, ChevronLeft, Phone, Mail, Hash, DollarSign, MapPin, CheckSquare, X, Globe } from "lucide-react";
 import { toast } from "sonner";

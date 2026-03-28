@@ -3,6 +3,7 @@ import { useListAirlines, useUpdateAirlineStatus, useCreateAirline, useUpdateAir
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent, Button, Input, Select, Badge, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Modal, Label } from "@/components/ui";
 import { Search, Plus, Edit2, Trash2, Check, X, Filter, CheckSquare, ChevronsUpDown, Hash } from "lucide-react";
+import { CardWatermark } from "@/components/CardWatermark";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -205,6 +206,7 @@ export default function Airlines() {
   return (
     <div className="space-y-4">
       <Card>
+        <CardWatermark variant="jet" size={110} opacity={0.04} position="bottom-right" />
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <CardTitle>Airlines Registry</CardTitle>
           <Button variant="primary" onClick={() => openModal()} className="hover:scale-105 active:scale-95 transition-all">

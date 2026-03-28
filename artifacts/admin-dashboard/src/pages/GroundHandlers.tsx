@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent, Button, Input, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Modal, Label } from "@/components/ui";
 import { SearchableAirportSelect } from "@/components/SearchableAirportSelect";
 import { Search, Plus, Edit2, Trash2, Upload, Users } from "lucide-react";
+import { CardWatermark } from "@/components/CardWatermark";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -87,6 +88,7 @@ export default function GroundHandlers() {
   return (
     <div className="space-y-6">
       <Card>
+        <CardWatermark variant="globe" size={110} opacity={0.04} position="bottom-right" />
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle>Ground Handlers Directory</CardTitle>
           <div className="flex gap-3">

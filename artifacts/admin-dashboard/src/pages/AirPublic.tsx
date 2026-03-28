@@ -6,7 +6,8 @@ import {
   Shield, TrendingUp, AlertCircle, ScanBarcode, Package, Loader2,
   MessageSquarePlus, Send, CheckCircle2
 } from "lucide-react";
-import { Watermark } from "@/components/Watermark";
+import { AviationBg } from "@/components/AviationBg";
+import { CardWatermark } from "@/components/CardWatermark";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -480,7 +481,7 @@ export default function AirPublic() {
 
   return (
     <div className="min-h-screen relative" style={{ background: isDark ? "hsl(222,60%,7%)" : "hsl(210,20%,96%)" }}>
-      <Watermark />
+      <AviationBg />
       {/* Atmospheric glow blobs (dark only) */}
       {isDark && (
         <div className="pointer-events-none fixed inset-0 overflow-hidden -z-0">
