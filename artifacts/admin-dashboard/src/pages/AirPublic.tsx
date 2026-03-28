@@ -490,7 +490,7 @@ export default function AirPublic() {
         </div>
       )}
       {/* ─── HERO ─── */}
-      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16" style={{ background: heroBg }}>
+      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 bg-[transparent] opacity-[1]" style={{ background: heroBg }}>
         {/* Status + Theme toggle row */}
         <div className="flex items-center justify-between gap-3 mb-10 max-w-6xl mx-auto">
           <button
