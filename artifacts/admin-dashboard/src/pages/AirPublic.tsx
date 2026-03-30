@@ -684,14 +684,14 @@ export default function AirPublic() {
         {tab === "awb" && (
           <div>
             {/* Input card */}
-            <div className="rounded-2xl p-6 shadow-xl mb-6" style={{ ...cardStyle, background: isDark ? "rgba(5,150,105,0.06)" : "rgba(5,150,105,0.04)", border: "1px solid rgba(5,150,105,0.22)" }}>
+            <div className="rounded-2xl p-6 shadow-xl mb-6" style={{ ...cardStyle, background: isDark ? "rgba(5,150,105,0.06)" : "rgba(5,150,105,0.04)", border: "2px solid #f97316" }}>
               <div className="flex items-center gap-3 mb-5">
-                <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(5,150,105,0.15)", border: "1px solid rgba(5,150,105,0.3)" }}>
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(5,150,105,0.15)", border: "2px solid #f97316" }}>
                   <ScanBarcode className="h-5 w-5 text-emerald-400" />
                 </div>
                 <div>
                   <h2 className="text-base font-black tracking-wide" style={{ color: "var(--t-text)" }}>AWB Lookup</h2>
-                  <p className="text-xs font-mono" style={{ color: "var(--t-text-muted)" }}>Air Waybill → Airline + ISC details at destination</p>
+                  <p className="text-xs font-mono" style={{ color: "#ffffff" }}>Air Waybill → Airline + ISC details at destination</p>
                 </div>
               </div>
 
@@ -707,7 +707,7 @@ export default function AirPublic() {
                     className="w-full px-4 py-3 rounded-xl text-sm font-mono focus:outline-none transition-all"
                     style={{
                       background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
-                      border: "1px solid rgba(5,150,105,0.3)",
+                      border: "2px solid rgba(249,115,22,0.5)",
                       color: "var(--t-text)"
                     }}
                   />
@@ -725,7 +725,7 @@ export default function AirPublic() {
                     className="w-full px-4 py-3 rounded-xl text-sm font-mono uppercase focus:outline-none transition-all"
                     style={{
                       background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
-                      border: "1px solid rgba(5,150,105,0.3)",
+                      border: "2px solid rgba(249,115,22,0.5)",
                       color: "var(--t-text)"
                     }}
                   />
@@ -809,17 +809,17 @@ export default function AirPublic() {
 
             {/* Quick reference */}
             {!awbResult && !awbError && (
-              <div className="rounded-2xl p-5" style={{ background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)", border: "1px solid var(--t-border)" }}>
-                <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: "var(--t-text-muted)" }}>Common AWB Prefixes</p>
+              <div className="rounded-2xl p-5" style={{ background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)", border: "2px solid #f97316" }}>
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: "#ffffff" }}>Common AWB Prefixes</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {[["176","Emirates (EK)"],["157","Qatar Airways (QR)"],["020","Lufthansa (LH)"],["057","Air France (AF)"],
                     ["235","Turkish Airlines (TK)"],["108","Atlas Air (5Y)"],["125","British Airways (BA)"],["618","Singapore Airlines (SQ)"],
                     ["016","United Airlines (UA)"],["006","Delta Air Lines (DL)"],["001","American Airlines (AA)"],["160","Cathay Pacific (CX)"]].map(([prefix, name]) => (
                     <button key={prefix} onClick={() => setAwbInput(`${prefix}-`)}
                       className="text-left p-2.5 rounded-lg transition-all"
-                      style={{ background: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)", border: "1px solid var(--t-border-soft)" }}>
+                      style={{ background: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)", border: "2px solid rgba(249,115,22,0.35)" }}>
                       <p className="text-sm font-black font-mono" style={{ color: "var(--t-accent)" }}>{prefix}</p>
-                      <p className="text-[10px] leading-tight mt-0.5" style={{ color: "var(--t-text-muted)" }}>{name}</p>
+                      <p className="text-[10px] leading-tight mt-0.5" style={{ color: "#ffffff" }}>{name}</p>
                     </button>
                   ))}
                 </div>
