@@ -491,12 +491,13 @@ export default function AirPublic() {
       {/* ─── HERO ─── */}
       <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden">
         {/* GIF background */}
-        <img
-          src={`${BASE}/plane-takeoff.gif`}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none select-none absolute inset-0 w-full h-full object-cover"
-          style={{ zIndex: 0 }}
+          <img
+            src={`${BASE}/plane-takeoff.gif`}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none select-none absolute inset-0 w-full h-full object-cover opacity-50"
+            style={{ zIndex: 0 }}
+          
         />
         {/* Very subtle bottom gradient so text stays readable without tinting the GIF */}
         <div
@@ -531,16 +532,16 @@ export default function AirPublic() {
         </div>
 
         {/* Title */}
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(147,197,253,0.15)", border: "1px solid rgba(147,197,253,0.35)" }}>
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse inline-block" />
-            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#93c5fd" }}>Technical Registry Query</span>
+        <div className="max-w-3xl mx-auto text-center rounded-2xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5" style={{ background: "rgb(147,197,253)", border: "2px solid rgba(147,197,253,0.35)" }}>
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse inline-block" />
+            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#ffffff" }}>Technical Registry Query</span>
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ color: "#ffffff", letterSpacing: "-0.02em" }}>
+          <h1 className="font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ background: "#B8B8B8", color: "#ffffff", letterSpacing: "-0.02em" }}>
             Precision{" "}<span style={{ color: "#7dd3fc" }}>Intelligence</span>{" "}Search
           </h1>
-          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{ color: "rgba(255,255,255,0.72)" }}>
+          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{background: "#B8B8B8", color: "#ffffff" }}>
             Search for Airlines, Airports, and AWB data with complete access to ISC charges, FIRMS codes, and operational details sourced from Aviation Regulatory Authority databases.
           </p>
 
@@ -697,7 +698,7 @@ export default function AirPublic() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label className="block text-[15px] font-bold uppercase tracking-widest mb-1.5 text-[#ffffff]" style={{ color: "#ffffff" }}>AWB Number</label>
+                  <label className="block text-[15px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "#ffffff" }}>AWB Number</label>
                   <input
                     type="text"
                     value={awbInput}
@@ -711,10 +712,10 @@ export default function AirPublic() {
                       color: "var(--t-text)"
                     }}
                   />
-                  <p className="text-[10px] mt-1.5 text-[#fcfcfc]" style={{ color: "var(--t-text-muted)" }}>3-digit prefix identifies the airline (e.g. 176 = Emirates)</p>
+                  <p className="text-[10px] mt-1.5 text-[#fcfcfc]" style={{ color: "#ffffff" }}>3-digit prefix identifies the airline (e.g. 176 = Emirates)</p>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Destination Airport</label>
+                  <label className="block text-[15px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "#ffffff" }}>Destination Airport</label>
                   <input
                     type="text"
                     value={awbAirport}
@@ -729,7 +730,7 @@ export default function AirPublic() {
                       color: "var(--t-text)"
                     }}
                   />
-                  <p className="text-[10px] mt-1.5 text-[#ffffff] border-t-[#fafafa] border-r-[#fafafa] border-b-[#fafafa] border-l-[#fafafa]" style={{ color: "var(--t-text-muted)" }}>Airport IATA code where cargo will arrive</p>
+                  <p className="text-[10px] mt-1.5 text-[#ffffff] border-t-[#fafafa] border-r-[#fafafa] border-b-[#fafafa] border-l-[#fafafa]" style={{ color: "#ffffff)" }}>Airport IATA code where cargo will arrive</p>
                 </div>
               </div>
 
@@ -1040,12 +1041,12 @@ export default function AirPublic() {
                 </div>
                 <div>
                   <h2 className="text-base font-black tracking-wide" style={{ color: "var(--t-text)" }}>FIRMS Code Lookup</h2>
-                  <p className="text-xs" style={{ color: "var(--t-text-muted)" }}>Find airlines and operational details by FIRMS code</p>
+                  <p className="text-xs" style={{ color: "#ffffff" }}>Find airlines and operational details by FIRMS code</p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>FIRMS Code</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "#ffffff" }}>FIRMS Code</label>
                   <input
                     type="text"
                     value={firmsInput}
@@ -1062,7 +1063,7 @@ export default function AirPublic() {
                     onClick={handleFirmsSearch}
                     disabled={firmsLoading || !firmsInput.trim()}
                     className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
-                    style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "#fff", boxShadow: "0 4px 20px rgba(124,58,237,0.35)" }}
+                    style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "#ffffff", boxShadow: "0 4px 20px rgba(124,58,237,0.35)" }}
                   >
                     {firmsLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                     {firmsLoading ? "Searching..." : "Lookup"}
