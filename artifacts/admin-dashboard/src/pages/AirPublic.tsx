@@ -490,21 +490,21 @@ export default function AirPublic() {
       )}
       {/* ─── HERO ─── */}
       <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden">
-        {/* GIF background */}
-          <img
-            src={`${BASE}/plane-takeoff.gif`}
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none select-none absolute inset-0 w-full h-full object-cover opacity-50"
-            style={{ zIndex: 0 }}
-          
+        {/* GIF background — limited to heading area only */}
+        <img
+          src={`${BASE}/plane-takeoff.gif`}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none select-none absolute top-0 left-0 right-0 w-full object-cover"
+          style={{ zIndex: 0, height: "380px", objectPosition: "center top" }}
         />
-        {/* Very subtle bottom gradient so text stays readable without tinting the GIF */}
+        {/* Overlay — same height as the GIF, fades out at bottom */}
         <div
-          className="absolute inset-0"
+          className="absolute top-0 left-0 right-0"
           style={{
             zIndex: 1,
-            background: "linear-gradient(to bottom, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.25) 100%)",
+            height: "380px",
+            background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.28) 80%, rgba(0,0,0,0.55) 100%)",
           }}
         />
         {/* Hero content sits above all layers */}
@@ -538,10 +538,10 @@ export default function AirPublic() {
             <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#ffffff" }}>Technical Registry Query</span>
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ background: "#B8B8B8", color: "#ffffff", letterSpacing: "-0.02em" }}>
+          <h1 className="font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ color: "#ffffff", letterSpacing: "-0.02em" }}>
             Precision{" "}<span style={{ color: "#7dd3fc" }}>Intelligence</span>{" "}Search
           </h1>
-          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{background: "#B8B8B8", color: "#ffffff" }}>
+          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{ color: "rgba(255,255,255,0.85)" }}>
             Search for Airlines, Airports, and AWB data with complete access to ISC charges, FIRMS codes, and operational details sourced from Aviation Regulatory Authority databases.
           </p>
 
