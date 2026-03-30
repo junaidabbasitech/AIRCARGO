@@ -7,7 +7,6 @@ import {
   MessageSquarePlus, Send, CheckCircle2
 } from "lucide-react";
 import { AviationBg } from "@/components/AviationBg";
-import { CardWatermark } from "@/components/CardWatermark";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -515,80 +514,48 @@ export default function AirPublic() {
 
         {/* Title */}
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5" style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-accent-border)" }}>
-            <TrendingUp className="h-3 w-3" style={{ color: "var(--t-accent)" }} />
-            <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--t-accent)" }}>Aviation Data Intelligence</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(59,95,173,0.12)", border: "1px solid rgba(59,95,173,0.25)" }}>
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse inline-block" />
+            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#3b5fad" }}>Technical Registry Query</span>
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl font-black tracking-widest mb-3 leading-tight normal-case" style={{ color: "var(--t-text)" }}>
-            Find{" "}<span style={{ color: "var(--t-accent)" }}>Aviation</span>{" "}Data
+          <h1 className="font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ color: "var(--t-text)", letterSpacing: "-0.02em" }}>
+            Precision{" "}<span style={{ color: "var(--t-accent)" }}>Intelligence</span>{" "}Search
           </h1>
-          <p className="text-sm sm:text-base mb-8 leading-relaxed" style={{ color: "var(--t-text-sub)" }}>
-            {tab === "awb"
-              ? "Enter an Air Waybill number and destination airport to decode the carrier and look up ISC charges, FIRMS code, and ground handler details."
-              : tab === "firms"
-              ? "Enter a FIRMS code to find all airlines and airports linked to it, including ISC charges, ground handler contacts, and operational details."
-              : "Search airlines and airports — click any entry to explore operational data, ISC charges, FIRMS codes, and ground handler contacts."}
+          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{ color: "var(--t-text-sub)" }}>
+            Search for Airlines, Airports, and AWB data with complete access to ISC charges, FIRMS codes, and operational details sourced from Aviation Regulatory Authority databases.
           </p>
 
           {/* Tab switcher */}
-          <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-7" style={{ background: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)", border: "1px solid var(--t-border)" }}>
-            <button
-              onClick={() => handleTab("awb")}
-              className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
-              style={tab === "awb" ? {
-                background: "linear-gradient(135deg, #059669, #047857)",
-                color: "#fff", boxShadow: "0 4px 20px rgba(5,150,105,0.35)"
-              } : { color: "var(--t-text-sub)" }}
-            >
-              <ScanBarcode className="h-4 w-4" />
-              AWB Track
-            </button>
-            <button
-              onClick={() => handleTab("airlines")}
-              className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
-              style={tab === "airlines" ? {
-                background: "linear-gradient(135deg, var(--t-accent), color-mix(in srgb, var(--t-accent) 70%, #1d4ed8))",
-                color: "#fff", boxShadow: "0 4px 20px var(--t-accent-glow)"
-              } : { color: "var(--t-text-sub)" }}
-            >
-              <Plane className="h-4 w-4" />
-              Airlines
-              {airlines && (
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md" style={{
-                  background: tab === "airlines" ? "rgba(255,255,255,0.2)" : "var(--t-card)",
-                  color: tab === "airlines" ? "#fff" : "var(--t-text-muted)"
-                }}>{airlines.total}</span>
-              )}
-            </button>
-            <button
-              onClick={() => handleTab("airports")}
-              className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
-              style={tab === "airports" ? {
-                background: "linear-gradient(135deg, var(--t-accent2), color-mix(in srgb, var(--t-accent2) 80%, #dc2626))",
-                color: "#fff", boxShadow: "0 4px 20px var(--t-accent2-dim)"
-              } : { color: "var(--t-text-sub)" }}
-            >
-              <Building2 className="h-4 w-4" />
-              Airports
-              {airports && (
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md" style={{
-                  background: tab === "airports" ? "rgba(255,255,255,0.2)" : "var(--t-card)",
-                  color: tab === "airports" ? "#fff" : "var(--t-text-muted)"
-                }}>{airports.total}</span>
-              )}
-            </button>
-            <button
-              onClick={() => handleTab("firms")}
-              className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
-              style={tab === "firms" ? {
-                background: "linear-gradient(135deg, #7c3aed, #6d28d9)",
-                color: "#fff", boxShadow: "0 4px 20px rgba(124,58,237,0.35)"
-              } : { color: "var(--t-text-sub)" }}
-            >
-              <Hash className="h-4 w-4" />
-              FIRMS Lookup
-            </button>
+          <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-7" style={{ background: isDark ? "rgba(255,255,255,0.06)" : "rgba(11,33,71,0.07)", border: "1px solid var(--t-border)" }}>
+            {([
+              { key: "awb" as const, icon: ScanBarcode, label: "AWB Track", activeBg: "linear-gradient(135deg, #059669, #047857)", shadow: "rgba(5,150,105,0.35)" },
+              { key: "airlines" as const, icon: Plane, label: "Airlines", activeBg: "linear-gradient(135deg, var(--t-accent), #1d4ed8)", shadow: "var(--t-accent-glow)" },
+              { key: "airports" as const, icon: Building2, label: "Airports", activeBg: "linear-gradient(135deg, var(--t-accent2), #dc2626)", shadow: "var(--t-accent2-dim)" },
+              { key: "firms" as const, icon: Hash, label: "FIRMS Lookup", activeBg: "linear-gradient(135deg, #7c3aed, #6d28d9)", shadow: "rgba(124,58,237,0.35)" },
+            ] as const).map(({ key, icon: Icon, label, activeBg, shadow }) => (
+              <button key={key}
+                onClick={() => handleTab(key)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-wider transition-all duration-200"
+                style={tab === key
+                  ? { background: activeBg, color: "#fff", boxShadow: `0 4px 20px ${shadow}` }
+                  : { color: "var(--t-text-sub)" }}>
+                <Icon className="h-3.5 w-3.5" />
+                {label}
+                {key === "airlines" && airlines && (
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md"
+                    style={{ background: tab === "airlines" ? "rgba(255,255,255,0.2)" : "var(--t-card)", color: tab === "airlines" ? "#fff" : "var(--t-text-muted)" }}>
+                    {airlines.total}
+                  </span>
+                )}
+                {key === "airports" && airports && (
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md"
+                    style={{ background: tab === "airports" ? "rgba(255,255,255,0.2)" : "var(--t-card)", color: tab === "airports" ? "#fff" : "var(--t-text-muted)" }}>
+                    {airports.total}
+                  </span>
+                )}
+              </button>
+            ))}
           </div>
 
           {/* Search bar — hidden on AWB and FIRMS tabs */}

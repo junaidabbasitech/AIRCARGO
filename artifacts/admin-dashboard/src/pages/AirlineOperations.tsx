@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useListAirlines } from "@workspace/api-client-react";
 import { Card, CardContent, Button, Input, Label, Modal, Select, Badge } from "@/components/ui";
-import { CardWatermark } from "@/components/CardWatermark";
 import { SearchableAirportSelect } from "@/components/SearchableAirportSelect";
 import { Plus, Edit2, Trash2, Search, Plane, Building2, ChevronLeft, Phone, Mail, Hash, DollarSign, MapPin, CheckSquare, X, Globe } from "lucide-react";
 import { toast } from "sonner";
@@ -188,45 +187,33 @@ export default function AirlineOperations() {
   // ──────────────────────────────────────────────
   if (!selectedAirlineId) {
     return (
-      <div className="space-y-5">
+      <div className="space-y-5 max-w-7xl mx-auto">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold" style={{ color: "var(--t-text)" }}>Airline Operations</h2>
-            <p className="text-sm mt-0.5" style={{ color: "var(--t-text-muted)" }}>Manage airport operations, FIRMS codes, and ISC data by airline</p>
+            <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(11,33,71,0.40)" }}>Operational Data</p>
+            <h2 className="text-[22px] font-black" style={{ color: "#0b2147" }}>Airline Operations</h2>
+            <p className="text-[12px] mt-0.5" style={{ color: "rgba(11,33,71,0.45)" }}>Manage airport operations, FIRMS codes, and ISC data by airline</p>
           </div>
           <div className="flex items-center gap-2">
-            {/* Mode toggle */}
-            <div className="flex rounded-xl overflow-hidden border" style={{ borderColor: "var(--t-border)" }}>
+            <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: "rgba(11,33,71,0.05)" }}>
               <button onClick={() => setGlobalMode(false)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition-all hover:bg-orange-600 hover:shadow-lg hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
-                style={!globalMode ? { background: "var(--t-accent)", color: "#fff" } : { background: "var(--t-card)", color: "var(--t-text-sub)" }}>
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12px] font-bold transition-all"
+                style={!globalMode ? { background: "#0b2147", color: "#fff" } : { color: "rgba(11,33,71,0.50)" }}>
                 <Plane className="h-3.5 w-3.5" /> By Airline
               </button>
               <button onClick={() => setGlobalMode(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-xl font-bold transition-all hover:bg-orange-600 hover:shadow-lg hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
-                style={globalMode ? { background: "var(--t-accent)", color: "#fff" } : { background: "var(--t-card)", color: "var(--t-text-sub)" }}>
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12px] font-bold transition-all"
+                style={globalMode ? { background: "#0b2147", color: "#fff" } : { color: "rgba(11,33,71,0.50)" }}>
                 <Globe className="h-3.5 w-3.5" /> Global Search
               </button>
             </div>
-            <Button variant="primary" onClick={() => openCreate()} className="flex items-center
-                  px-3 py-1.5 text-xs font-bold
-                   text-white
-                  rounded-xl
-                  shadow-md
-
-                  transition-all duration-200 ease-in-out
-
-                  hover:bg-orange-600
-                  hover:shadow-lg
-                  hover:scale-110
-
-                  active:scale-85
-
-                  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
-                "
-              >
-              <Plus className="h-4 w-4 mr-2" /> Add Operation
-            </Button>
+            <button onClick={() => openCreate()}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-[13px] font-bold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+              style={{ background: "#0b2147", boxShadow: "0 4px 16px rgba(11,33,71,0.25)" }}
+              onMouseEnter={e => e.currentTarget.style.filter = "brightness(1.15)"}
+              onMouseLeave={e => e.currentTarget.style.filter = ""}>
+              <Plus className="h-4 w-4" /> Add Operation
+            </button>
           </div>
         </div>
 
@@ -348,25 +335,25 @@ export default function AirlineOperations() {
                   <button
                     key={airlineId}
                     onClick={() => { setSelectedAirlineId(airlineId); setExpandedAirportId(null); setSelected(new Set()); }}
-                    className="group flex flex-col items-center gap-3 p-4 border rounded-2xl hover:shadow-lg active:scale-95 transition-all duration-200 text-left"
-                    style={{ background: isDark ? "rgba(255,255,255,0.04)" : "#fff", borderColor: "var(--t-border)" }}
-                  >
-                    <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 flex items-center justify-center text-white font-bold font-mono text-lg shadow group-hover:scale-110 transition-transform">
+                    className="group flex flex-col items-center gap-3 p-5 rounded-2xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 text-center"
+                    style={{ background: "#fff", border: "1px solid rgba(11,33,71,0.09)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+                    <div className="h-14 w-14 rounded-xl flex items-center justify-center font-black font-mono text-lg transition-transform group-hover:scale-110"
+                      style={{ background: "rgba(11,33,71,0.05)", border: "1px solid rgba(11,33,71,0.10)", color: "#0b2147" }}>
                       {info.iata}
                     </div>
-                    <div className="text-center w-full">
-                      <p className="font-semibold text-sm line-clamp-2 leading-tight" style={{ color: "var(--t-text)" }}>{info.name}</p>
-                      <p className="text-xs mt-1">
-                        {info.count > 0 ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-medium text-orange-700" style={{ background: "rgba(234,88,12,0.12)" }}>
-                            <Building2 className="h-3 w-3" /> {info.count} airport{info.count !== 1 ? "s" : ""}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-medium" style={{ color: "var(--t-text-muted)", background: "var(--t-card)" }}>
-                            No airports
-                          </span>
-                        )}
-                      </p>
+                    <div className="w-full">
+                      <p className="font-bold text-[13px] line-clamp-2 leading-tight mb-1" style={{ color: "#0b2147" }}>{info.name}</p>
+                      {info.count > 0 ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
+                          style={{ background: "rgba(11,33,71,0.06)", color: "rgba(11,33,71,0.60)" }}>
+                          <Building2 className="h-3 w-3" /> {info.count} airport{info.count !== 1 ? "s" : ""}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
+                          style={{ color: "rgba(11,33,71,0.35)", background: "rgba(11,33,71,0.03)" }}>
+                          No airports
+                        </span>
+                      )}
                     </div>
                   </button>
                 ))}

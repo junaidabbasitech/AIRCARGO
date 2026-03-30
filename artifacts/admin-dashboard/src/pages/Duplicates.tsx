@@ -364,87 +364,149 @@ export default function Duplicates() {
   ];
 
   return (
-    <div className="space-y-5 max-w-4xl">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-black text-slate-800 tracking-tight">Duplicate Detection</h2>
-          <p className="text-sm text-slate-500 mt-0.5">Scan for duplicate airlines, airports, and airline-airport operation records</p>
+    <div className="space-y-5 max-w-5xl mx-auto">
+
+      {/* Hero card */}
+      <div className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(11,33,71,0.08)", boxShadow: "0 2px 16px rgba(11,33,71,0.06)" }}>
+        <div className="p-6 flex items-start gap-6">
+          <div className="flex-1">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3"
+              style={{ background: "rgba(5,150,105,0.10)", color: "#059669", border: "1px solid rgba(5,150,105,0.22)" }}>
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              System Integrity Tool
+            </span>
+            <h1 className="text-[24px] font-black leading-tight mb-2" style={{ color: "#0b2147" }}>Registry Scanner</h1>
+            <p className="text-[13px] leading-relaxed" style={{ color: "rgba(11,33,71,0.55)" }}>
+              Analyze global registry databases to identify and resolve redundancy. Scan for duplicate airlines, airports, and complex airline-airport operation records to ensure technical authority and data precision.
+            </p>
+            <div className="flex items-center gap-2 mt-4">
+              <button onClick={checkDuplicates} disabled={loading}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-70"
+                style={{ background: "#0b2147", boxShadow: "0 4px 16px rgba(11,33,71,0.25)" }}
+                onMouseEnter={e => { if (!loading) e.currentTarget.style.filter = "brightness(1.15)"; }}
+                onMouseLeave={e => e.currentTarget.style.filter = ""}>
+                <Search className="h-4 w-4" />
+                {loading ? "Scanning…" : checked ? "Re-Scan Database" : "Check for Duplicates"}
+              </button>
+              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all"
+                style={{ background: "rgba(11,33,71,0.05)", color: "#0b2147", border: "1px solid rgba(11,33,71,0.10)" }}>
+                Scan History
+              </button>
+            </div>
+          </div>
+          <div className="shrink-0 hidden sm:flex items-center justify-center h-24 w-24 rounded-2xl"
+            style={{ background: "rgba(11,33,71,0.04)", border: "1px solid rgba(11,33,71,0.08)" }}>
+            <GitMerge className="h-12 w-12" style={{ color: "rgba(11,33,71,0.25)" }} />
+          </div>
         </div>
-        <Button variant="primary" onClick={checkDuplicates} isLoading={loading} className="flex items-center
-              px-3 py-1.5 text-xs font-bold
-               text-white
-              rounded-xl
-              shadow-md
-
-              transition-all duration-200 ease-in-out
-
-              hover:bg-orange-600
-              hover:shadow-lg
-              hover:scale-110
-
-              active:scale-85
-
-              focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
-            "
-          >
-          <Search className="h-4 w-4 mr-2" />
-          {checked ? "Re-Scan Database" : "Check for Duplicates"}
-        </Button>
       </div>
 
-      {checked && data && (
-        <div className="grid grid-cols-3 gap-4">
-          {tabs.map(({ key, label, icon: Icon, data: d }) => (
-            <div key={key} className={`rounded-xl p-4 border-2 ${d && d.totalGroups > 0 ? "bg-amber-50 border-amber-200" : "bg-green-50 border-green-200"}`}>
-              <div className="flex items-center gap-2 mb-1">
-                <Icon className={`h-4 w-4 ${d && d.totalGroups > 0 ? "text-amber-600" : "text-green-600"}`} />
-                <span className="text-sm font-bold text-slate-700">{label}</span>
-              </div>
-              {d && d.totalGroups > 0 ? (
-                <><p className="text-2xl font-black font-mono text-amber-700">{d.totalGroups} groups</p><p className="text-xs text-amber-600 mt-0.5">{d.totalDuplicates} records can be removed</p></>
-              ) : (
-                <><p className="text-2xl font-black font-mono text-green-700">Clean</p><p className="text-xs text-green-600 mt-0.5">No duplicates found</p></>
-              )}
+      {/* Stats row */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {[
+          { label: "Airlines Analyzed", value: checked && data ? data.airlines.groups.reduce((a, g) => a + g.records.length, 0) : "—", sub: checked && data && data.airlines.totalGroups === 0 ? "Stable" : checked ? `+${data?.airlines.totalGroups || 0} groups` : null },
+          { label: "Airports Verified", value: checked && data ? data.airports.groups.reduce((a, g) => a + g.records.length, 0) : "—", sub: checked && data && data.airports.totalGroups === 0 ? "Stable" : checked ? `+${data?.airports.totalGroups || 0} groups` : null },
+          { label: "Operations Indexed", value: checked && data ? data.operations.groups.reduce((a, g) => a + g.records.length, 0) : "—", sub: checked ? "Updating" : null },
+        ].map(({ label, value, sub }) => (
+          <div key={label} className="bg-white rounded-2xl p-5"
+            style={{ border: "1px solid rgba(11,33,71,0.08)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+            <p className="text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: "rgba(11,33,71,0.38)" }}>{label}</p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-[28px] font-black tabular-nums" style={{ color: "#0b2147" }}>{value}</p>
+              {sub && <p className="text-[11px] font-bold" style={{ color: "#059669" }}>{sub}</p>}
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
 
+      {/* Empty / loading state */}
       {!checked && !loading && (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-12 text-center">
-          <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4"><GitMerge className="h-8 w-8 text-slate-400" /></div>
-          <h3 className="font-bold text-slate-700 mb-1">No scan performed yet</h3>
-          <p className="text-sm text-slate-400 max-w-sm mx-auto">Click "Check for Duplicates" to scan for duplicate airlines, airports, and airline-airport operation records.</p>
+        <div className="bg-white rounded-2xl p-16 flex flex-col items-center gap-4 text-center"
+          style={{ border: "1px solid rgba(11,33,71,0.08)" }}>
+          <div className="h-20 w-20 rounded-2xl flex items-center justify-center"
+            style={{ background: "rgba(11,33,71,0.05)", border: "1px solid rgba(11,33,71,0.08)" }}>
+            <Search className="h-10 w-10" style={{ color: "rgba(11,33,71,0.20)" }} />
+          </div>
+          <div>
+            <p className="text-[15px] font-black uppercase tracking-wide mb-1" style={{ color: "#0b2147" }}>No Scan Performed Yet</p>
+            <p className="text-[13px] max-w-sm" style={{ color: "rgba(11,33,71,0.45)" }}>
+              The registry duplicate detection engine is idle. Run a new scan to identify potential data conflicts across the authority databases.
+            </p>
+          </div>
         </div>
       )}
 
+      {/* Results */}
       {checked && data && (
         <>
-          <div className="flex gap-1 bg-slate-100 p-1 rounded-xl w-fit">
+          {/* Tab summary */}
+          <div className="grid grid-cols-3 gap-4">
             {tabs.map(({ key, label, icon: Icon, data: d }) => (
-              <button key={key} onClick={() => setTab(key)} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-150 ${tab === key ? "bg-white shadow text-slate-800" : "text-slate-500 hover:text-slate-700"}`}>
-                <Icon className="h-4 w-4" />
-                {label}
-                {d && d.totalGroups > 0 && <span className="bg-amber-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full">{d.totalGroups}</span>}
+              <button key={key} onClick={() => setTab(key)}
+                className="bg-white rounded-2xl p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                style={{
+                  border: tab === key ? "1.5px solid #0b2147" : "1px solid rgba(11,33,71,0.08)",
+                  boxShadow: tab === key ? "0 0 0 3px rgba(11,33,71,0.06)" : "0 1px 6px rgba(11,33,71,0.05)",
+                }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Icon className="h-4 w-4" style={{ color: d && d.totalGroups > 0 ? "#f59e0b" : "#059669" }} />
+                  <span className="text-[13px] font-bold" style={{ color: "#0b2147" }}>{label}</span>
+                  {d && d.totalGroups > 0 && (
+                    <span className="ml-auto px-2 py-0.5 rounded-full text-[10px] font-black text-white" style={{ background: "#f59e0b" }}>{d.totalGroups}</span>
+                  )}
+                </div>
+                <p className="text-[22px] font-black tabular-nums" style={{ color: d && d.totalGroups > 0 ? "#f59e0b" : "#059669" }}>
+                  {d && d.totalGroups > 0 ? `${d.totalGroups} groups` : "Clean"}
+                </p>
+                <p className="text-[11px] mt-0.5" style={{ color: "rgba(11,33,71,0.40)" }}>
+                  {d && d.totalDuplicates > 0 ? `${d.totalDuplicates} records removable` : "No duplicates found"}
+                </p>
               </button>
             ))}
           </div>
 
           {tab === "airlines" && (
             data.airlines.totalGroups === 0
-              ? <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center"><CheckCircle2 className="h-10 w-10 text-green-500 mx-auto mb-2" /><p className="font-bold text-green-700">No duplicate airlines found</p></div>
+              ? <div className="bg-white rounded-2xl p-10 text-center" style={{ border: "1px solid rgba(11,33,71,0.08)" }}>
+                  <CheckCircle2 className="h-10 w-10 mx-auto mb-2" style={{ color: "#059669" }} />
+                  <p className="font-bold" style={{ color: "#0b2147" }}>No duplicate airlines found</p>
+                </div>
               : <div className="space-y-3">{data.airlines.groups.map((g, i) => <AirlineGroup key={`${g.key_field}-${i}`} group={g} idx={i} onMerge={handleAirlineMerge} onDelete={handleAirlineDelete} loading={actionLoading} />)}</div>
           )}
           {tab === "airports" && (
             data.airports.totalGroups === 0
-              ? <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center"><CheckCircle2 className="h-10 w-10 text-green-500 mx-auto mb-2" /><p className="font-bold text-green-700">No duplicate airports found</p></div>
+              ? <div className="bg-white rounded-2xl p-10 text-center" style={{ border: "1px solid rgba(11,33,71,0.08)" }}>
+                  <CheckCircle2 className="h-10 w-10 mx-auto mb-2" style={{ color: "#059669" }} />
+                  <p className="font-bold" style={{ color: "#0b2147" }}>No duplicate airports found</p>
+                </div>
               : <div className="space-y-3">{data.airports.groups.map((g, i) => <AirportGroup key={`${g.key_field}-${i}`} group={g} idx={i} onMerge={handleAirportMerge} onDelete={handleAirportDelete} loading={actionLoading} />)}</div>
           )}
           {tab === "operations" && (
             data.operations.totalGroups === 0
-              ? <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center"><CheckCircle2 className="h-10 w-10 text-green-500 mx-auto mb-2" /><p className="font-bold text-green-700">No duplicate airline-airport operations found</p><p className="text-sm text-green-500 mt-1">Each airline appears only once per airport</p></div>
+              ? <div className="bg-white rounded-2xl p-10 text-center" style={{ border: "1px solid rgba(11,33,71,0.08)" }}>
+                  <CheckCircle2 className="h-10 w-10 mx-auto mb-2" style={{ color: "#059669" }} />
+                  <p className="font-bold" style={{ color: "#0b2147" }}>No duplicate operations found</p>
+                </div>
               : <div className="space-y-3">{data.operations.groups.map((g, i) => <OpsGroup key={`${g.key_field}-${i}`} group={g} idx={i} onMerge={handleOpsMerge} onDelete={handleOpsDelete} loading={actionLoading} />)}</div>
           )}
+
+          {/* Tool tiles */}
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { label: "Airline Sync", icon: Plane, key: "airlines" as const },
+              { label: "Airport Audit", icon: Building2, key: "airports" as const },
+              { label: "Ops Conflict", icon: Network, key: "operations" as const },
+            ].map(({ label, icon: Icon, key }) => (
+              <button key={key} onClick={() => setTab(key)}
+                className="bg-white rounded-2xl p-4 flex flex-col items-center gap-2 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
+                style={{ border: "1px solid rgba(11,33,71,0.08)" }}>
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(11,33,71,0.05)" }}>
+                  <Icon className="h-5 w-5" style={{ color: "rgba(11,33,71,0.40)" }} />
+                </div>
+                <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: "rgba(11,33,71,0.50)" }}>{label}</p>
+              </button>
+            ))}
+          </div>
         </>
       )}
     </div>
