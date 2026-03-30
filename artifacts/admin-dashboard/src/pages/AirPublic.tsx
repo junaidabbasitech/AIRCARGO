@@ -698,7 +698,7 @@ export default function AirPublic() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label className="block text-[15px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "#ffffff" }}>AWB Number</label>
+                  <label className="block text-[15px] font-bold uppercase tracking-widest mb-1.5 text-[#000000]" style={{ color: "#ffffff" }}>AWB Number</label>
                   <input
                     type="text"
                     value={awbInput}
