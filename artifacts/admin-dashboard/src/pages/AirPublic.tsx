@@ -729,7 +729,7 @@ export default function AirPublic() {
                       color: "var(--t-text)"
                     }}
                   />
-                  <p className="text-[10px] mt-1.5" style={{ color: "var(--t-text-muted)" }}>Airport IATA code where cargo will arrive</p>
+                  <p className="text-[10px] mt-1.5 text-[#ffffff] border-t-[#fafafa] border-r-[#fafafa] border-b-[#fafafa] border-l-[#fafafa]" style={{ color: "var(--t-text-muted)" }}>Airport IATA code where cargo will arrive</p>
                 </div>
               </div>
 
