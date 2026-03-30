@@ -119,19 +119,15 @@ export default function AwbPrefixes() {
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg"
-            style={{ background: "linear-gradient(135deg, #059669, #047857)", boxShadow: "0 4px 16px rgba(5,150,105,0.35)" }}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(11,33,71,0.40)" }}>Registry · Cargo</p>
+          <h1 className="text-[26px] font-black leading-tight" style={{ color: "#0b2147" }}>AWB Prefix Registry</h1>
+          <p className="text-[12px] mt-0.5" style={{ color: "rgba(11,33,71,0.45)" }}>Manage 3-digit IATA Air Waybill prefixes for each airline</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "#0b2147" }}>
             <ScanBarcode className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl font-black tracking-tight" style={{ color: "var(--t-text)" }}>
-              AWB Prefix Registry
-            </h1>
-            <p className="text-xs mt-0.5" style={{ color: "var(--t-text-muted)" }}>
-              Manage 3-digit IATA Air Waybill prefixes for each airline
-            </p>
           </div>
         </div>
       </div>
@@ -140,14 +136,13 @@ export default function AwbPrefixes() {
       {stats && (
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Total Airlines", value: stats.total, color: "var(--t-accent)", bg: accentGlow },
-            { label: "With Prefix", value: stats.hasPrefix, color: "#059669", bg: "rgba(5,150,105,0.12)" },
-            { label: "Missing Prefix", value: stats.total - stats.hasPrefix, color: "#f59e0b", bg: "rgba(245,158,11,0.12)" },
+            { label: "Total Airlines", value: stats.total },
+            { label: "With Prefix", value: stats.hasPrefix },
+            { label: "Missing Prefix", value: stats.total - stats.hasPrefix },
           ].map(s => (
-            <div key={s.label} className="rounded-2xl p-4 flex items-center gap-4"
-              style={{ background: s.bg, border: `1px solid ${s.color}30` }}>
-              <div className="text-2xl font-black font-mono" style={{ color: s.color }}>{s.value}</div>
-              <div className="text-xs font-bold" style={{ color: "var(--t-text-sub)" }}>{s.label}</div>
+            <div key={s.label} className="bg-white rounded-2xl p-5" style={{ border: "1px solid rgba(11,33,71,0.08)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: "rgba(11,33,71,0.45)" }}>{s.label}</p>
+              <p className="text-3xl font-black tabular-nums" style={{ color: "#0b2147" }}>{s.value}</p>
             </div>
           ))}
         </div>

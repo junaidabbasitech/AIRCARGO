@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useListGroundHandlers, useCreateGroundHandler, useUpdateGroundHandler, useDeleteGroundHandler, useBulkUploadGroundHandlers, GroundHandler, CreateGroundHandlerRequest } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Card, CardHeader, CardTitle, CardContent, Button, Input, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Modal, Label } from "@/components/ui";
+import { Button, Input, Modal, Label } from "@/components/ui";
 import { SearchableAirportSelect } from "@/components/SearchableAirportSelect";
-import { Search, Plus, Edit2, Trash2, Upload, Users } from "lucide-react";
-import { CardWatermark } from "@/components/CardWatermark";
+import { Search, Plus, Edit2, Trash2, Upload, Users, Mail, Phone } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -86,105 +85,158 @@ export default function GroundHandlers() {
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardWatermark variant="globe" size={110} opacity={0.04} position="bottom-right" />
-        <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle>Ground Handlers Directory</CardTitle>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setIsBulkModalOpen(true)}><Upload className="h-4 w-4 mr-2" /> Bulk Upload</Button>
-            <Button variant="primary" onClick={() => openModal()} className="flex items-center
-                  px-3 py-1.5 text-xs font-bold
-                   text-white
-                  rounded-xl
-                  shadow-md
+    <div className="space-y-5 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(11,33,71,0.40)" }}>Registry · Personnel</p>
+          <h2 className="text-[26px] font-black leading-tight" style={{ color: "#0b2147" }}>Ground Handlers Directory</h2>
+          <p className="text-[12px] mt-0.5" style={{ color: "rgba(11,33,71,0.45)" }}>Manage ramp operators, ground service providers, and airport personnel records</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setIsBulkModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:bg-slate-100"
+            style={{ background: "rgba(11,33,71,0.06)", color: "#0b2147", border: "1px solid rgba(11,33,71,0.10)" }}>
+            <Upload className="h-4 w-4" /> Bulk Upload
+          </button>
+          <button onClick={() => openModal()}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-bold transition-all hover:-translate-y-0.5 hover:shadow-lg"
+            style={{ background: "#0b2147", boxShadow: "0 4px 16px rgba(11,33,71,0.25)" }}>
+            <Plus className="h-4 w-4" /> Add Handler
+          </button>
+        </div>
+      </div>
 
-                  transition-all duration-200 ease-in-out
-
-                  hover:bg-orange-600
-                  hover:shadow-lg
-                  hover:scale-110
-
-                  active:scale-85
-
-                  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
-                "
-              ><Plus className="h-4 w-4 mr-2" /> Add Handler</Button>
+      {/* Search + content card */}
+      <div className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(11,33,71,0.08)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+        {/* Search bar */}
+        <div className="px-5 py-4 border-b" style={{ borderColor: "rgba(11,33,71,0.07)" }}>
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "rgba(11,33,71,0.35)" }} />
+            <Input placeholder="Search ground handlers, airport, contact..." className="pl-9" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-6 relative max-w-md">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search ground handlers..." className="pl-9" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
-          </div>
+        </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Operator Details</TableHead>
-                <TableHead>Primary Contact</TableHead>
-                <TableHead>Services</TableHead>
-                <TableHead>Last Updated</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr style={{ borderBottom: "1px solid rgba(11,33,71,0.07)", background: "rgba(11,33,71,0.02)" }}>
+                {["Operator Details", "Primary Contact", "Services", "Last Updated", ""].map(h => (
+                  <th key={h} className="px-5 py-3 text-left text-[10px] font-black uppercase tracking-widest" style={{ color: "rgba(11,33,71,0.40)" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Loading directory...</TableCell></TableRow>
+                <tr><td colSpan={5} className="text-center py-12" style={{ color: "rgba(11,33,71,0.35)" }}>
+                  <div className="flex flex-col items-center gap-2">
+                    <Users className="h-6 w-6 opacity-30" />
+                    <span className="text-sm">Loading directory...</span>
+                  </div>
+                </td></tr>
               ) : data?.data.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No records found.</TableCell></TableRow>
+                <tr><td colSpan={5} className="text-center py-16">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="h-14 w-14 rounded-2xl flex items-center justify-center" style={{ background: "rgba(11,33,71,0.05)" }}>
+                      <Users className="h-7 w-7" style={{ color: "rgba(11,33,71,0.25)" }} />
+                    </div>
+                    <p className="font-bold" style={{ color: "#0b2147" }}>No records found</p>
+                    <p className="text-sm" style={{ color: "rgba(11,33,71,0.40)" }}>Add your first ground handler to get started</p>
+                  </div>
+                </td></tr>
               ) : (
                 data?.data.map((handler) => (
-                  <TableRow key={handler.id}>
-                    <TableCell>
-                      <div className="font-semibold text-foreground flex items-center gap-2">
-                        <Users className="h-4 w-4 text-primary" /> {handler.name}
+                  <tr key={handler.id} className="group transition-all" style={{ borderBottom: "1px solid rgba(11,33,71,0.05)" }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "rgba(11,33,71,0.02)")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "")}>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 font-black text-[11px]"
+                          style={{ background: "rgba(11,33,71,0.07)", color: "#0b2147" }}>
+                          {handler.name.slice(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm" style={{ color: "#0b2147" }}>{handler.name}</p>
+                          <p className="text-xs mt-0.5" style={{ color: "rgba(11,33,71,0.45)" }}>
+                            {handler.airportName ? `Airport: ${handler.airportName}` : handler.airportId ? `Airport ID: ${handler.airportId}` : "All airports"}
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground mt-1">Airport: {handler.airportName || `ID ${handler.airportId}` || "Any"}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">{handler.contactName || "—"}</div>
-                      <div className="text-xs font-mono text-muted-foreground">{handler.contactEmail || "—"} • {handler.contactPhone || "—"}</div>
-                    </TableCell>
-                    <TableCell><div className="text-sm truncate max-w-xs">{handler.services || "—"}</div></TableCell>
-                    <TableCell>{formatDate(handler.lastUpdated)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" className="text-primary hover:bg-primary/20" onClick={() => openModal(handler)}><Edit2 className="h-4 w-4" /></Button>
-                        <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/20" onClick={() => { if(confirm("Delete operator?")) deleteMut.mutate({ id: handler.id }) }}><Trash2 className="h-4 w-4" /></Button>
+                    </td>
+                    <td className="px-5 py-4">
+                      <p className="text-sm font-medium" style={{ color: "#0b2147" }}>{handler.contactName || "—"}</p>
+                      {handler.contactEmail && (
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <Mail className="h-3 w-3" style={{ color: "rgba(11,33,71,0.35)" }} />
+                          <span className="text-xs" style={{ color: "rgba(11,33,71,0.50)" }}>{handler.contactEmail}</span>
+                        </div>
+                      )}
+                      {handler.contactPhone && (
+                        <div className="flex items-center gap-1">
+                          <Phone className="h-3 w-3" style={{ color: "rgba(11,33,71,0.35)" }} />
+                          <span className="text-xs" style={{ color: "rgba(11,33,71,0.50)" }}>{handler.contactPhone}</span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-5 py-4">
+                      <p className="text-sm truncate max-w-[200px]" style={{ color: "rgba(11,33,71,0.60)" }}>{handler.services || "—"}</p>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className="text-xs font-mono" style={{ color: "rgba(11,33,71,0.45)" }}>{formatDate(handler.lastUpdated)}</span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => openModal(handler)}
+                          className="p-2 rounded-xl transition-all hover:bg-blue-50"
+                          style={{ color: "rgba(11,33,71,0.50)" }}
+                          onMouseEnter={e => e.currentTarget.style.color = "#0b2147"}
+                          onMouseLeave={e => e.currentTarget.style.color = "rgba(11,33,71,0.50)"}>
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                        <button onClick={() => { if(confirm("Delete operator?")) deleteMut.mutate({ id: handler.id }); }}
+                          className="p-2 rounded-xl transition-all hover:bg-red-50"
+                          style={{ color: "rgba(11,33,71,0.40)" }}
+                          onMouseEnter={e => e.currentTarget.style.color = "#ef4444"}
+                          onMouseLeave={e => e.currentTarget.style.color = "rgba(11,33,71,0.40)"}>
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))
               )}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
+        </div>
 
-          {data && data.total > 0 && (
-            <div className="flex flex-wrap justify-between items-center mt-4 gap-2">
-              <span className="text-sm font-mono text-muted-foreground">
-                Showing {Math.min((page-1)*limit+1, data.total)}–{Math.min(page*limit, data.total)} of {data.total}
-              </span>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <span>Show</span>
-                  <select
-                    value={limit}
-                    onChange={e => { setLimit(Number(e.target.value)); setPage(1); }}
-                    className="h-7 px-1.5 rounded border border-border bg-background text-xs font-mono focus:outline-none focus:ring-1 focus:ring-primary"
-                  >
-                    {PAGE_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  <span>per page</span>
-                </div>
-                <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</Button>
-                <span className="text-xs text-muted-foreground px-1">Page {page} of {Math.ceil(data.total/limit)}</span>
-                <Button size="sm" variant="outline" disabled={page * limit >= data.total} onClick={() => setPage(p => p + 1)}>Next →</Button>
+        {/* Pagination */}
+        {data && data.total > 0 && (
+          <div className="flex flex-wrap justify-between items-center px-5 py-3 border-t" style={{ borderColor: "rgba(11,33,71,0.07)", background: "rgba(11,33,71,0.01)" }}>
+            <span className="text-xs font-mono" style={{ color: "rgba(11,33,71,0.45)" }}>
+              Showing {Math.min((page-1)*limit+1, data.total)}–{Math.min(page*limit, data.total)} of {data.total}
+            </span>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(11,33,71,0.50)" }}>
+                <span>Show</span>
+                <select value={limit} onChange={e => { setLimit(Number(e.target.value)); setPage(1); }}
+                  className="h-7 px-1.5 rounded-lg text-xs font-mono focus:outline-none"
+                  style={{ background: "rgba(11,33,71,0.05)", border: "1px solid rgba(11,33,71,0.10)", color: "#0b2147" }}>
+                  {PAGE_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <span>per page</span>
               </div>
+              <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
+                className="px-3 py-1.5 text-xs font-bold rounded-lg transition-all disabled:opacity-30"
+                style={{ background: "rgba(11,33,71,0.06)", color: "#0b2147" }}>← Prev</button>
+              <span className="text-xs px-1" style={{ color: "rgba(11,33,71,0.45)" }}>Page {page} of {Math.ceil(data.total/limit)}</span>
+              <button disabled={page * limit >= data.total} onClick={() => setPage(p => p + 1)}
+                className="px-3 py-1.5 text-xs font-bold rounded-lg transition-all disabled:opacity-30"
+                style={{ background: "rgba(11,33,71,0.06)", color: "#0b2147" }}>Next →</button>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        )}
+      </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal} title={editingHandler ? "Edit Operator" : "Add Operator"}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

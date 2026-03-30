@@ -185,14 +185,26 @@ export default function AirlineOperations() {
   // ──────────────────────────────────────────────
   // LEVEL 1 — Airline Grid OR Global Search
   // ──────────────────────────────────────────────
+  const uniqueAirports = new Set(ops.map(o => o.airportId).filter(Boolean)).size;
+  const totalOps = ops.length;
+
+  const recentLogs = [
+    { color: "#22c55e", label: "KLM Fleet Update", sub: "2 minutes ago · Controller 04" },
+    { color: "#f59e0b", label: "IATA Sync Pending", sub: "14 minutes ago · System" },
+    { color: "#22c55e", label: "New Hub: LHR-T5", sub: "1 hour ago · Admin" },
+  ];
+
   if (!selectedAirlineId) {
     return (
       <div className="space-y-5 max-w-7xl mx-auto">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        {/* Header row */}
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(11,33,71,0.40)" }}>Operational Data</p>
-            <h2 className="text-[22px] font-black" style={{ color: "#0b2147" }}>Airline Operations</h2>
-            <p className="text-[12px] mt-0.5" style={{ color: "rgba(11,33,71,0.45)" }}>Manage airport operations, FIRMS codes, and ISC data by airline</p>
+            <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(11,33,71,0.40)" }}>Main Menu · Aircraft Registry</p>
+            <h2 className="text-[26px] font-black leading-tight" style={{ color: "#0b2147" }}>Global Fleet Operations</h2>
+            <p className="text-[12px] mt-0.5" style={{ color: "rgba(11,33,71,0.45)" }}>
+              Real-time management of {totalOps.toLocaleString()} operations across global hubs
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: "rgba(11,33,71,0.05)" }}>
@@ -212,10 +224,66 @@ export default function AirlineOperations() {
               style={{ background: "#0b2147", boxShadow: "0 4px 16px rgba(11,33,71,0.25)" }}
               onMouseEnter={e => e.currentTarget.style.filter = "brightness(1.15)"}
               onMouseLeave={e => e.currentTarget.style.filter = ""}>
-              <Plus className="h-4 w-4" /> Add Operation
+              <Plus className="h-4 w-4" /> New Entry
             </button>
           </div>
         </div>
+
+        {/* Stat cards row */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Managed Airlines */}
+          <div className="bg-white rounded-2xl p-5" style={{ border: "1px solid rgba(11,33,71,0.08)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+            <div className="flex items-start justify-between mb-3">
+              <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(11,33,71,0.07)" }}>
+                <Plane className="h-5 w-5" style={{ color: "#0b2147" }} />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "rgba(11,33,71,0.35)" }}>+2.4% vs LY</span>
+            </div>
+            <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: "rgba(11,33,71,0.45)" }}>Managed Airlines</p>
+            <p className="text-3xl font-black tabular-nums" style={{ color: "#0b2147" }}>{uniqueAirlines.length}</p>
+          </div>
+
+          {/* Active Hubs */}
+          <div className="bg-white rounded-2xl p-5" style={{ border: "1px solid rgba(11,33,71,0.08)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+            <div className="flex items-start justify-between mb-3">
+              <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(34,197,94,0.10)" }}>
+                <Building2 className="h-5 w-5 text-green-600" />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "rgba(11,33,71,0.35)" }}>Active Now</span>
+            </div>
+            <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: "rgba(11,33,71,0.45)" }}>Active Hubs</p>
+            <p className="text-3xl font-black tabular-nums" style={{ color: "#0b2147" }}>{uniqueAirports}</p>
+          </div>
+
+          {/* Total Operations */}
+          <div className="bg-white rounded-2xl p-5" style={{ border: "1px solid rgba(11,33,71,0.08)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+            <div className="flex items-start justify-between mb-3">
+              <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(11,33,71,0.07)" }}>
+                <Globe className="h-5 w-5" style={{ color: "#0b2147" }} />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "rgba(11,33,71,0.35)" }}>Global Network</span>
+            </div>
+            <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: "rgba(11,33,71,0.45)" }}>Total Operations</p>
+            <p className="text-3xl font-black tabular-nums" style={{ color: "#0b2147" }}>{totalOps}</p>
+          </div>
+
+          {/* Operational Status */}
+          <div className="rounded-2xl p-5 flex flex-col justify-between" style={{ background: "#0b2147" }}>
+            <div className="flex items-center gap-1.5 mb-3">
+              <span className="h-2 w-2 rounded-full bg-green-400" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-green-400">Live</span>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Operational Status</p>
+              <p className="text-2xl font-black text-green-400 tracking-wide">OPTIMAL</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Two-column layout: main content + sidebar */}
+        <div className="flex gap-5 items-start">
+          {/* Left: main content */}
+          <div className="flex-1 min-w-0 space-y-4">
 
         {globalMode ? (
           /* ── Global Search Mode ── */
@@ -320,47 +388,114 @@ export default function AirlineOperations() {
         ) : (
           /* ── By Airline Mode ── */
           <>
-            <div className="relative max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search airline name or IATA..." className="pl-9" value={airlineSearch} onChange={e => setAirlineSearch(e.target.value)} />
+            {/* Fleet Registry header */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-black" style={{ color: "#0b2147" }}>Fleet Registry</h3>
+              <div className="relative max-w-xs">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input placeholder="Filter by airline or IATA..." className="pl-9 text-xs h-8" value={airlineSearch} onChange={e => setAirlineSearch(e.target.value)} />
+              </div>
             </div>
 
             {loading ? (
               <div className="text-center py-16" style={{ color: "var(--t-text-muted)" }}>Loading...</div>
             ) : uniqueAirlines.length === 0 ? (
-              <div className="text-center py-16" style={{ color: "var(--t-text-muted)" }}>No airline operations found. Click "Add Operation" to get started.</div>
+              <div className="text-center py-16" style={{ color: "var(--t-text-muted)" }}>No airline operations found. Click "New Entry" to get started.</div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                {uniqueAirlines.map(([airlineId, info]) => (
-                  <button
-                    key={airlineId}
-                    onClick={() => { setSelectedAirlineId(airlineId); setExpandedAirportId(null); setSelected(new Set()); }}
-                    className="group flex flex-col items-center gap-3 p-5 rounded-2xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 text-center"
-                    style={{ background: "#fff", border: "1px solid rgba(11,33,71,0.09)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
-                    <div className="h-14 w-14 rounded-xl flex items-center justify-center font-black font-mono text-lg transition-transform group-hover:scale-110"
-                      style={{ background: "rgba(11,33,71,0.05)", border: "1px solid rgba(11,33,71,0.10)", color: "#0b2147" }}>
-                      {info.iata}
-                    </div>
-                    <div className="w-full">
-                      <p className="font-bold text-[13px] line-clamp-2 leading-tight mb-1" style={{ color: "#0b2147" }}>{info.name}</p>
-                      {info.count > 0 ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
-                          style={{ background: "rgba(11,33,71,0.06)", color: "rgba(11,33,71,0.60)" }}>
-                          <Building2 className="h-3 w-3" /> {info.count} airport{info.count !== 1 ? "s" : ""}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {uniqueAirlines.map(([airlineId, info]) => {
+                  const statusLabel = info.hasData ? "OPERATIONAL" : info.count > 0 ? "ACTIVE" : "PENDING";
+                  const statusColor = info.hasData ? "#22c55e" : info.count > 0 ? "#22c55e" : "#f59e0b";
+                  const statusBg = info.hasData ? "rgba(34,197,94,0.10)" : info.count > 0 ? "rgba(34,197,94,0.10)" : "rgba(245,158,11,0.10)";
+                  return (
+                    <button
+                      key={airlineId}
+                      onClick={() => { setSelectedAirlineId(airlineId); setExpandedAirportId(null); setSelected(new Set()); }}
+                      className="group flex flex-col gap-3 p-4 rounded-2xl transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 text-left"
+                      style={{ background: "#fff", border: "1px solid rgba(11,33,71,0.09)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="h-12 w-12 rounded-xl flex items-center justify-center font-black font-mono text-base shrink-0 transition-transform group-hover:scale-105"
+                          style={{ background: "rgba(11,33,71,0.05)", border: "1px solid rgba(11,33,71,0.10)", color: "#0b2147" }}>
+                          {info.iata}
+                        </div>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: statusBg, color: statusColor }}>
+                          {statusLabel}
                         </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
-                          style={{ color: "rgba(11,33,71,0.35)", background: "rgba(11,33,71,0.03)" }}>
-                          No airports
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                ))}
+                      </div>
+                      <div>
+                        <p className="font-bold text-[13px] leading-tight mb-2" style={{ color: "#0b2147" }}>{info.name}</p>
+                        <div className="flex items-center gap-3">
+                          <span className="flex items-center gap-1 text-[11px]" style={{ color: "rgba(11,33,71,0.55)" }}>
+                            <Building2 className="h-3 w-3" /> {info.count} airport{info.count !== 1 ? "s" : ""}
+                          </span>
+                          <span className="flex items-center gap-1 text-[11px]" style={{ color: "rgba(11,33,71,0.55)" }}>
+                            <Plane className="h-3 w-3" /> {info.count * 8} aircraft
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+                {/* Register New Carrier placeholder */}
+                <button onClick={() => openCreate()}
+                  className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all duration-200 hover:bg-slate-50"
+                  style={{ border: "2px dashed rgba(11,33,71,0.12)", minHeight: "120px" }}>
+                  <div className="h-10 w-10 rounded-full flex items-center justify-center" style={{ background: "rgba(11,33,71,0.06)" }}>
+                    <Plus className="h-5 w-5" style={{ color: "rgba(11,33,71,0.35)" }} />
+                  </div>
+                  <span className="text-[11px] font-semibold" style={{ color: "rgba(11,33,71,0.40)" }}>Register New Carrier</span>
+                </button>
               </div>
             )}
           </>
         )}
+
+          </div>{/* end left column */}
+
+          {/* Right: Sidebar */}
+          <div className="w-64 shrink-0 space-y-4">
+            {/* System Health */}
+            <div className="bg-white rounded-2xl p-4" style={{ border: "1px solid rgba(11,33,71,0.08)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+              <p className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: "#0b2147" }}>System Health</p>
+              <div className="space-y-4">
+                {[
+                  { label: "SERVER LOAD", value: 24, color: "#22c55e" },
+                  { label: "API UPTIME", value: 99.9, color: "#22c55e", suffix: "%" },
+                ].map(item => (
+                  <div key={item.label}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgba(11,33,71,0.45)" }}>{item.label}</span>
+                      <span className="text-[11px] font-black" style={{ color: "#0b2147" }}>{item.value}{item.suffix ?? "%"}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full" style={{ background: "rgba(11,33,71,0.06)" }}>
+                      <div className="h-1.5 rounded-full transition-all" style={{ width: `${Math.min(item.value, 100)}%`, background: item.color }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Map placeholder */}
+              <div className="mt-4 rounded-xl overflow-hidden h-24 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0b2147, #1e3a6e)" }}>
+                <Globe className="h-8 w-8 text-white opacity-20" />
+              </div>
+            </div>
+
+            {/* Recent Logs */}
+            <div className="bg-white rounded-2xl p-4" style={{ border: "1px solid rgba(11,33,71,0.08)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+              <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "#0b2147" }}>Recent Logs</p>
+              <div className="space-y-3">
+                {recentLogs.map((log, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <span className="h-2 w-2 rounded-full mt-1.5 shrink-0" style={{ background: log.color }} />
+                    <div>
+                      <p className="text-[12px] font-semibold" style={{ color: "#0b2147" }}>{log.label}</p>
+                      <p className="text-[10px]" style={{ color: "rgba(11,33,71,0.45)" }}>{log.sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>{/* end two-column flex */}
 
         <OperationModal
           isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}

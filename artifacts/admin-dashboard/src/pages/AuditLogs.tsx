@@ -117,30 +117,31 @@ export default function AuditLogs() {
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg"
-          style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)", boxShadow: "0 4px 16px rgba(124,58,237,0.35)" }}>
-          <ClipboardList className="h-5 w-5 text-white" />
-        </div>
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-black tracking-tight" style={{ color: "var(--t-text)" }}>Audit Trail</h1>
-          <p className="text-xs mt-0.5" style={{ color: "var(--t-text-muted)" }}>Complete system activity log — click any row to expand or navigate to the entity</p>
+          <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(11,33,71,0.40)" }}>System · Compliance</p>
+          <h1 className="text-[26px] font-black leading-tight" style={{ color: "#0b2147" }}>Audit Trail</h1>
+          <p className="text-[12px] mt-0.5" style={{ color: "rgba(11,33,71,0.45)" }}>Complete system activity log — click any row to expand or navigate to the entity</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "#0b2147" }}>
+            <ClipboardList className="h-5 w-5 text-white" />
+          </div>
         </div>
       </div>
 
       {/* Stats */}
       {stats && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { label: "Total Events", value: stats.total, color: "var(--t-accent)" },
-            { label: "Creates", value: stats.creates, color: "#10b981" },
-            { label: "Updates", value: stats.updates, color: "#38bdf8" },
-            { label: "Deletes", value: stats.deletes, color: "#f43f5e" },
+            { label: "Total Events", value: stats.total },
+            { label: "Creates", value: stats.creates },
+            { label: "Updates", value: stats.updates },
+            { label: "Deletes", value: stats.deletes },
           ].map(s => (
-            <div key={s.label} className="rounded-xl p-3 flex items-center gap-3"
-              style={{ background: `${s.color}10`, border: `1px solid ${s.color}25` }}>
-              <div className="text-xl font-black font-mono" style={{ color: s.color }}>{s.value}</div>
-              <div className="text-xs font-semibold" style={{ color: "var(--t-text-sub)" }}>{s.label}</div>
+            <div key={s.label} className="bg-white rounded-2xl p-5" style={{ border: "1px solid rgba(11,33,71,0.08)", boxShadow: "0 1px 6px rgba(11,33,71,0.05)" }}>
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: "rgba(11,33,71,0.45)" }}>{s.label}</p>
+              <p className="text-3xl font-black tabular-nums" style={{ color: "#0b2147" }}>{s.value}</p>
             </div>
           ))}
         </div>

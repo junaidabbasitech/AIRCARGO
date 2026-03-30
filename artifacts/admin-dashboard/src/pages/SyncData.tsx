@@ -136,7 +136,21 @@ export default function SyncData() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(11,33,71,0.40)" }}>System · Operations</p>
+          <h1 className="text-[26px] font-black leading-tight" style={{ color: "#0b2147" }}>Sync Operations</h1>
+          <p className="text-[12px] mt-0.5" style={{ color: "rgba(11,33,71,0.45)" }}>Export registry data and import updates from external sources</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "#0b2147" }}>
+            <RefreshCw className="h-5 w-5 text-white" />
+          </div>
+        </div>
+      </div>
+
       {/* ── Download / Export ── */}
       <Card>
         <CardHeader>
