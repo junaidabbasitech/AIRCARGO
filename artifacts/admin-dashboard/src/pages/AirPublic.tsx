@@ -489,7 +489,7 @@ export default function AirPublic() {
         </div>
       )}
       {/* ─── HERO ─── */}
-      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden">
+      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden bg-[#0094e07a]">
         {/* GIF background — limited to heading area only */}
         <img
           src={`${BASE}/plane-takeoff.gif`}
@@ -546,7 +546,7 @@ export default function AirPublic() {
           </p>
 
           {/* Tab switcher */}
-          <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-7" style={{ background: isDark ? "rgba(255,255,255,0.06)" : "rgba(11,33,71,0.07)", border: "1px solid var(--t-border)" }}>
+          <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-7" style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-border)" }}>
             {([
               { key: "awb" as const, icon: ScanBarcode, label: "AWB Track", activeBg: "linear-gradient(135deg, #059669, #047857)", shadow: "rgba(5,150,105,0.35)" },
               { key: "airlines" as const, icon: Plane, label: "Airlines", activeBg: "linear-gradient(135deg, var(--t-accent), #1d4ed8)", shadow: "var(--t-accent-glow)" },
@@ -555,15 +555,15 @@ export default function AirPublic() {
             ] as const).map(({ key, icon: Icon, label, activeBg, shadow }) => (
               <button key={key}
                 onClick={() => handleTab(key)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-wider transition-all duration-200 text-[#fcfeff]"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-wider transition-all duration-200 text-[#ffffff]"
                 style={tab === key
                   ? { background: activeBg, color: "#fff", boxShadow: `0 4px 20px ${shadow}` }
-                  : { color: "var(--t-text-sub)" }}>
+                  : { color: "#ffffff" }}>
                 <Icon className="h-3.5 w-3.5" />
                 {label}
                 {key === "airlines" && airlines && (
                   <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md"
-                    style={{ background: tab === "airlines" ? "rgba(255,255,255,0.2)" : "var(--t-card)", color: tab === "airlines" ? "#fff" : "var(--t-text-muted)" }}>
+                    style={{ background: tab === "airlines" ? "rgba(255,255,255,0.2)" : "var(--t-card)", color: tab === "airlines" ? "#ffffff" : "var(--t-text-muted)" }}>
                     {airlines.total}
                   </span>
                 )}
@@ -712,7 +712,7 @@ export default function AirPublic() {
                       color: "var(--t-text)"
                     }}
                   />
-                  <p className="text-[10px] mt-1.5 text-[#050101]" style={{ color: "#ffffff" }}>3-digit prefix identifies the airline (e.g. 176 = Emirates)</p>
+                  <p className="text-[10px] mt-1.5 text-[#fcfcfc]" style={{ color: "#ffffff" }}>3-digit prefix identifies the airline (e.g. 176 = Emirates)</p>
                 </div>
                 <div>
                   <label className="block text-[15px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "#ffffff" }}>Destination Airport</label>
