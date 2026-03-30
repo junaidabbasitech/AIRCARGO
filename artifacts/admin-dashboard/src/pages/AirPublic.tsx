@@ -489,7 +489,29 @@ export default function AirPublic() {
         </div>
       )}
       {/* ─── HERO ─── */}
-      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 bg-[transparent] opacity-[1]" style={{ background: heroBg }}>
+      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden">
+        {/* GIF background */}
+        <img
+          src={`${BASE}/plane-takeoff.gif`}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none select-none absolute inset-0 w-full h-full object-cover"
+          style={{ zIndex: 0 }}
+        />
+        {/* Overlay — dark navy tint so text stays readable */}
+        <div
+          className="absolute inset-0"
+          style={{
+            zIndex: 1,
+            background: isDark
+              ? "linear-gradient(135deg, rgba(5,10,25,0.88) 0%, rgba(11,33,71,0.82) 60%, rgba(5,10,25,0.88) 100%)"
+              : "linear-gradient(135deg, rgba(11,33,71,0.80) 0%, rgba(27,55,110,0.75) 60%, rgba(11,33,71,0.80) 100%)",
+          }}
+        />
+        {/* Noise/grain texture for depth */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ zIndex: 2, backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
+        {/* Hero content sits above all layers */}
+        <div className="relative" style={{ zIndex: 3 }}>
         {/* Status + Theme toggle row */}
         <div className="flex items-center justify-between gap-3 mb-10 max-w-6xl mx-auto">
           <button
@@ -514,15 +536,15 @@ export default function AirPublic() {
 
         {/* Title */}
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(59,95,173,0.12)", border: "1px solid rgba(59,95,173,0.25)" }}>
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse inline-block" />
-            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#3b5fad" }}>Technical Registry Query</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(147,197,253,0.15)", border: "1px solid rgba(147,197,253,0.35)" }}>
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse inline-block" />
+            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#93c5fd" }}>Technical Registry Query</span>
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ color: "var(--t-text)", letterSpacing: "-0.02em" }}>
-            Precision{" "}<span style={{ color: "var(--t-accent)" }}>Intelligence</span>{" "}Search
+          <h1 className="font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ color: "#ffffff", letterSpacing: "-0.02em" }}>
+            Precision{" "}<span style={{ color: "#7dd3fc" }}>Intelligence</span>{" "}Search
           </h1>
-          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{ color: "var(--t-text-sub)" }}>
+          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{ color: "rgba(255,255,255,0.72)" }}>
             Search for Airlines, Airports, and AWB data with complete access to ISC charges, FIRMS codes, and operational details sourced from Aviation Regulatory Authority databases.
           </p>
 
@@ -1397,6 +1419,7 @@ export default function AirPublic() {
             )}
           </div>
         )}
+        </div>{/* end zIndex: 3 content wrapper */}
       </div>
       <RequestModal isOpen={requestOpen} onClose={() => setRequestOpen(false)} isDark={isDark} />
     </div>
