@@ -555,7 +555,7 @@ export default function AirPublic() {
             ] as const).map(({ key, icon: Icon, label, activeBg, shadow }) => (
               <button key={key}
                 onClick={() => handleTab(key)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-wider transition-all duration-200"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-wider transition-all duration-200 text-[#fcfeff]"
                 style={tab === key
                   ? { background: activeBg, color: "#fff", boxShadow: `0 4px 20px ${shadow}` }
                   : { color: "var(--t-text-sub)" }}>
