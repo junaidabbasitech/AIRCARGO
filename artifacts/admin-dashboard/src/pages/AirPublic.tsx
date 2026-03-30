@@ -712,7 +712,7 @@ export default function AirPublic() {
                       color: "var(--t-text)"
                     }}
                   />
-                  <p className="text-[10px] mt-1.5 text-[#fcfcfc]" style={{ color: "#ffffff" }}>3-digit prefix identifies the airline (e.g. 176 = Emirates)</p>
+                  <p className="text-[10px] mt-1.5 text-[#050101]" style={{ color: "#ffffff" }}>3-digit prefix identifies the airline (e.g. 176 = Emirates)</p>
                 </div>
                 <div>
                   <label className="block text-[15px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "#ffffff" }}>Destination Airport</label>
