@@ -692,7 +692,7 @@ export default function AirPublic() {
                 </div>
                 <div>
                   <h2 className="text-base font-black tracking-wide" style={{ color: "var(--t-text)" }}>AWB Lookup</h2>
-                  <p className="text-xs font-mono" style={{ color: "#ffffff" }}>Air Waybill → Airline + ISC details at destination</p>
+                  <p className="text-xs font-mono text-[#211e1e]" style={{ color: "#ffffff" }}>Air Waybill → Airline + ISC details at destination</p>
                 </div>
               </div>
 
