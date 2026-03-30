@@ -697,7 +697,7 @@ export default function AirPublic() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>AWB Number</label>
+                  <label className="block text-[15px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "#ffffff" }}>AWB Number</label>
                   <input
                     type="text"
                     value={awbInput}
@@ -711,7 +711,7 @@ export default function AirPublic() {
                       color: "var(--t-text)"
                     }}
                   />
-                  <p className="text-[10px] mt-1.5" style={{ color: "var(--t-text-muted)" }}>3-digit prefix identifies the airline (e.g. 176 = Emirates)</p>
+                  <p className="text-[10px] mt-1.5 text-[#fcfcfc]" style={{ color: "var(--t-text-muted)" }}>3-digit prefix identifies the airline (e.g. 176 = Emirates)</p>
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--t-text-muted)" }}>Destination Airport</label>
