@@ -479,26 +479,27 @@ export default function AirPublic() {
   );
 
   return (
-    <div className="min-h-screen relative" style={{ background: "transparent" }}>
-      {/* Full-viewport GIF — fixed so it covers the entire app including sidebar & header */}
-      <img
-        src={`${BASE}/plane-takeoff.gif`}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none select-none"
-        style={{
-          position: "fixed",
-          inset: 0,
-          width: "100vw",
-          height: "100vh",
-          objectFit: "cover",
-          objectPosition: "center",
-          zIndex: -1,
-        }}
-      />
+    <div className="min-h-screen relative" style={{ background: isDark ? "hsl(222,60%,7%)" : "hsl(210,20%,96%)" }}>
+      <AviationBg />
+      {/* Atmospheric glow blobs (dark only) */}
+      {isDark && (
+        <div className="pointer-events-none fixed inset-0 overflow-hidden -z-0">
+          <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full blur-[120px]" style={{ background: "var(--t-accent-dim)" }} />
+          <div className="absolute top-1/3 -right-32 h-[400px] w-[400px] rounded-full blur-[100px]" style={{ background: "var(--t-accent2-dim)" }} />
+        </div>
+      )}
       {/* ─── HERO ─── */}
       <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden">
-        {/* Very subtle bottom gradient so text stays readable */}
+        {/* GIF background */}
+          <img
+            src={`${BASE}/plane-takeoff.gif`}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none select-none absolute inset-0 w-full h-full object-cover opacity-50"
+            style={{ zIndex: 0 }}
+          
+        />
+        {/* Very subtle bottom gradient so text stays readable without tinting the GIF */}
         <div
           className="absolute inset-0"
           style={{
@@ -531,16 +532,16 @@ export default function AirPublic() {
         </div>
 
         {/* Title */}
-        <div className="max-w-3xl mx-auto text-center ">
+        <div className="max-w-3xl mx-auto text-center rounded-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5" style={{ background: "rgb(147,197,253)", border: "2px solid rgba(147,197,253,0.35)" }}>
             <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse inline-block" />
             <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#ffffff" }}>Technical Registry Query</span>
           </div>
 
-          <h1 className="inline-flex rounded-xl p-1.5 gap-1 font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ background: "#B8B8B8", color: "#ffffff", letterSpacing: "-0.02em" }}>
+          <h1 className="font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ background: "#B8B8B8", color: "#ffffff", letterSpacing: "-0.02em" }}>
             Precision{" "}<span style={{ color: "#7dd3fc" }}>Intelligence</span>{" "}Search
           </h1>
-          <p className="inline-flex rounded-xl p-1.5 gap-1  text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{background: "#B8B8B8", color: "#ffffff" }}>
+          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{background: "#B8B8B8", color: "#ffffff" }}>
             Search for Airlines, Airports, and AWB data with complete access to ISC charges, FIRMS codes, and operational details sourced from Aviation Regulatory Authority databases.
           </p>
 
@@ -809,7 +810,7 @@ export default function AirPublic() {
 
             {/* Quick reference */}
             {!awbResult && !awbError && (
-              <div className="rounded-2xl p-5 " style={{ background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)", border: "2px solid #f97316" }}>
+              <div className="rounded-2xl p-5" style={{ background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)", border: "2px solid #f97316" }}>
                 <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: "#ffffff" }}>Common AWB Prefixes</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {[["176","Emirates (EK)"],["157","Qatar Airways (QR)"],["020","Lufthansa (LH)"],["057","Air France (AF)"],
@@ -818,7 +819,7 @@ export default function AirPublic() {
                     <button key={prefix} onClick={() => setAwbInput(`${prefix}-`)}
                       className="text-left p-2.5 rounded-lg transition-all"
                       style={{ background: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)", border: "2px solid rgba(249,115,22,0.35)" }}>
-                      <p className="text-sm font-black font-mono" style={{ color: "var(--t-text)" }}>{prefix}</p>
+                      <p className="text-sm font-black font-mono" style={{ color: "var(--t-accent)" }}>{prefix}</p>
                       <p className="text-[10px] leading-tight mt-0.5" style={{ color: "#ffffff" }}>{name}</p>
                     </button>
                   ))}
