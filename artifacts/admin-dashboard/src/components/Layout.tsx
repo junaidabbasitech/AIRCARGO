@@ -86,8 +86,8 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
   const close = () => setIsMobileOpen(false);
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "var(--t-bg)" }}>
-      <AviationBg />
+    <div className="flex h-screen overflow-hidden" style={{ background: isAirActive ? "transparent" : "var(--t-bg)" }}>
+      {!isAirActive && <AviationBg />}
 
       {/* Mobile overlay */}
       {isMobileOpen && (
@@ -104,7 +104,13 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
           "md:relative md:flex md:translate-x-0",
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
-        style={{ background: "#0b2147", borderRight: "1px solid rgba(255,255,255,0.06)" }}
+        style={{
+          background: isAirActive
+            ? "rgba(5, 15, 40, 0.55)"
+            : "#0b2147",
+          backdropFilter: isAirActive ? "blur(18px)" : undefined,
+          borderRight: "1px solid rgba(255,255,255,0.06)",
+        }}
       >
         {/* Decorative glows */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden select-none" aria-hidden>
@@ -221,8 +227,9 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
         {/* Top bar */}
         <header className="h-14 flex items-center justify-between px-5 shrink-0 relative"
           style={{
-            background: "var(--t-card)",
-            borderBottom: "1px solid rgba(11,33,71,0.08)",
+            background: isAirActive ? "rgba(5,15,40,0.45)" : "var(--t-card)",
+            backdropFilter: isAirActive ? "blur(18px)" : undefined,
+            borderBottom: isAirActive ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(11,33,71,0.08)",
             boxShadow: "0 1px 12px rgba(11,33,71,0.05)",
           }}>
           <div className="flex items-center gap-3">
@@ -239,11 +246,11 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
               <div className="h-7 w-0.5 rounded-full hidden sm:block" style={{ background: "rgba(11,33,71,0.10)" }} />
               <div>
                 <h1 className="text-[13px] font-black tracking-widest uppercase leading-none"
-                  style={{ color: "#0b2147" }}>
+                  style={{ color: isAirActive ? "#dbe8ff" : "#0b2147" }}>
                   {pageLabel}
                 </h1>
                 <p className="text-[9px] font-semibold tracking-wide mt-0.5 hidden sm:block"
-                  style={{ color: "rgba(11,33,71,0.38)" }}>
+                  style={{ color: isAirActive ? "rgba(179,198,245,0.50)" : "rgba(11,33,71,0.38)" }}>
                   Aviation CBP Registry
                 </p>
               </div>
@@ -282,7 +289,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
         </header>
 
         {/* Page content */}
-        <div className="flex-1 overflow-auto p-5" style={{ background: "var(--t-bg)" }}>
+        <div className="flex-1 overflow-auto p-5" style={{ background: isAirActive ? "transparent" : "var(--t-bg)" }}>
           {children}
         </div>
       </main>
