@@ -20,6 +20,7 @@ import Duplicates from "@/pages/Duplicates";
 import AwbPrefixes from "@/pages/AwbPrefixes";
 import Requests from "@/pages/Requests";
 import Database from "@/pages/Database";
+import { Watermark } from "@/components/Watermark";
 
 const CORRECT_PASSWORD = "332";
 const AUTH_KEY = "aviacbp_auth";
@@ -231,6 +232,7 @@ function App() {
             }
           }}
         />
+        <Watermark />
       </QueryClientProvider>
     </ThemeProvider>
   );
