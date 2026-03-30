@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster, toast } from "sonner";
 import { Lock, Plane, Shield } from "lucide-react";
 import { Layout } from "@/components/Layout";
-import { Watermark } from "@/components/Watermark";
 import { AviationBg } from "@/components/AviationBg";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -51,7 +50,6 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
       style={{ background: "#f6fafe" }}>
       <AviationBg />
-      <Watermark />
 
       <div className={`relative w-full max-w-sm z-10 ${shake ? "animate-bounce" : ""}`}>
         {/* Theme toggle */}

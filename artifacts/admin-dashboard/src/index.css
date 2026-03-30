@@ -260,26 +260,45 @@
     border-radius: 9999px;
   }
 
-  /* ── Interactive button hover ── */
+  /* ── Button classes ── */
   .btn-primary {
-    background: linear-gradient(135deg, #0b2147 0%, #000b25 100%);
+    background: linear-gradient(135deg, #3b5fad 0%, #1e3a8a 100%);
     color: #ffffff;
-    border-radius: 0.5rem;
-    padding: 0.625rem 1.25rem;
-    font-weight: 600;
+    border-radius: 0.75rem;
+    padding: 0.55rem 1.1rem;
+    font-weight: 700;
     font-size: 0.8rem;
-    letter-spacing: 0.04em;
-    transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 16px rgba(11,33,71,0.25);
+    letter-spacing: 0.03em;
+    transition: all 0.18s ease;
+    box-shadow: 0 4px 18px rgba(59,95,173,0.35);
+    border: none;
   }
   .btn-primary:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(11,33,71,0.30);
+    filter: brightness(1.12);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(59,95,173,0.45);
   }
-  .btn-primary:active {
-    transform: scale(0.98);
+  .btn-primary:active { transform: scale(0.97); }
+
+  .btn-success {
+    background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+    color: #fff; border-radius: 0.75rem; padding: 0.5rem 1rem;
+    font-weight: 700; font-size: 0.75rem; border: none;
+    box-shadow: 0 4px 14px rgba(5,150,105,0.30);
+    transition: all 0.18s ease;
   }
+  .btn-success:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(5,150,105,0.40); }
+  .btn-success:active { transform: scale(0.97); }
+
+  .btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    color: #fff; border-radius: 0.75rem; padding: 0.5rem 1rem;
+    font-weight: 700; font-size: 0.75rem; border: none;
+    box-shadow: 0 4px 14px rgba(239,68,68,0.30);
+    transition: all 0.18s ease;
+  }
+  .btn-danger:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(239,68,68,0.40); }
+  .btn-danger:active { transform: scale(0.97); }
 
   /* ── Section hover highlight ── */
   .section-hover {

@@ -3,61 +3,103 @@ import { cn } from "@/lib/utils";
 import { X, Loader2 } from "lucide-react";
 
 export const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("glass-panel rounded-xl flex flex-col", className)} {...props} />
+  <div ref={ref} className={cn("aero-card flex flex-col", className)} {...props} />
 ));
 Card.displayName = "Card";
 
 export const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6 border-b border-border/50", className)} {...props} />
+  <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)}
+    style={{ borderBottom: "1px solid rgba(197,198,207,0.25)" }} {...props} />
 ));
 CardHeader.displayName = "CardHeader";
 
 export const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(({ className, ...props }, ref) => (
-  <h3 ref={ref} className={cn("font-display text-lg font-semibold tracking-wider text-primary glow-text", className)} {...props} />
+  <h3 ref={ref} className={cn("text-base font-black tracking-wide", className)}
+    style={{ color: "#0b2147" }} {...props} />
 ));
 CardTitle.displayName = "CardTitle";
 
 export const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 flex-1 overflow-auto", className)} {...props} />
+  <div ref={ref} className={cn("p-6 pt-5 flex-1 overflow-auto", className)} {...props} />
 ));
 CardContent.displayName = "CardContent";
 
+/* ── Button ── */
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "default" | "primary" | "secondary" | "outline" | "ghost" | "danger";
+  variant?: "default" | "primary" | "secondary" | "outline" | "ghost" | "danger" | "success";
   size?: "sm" | "md" | "lg" | "icon";
   isLoading?: boolean;
 };
 
+const BTN_VARIANTS: Record<string, string> = {
+  primary:   "text-white shadow-md",
+  secondary: "text-white shadow-sm",
+  danger:    "text-white shadow-md",
+  success:   "text-white shadow-md",
+  outline:   "border font-semibold",
+  ghost:     "hover:bg-black/5",
+  default:   "border font-semibold",
+};
+
+const BTN_STYLES: Record<string, React.CSSProperties> = {
+  primary:   { background: "linear-gradient(135deg, #3b5fad 0%, #1e3a8a 100%)", boxShadow: "0 4px 18px rgba(59,95,173,0.35)" },
+  secondary: { background: "linear-gradient(135deg, #475569 0%, #334155 100%)", boxShadow: "0 4px 14px rgba(51,65,85,0.30)" },
+  danger:    { background: "linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)", boxShadow: "0 4px 18px rgba(239,68,68,0.35)" },
+  success:   { background: "linear-gradient(135deg, #059669 0%, #065f46 100%)", boxShadow: "0 4px 18px rgba(5,150,105,0.35)" },
+  outline:   { background: "transparent", borderColor: "rgba(59,95,173,0.30)", color: "#3b5fad" },
+  ghost:     { background: "transparent", color: "#44474e" },
+  default:   { background: "#f8faff", borderColor: "rgba(197,198,207,0.40)", color: "#0b2147" },
+};
+
+const BTN_HOVER: Record<string, React.CSSProperties> = {
+  primary:   { filter: "brightness(1.12)", transform: "translateY(-2px)", boxShadow: "0 8px 28px rgba(59,95,173,0.45)" },
+  secondary: { filter: "brightness(1.10)", transform: "translateY(-2px)", boxShadow: "0 8px 22px rgba(51,65,85,0.38)" },
+  danger:    { filter: "brightness(1.10)", transform: "translateY(-2px)", boxShadow: "0 8px 28px rgba(239,68,68,0.45)" },
+  success:   { filter: "brightness(1.10)", transform: "translateY(-2px)", boxShadow: "0 8px 28px rgba(5,150,105,0.45)" },
+  outline:   { background: "rgba(59,95,173,0.07)", transform: "translateY(-1px)" },
+  ghost:     { background: "rgba(0,0,0,0.05)" },
+  default:   { background: "#eef3ff", transform: "translateY(-1px)" },
+};
+
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "default", size = "md", isLoading, children, ...props }, ref) => {
-    const variants = {
-      default: "bg-muted text-foreground hover:bg-muted/80 border border-transparent",
-      primary: "bg-primary text-primary-foreground hover:bg-primary/90 glow-border shadow-primary/20",
-      secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90",
-      outline: "border border-primary/50 text-primary hover:bg-primary/10",
-      ghost: "hover:bg-accent hover:text-accent-foreground text-muted-foreground",
-      danger: "bg-destructive/10 text-destructive border border-destructive/30 hover:bg-destructive hover:text-destructive-foreground",
-    };
+  ({ className, variant = "default", size = "md", isLoading, style, children, ...props }, ref) => {
+    const [hovered, setHovered] = React.useState(false);
+    const v = variant;
+
     const sizes = {
-      sm: "h-8 px-3 text-xs",
-      md: "h-10 px-4 py-2 text-sm",
-      lg: "h-12 px-8 text-base",
-      icon: "h-9 w-9 p-0",
+      sm:   "h-8 px-3 text-xs rounded-lg",
+      md:   "h-9 px-4 text-sm rounded-xl",
+      lg:   "h-11 px-6 text-sm rounded-xl",
+      icon: "h-9 w-9 rounded-xl p-0",
+    };
+
+    const computedStyle: React.CSSProperties = {
+      ...BTN_STYLES[v],
+      ...(hovered && !props.disabled ? BTN_HOVER[v] : {}),
+      transition: "all 0.18s ease",
+      ...style,
     };
 
     return (
       <button
         ref={ref}
         disabled={isLoading || props.disabled}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onMouseDown={e => (e.currentTarget.style.transform = "scale(0.97)")}
+        onMouseUp={e => (e.currentTarget.style.transform = hovered ? BTN_HOVER[v]?.transform as string || "" : "")}
         className={cn(
-          "inline-flex items-center justify-center rounded-md font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50",
-          variants[variant],
+          "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
+          "disabled:pointer-events-none disabled:opacity-50",
+          BTN_VARIANTS[v],
           sizes[size],
           className
         )}
+        style={computedStyle}
         {...props}
       >
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {isLoading && <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />}
         {children}
       </button>
     );
@@ -69,9 +111,24 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
   <input
     ref={ref}
     className={cn(
-      "flex h-10 w-full rounded-md border border-border bg-background/50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
+      "flex h-10 w-full rounded-xl border px-3 py-2 text-sm",
+      "bg-white/80 placeholder:text-slate-400",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0",
+      "disabled:cursor-not-allowed disabled:opacity-50 transition-all",
       className
     )}
+    style={{
+      border: "1px solid rgba(197,198,207,0.45)",
+      color: "#0b2147",
+    } as any}
+    onFocus={e => {
+      e.currentTarget.style.borderColor = "rgba(59,95,173,0.50)";
+      e.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,95,173,0.10)";
+    }}
+    onBlur={e => {
+      e.currentTarget.style.borderColor = "rgba(197,198,207,0.45)";
+      e.currentTarget.style.boxShadow = "";
+    }}
     {...props}
   />
 ));
@@ -81,57 +138,119 @@ export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttrib
   <select
     ref={ref}
     className={cn(
-      "flex h-10 w-full rounded-md border border-border bg-background/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors appearance-none",
+      "flex h-10 w-full rounded-xl border px-3 py-2 text-sm appearance-none",
+      "bg-white/80",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0",
+      "disabled:cursor-not-allowed disabled:opacity-50 transition-all cursor-pointer",
       className
     )}
+    style={{
+      border: "1px solid rgba(197,198,207,0.45)",
+      color: "#0b2147",
+    } as any}
+    onFocus={e => {
+      e.currentTarget.style.borderColor = "rgba(59,95,173,0.50)";
+      e.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,95,173,0.10)";
+    }}
+    onBlur={e => {
+      e.currentTarget.style.borderColor = "rgba(197,198,207,0.45)";
+      e.currentTarget.style.boxShadow = "";
+    }}
     {...props}
   />
 ));
 Select.displayName = "Select";
 
 export const Label = React.forwardRef<HTMLLabelElement, React.LabelHTMLAttributes<HTMLLabelElement>>(({ className, ...props }, ref) => (
-  <label ref={ref} className={cn("text-sm font-medium leading-none text-muted-foreground uppercase tracking-wider font-display", className)} {...props} />
+  <label ref={ref} className={cn("text-[10px] font-black leading-none uppercase tracking-widest", className)}
+    style={{ color: "rgba(11,33,71,0.50)" }} {...props} />
 ));
 Label.displayName = "Label";
 
-export const Badge = ({ className, variant = "default", ...props }: React.HTMLAttributes<HTMLDivElement> & { variant?: "default" | "success" | "warning" | "danger" | "outline" }) => {
-  const variants = {
-    default: "bg-primary/20 text-primary border border-primary/30",
-    success: "bg-success/20 text-success border border-success/30",
-    warning: "bg-warning/20 text-warning border border-warning/30",
-    danger: "bg-destructive/20 text-destructive border border-destructive/30",
-    outline: "text-foreground border border-border",
+export const Badge = ({ className, variant = "default", ...props }: React.HTMLAttributes<HTMLDivElement> & {
+  variant?: "default" | "success" | "warning" | "danger" | "outline"
+}) => {
+  const styles: Record<string, React.CSSProperties> = {
+    default: { background: "rgba(59,95,173,0.10)", color: "#3b5fad",   border: "1px solid rgba(59,95,173,0.22)" },
+    success: { background: "rgba(5,150,105,0.10)",  color: "#059669",   border: "1px solid rgba(5,150,105,0.22)" },
+    warning: { background: "rgba(217,119,6,0.10)",  color: "#b45309",   border: "1px solid rgba(217,119,6,0.22)" },
+    danger:  { background: "rgba(239,68,68,0.10)",  color: "#dc2626",   border: "1px solid rgba(239,68,68,0.22)" },
+    outline: { background: "transparent",           color: "#44474e",   border: "1px solid rgba(197,198,207,0.50)" },
   };
   return (
-    <div className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold font-mono uppercase tracking-wider transition-colors", variants[variant], className)} {...props} />
+    <div
+      className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider", className)}
+      style={styles[variant]}
+      {...props}
+    />
   );
 };
 
-export const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode }) => {
+export const Modal = ({ isOpen, onClose, title, children }: {
+  isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode;
+}) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity" onClick={onClose} />
-      <div className="relative z-50 w-full max-w-lg scale-100 p-6 opacity-100 glow-border glass-panel rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xl font-display font-semibold text-primary glow-text tracking-wider uppercase">{title}</h2>
-          <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="relative z-50 w-full max-w-lg mx-4 rounded-2xl overflow-hidden"
+        style={{ background: "#fff", boxShadow: "0 24px 80px rgba(11,33,71,0.18)", border: "1px solid rgba(197,198,207,0.35)" }}
+      >
+        {/* Modal header */}
+        <div className="flex items-center justify-between px-6 py-4"
+          style={{ background: "linear-gradient(90deg, rgba(59,95,173,0.06), rgba(59,95,173,0.02))", borderBottom: "1px solid rgba(197,198,207,0.25)" }}>
+          <h2 className="text-[15px] font-black tracking-wide" style={{ color: "#0b2147" }}>{title}</h2>
+          <button
+            onClick={onClose}
+            className="h-8 w-8 rounded-lg flex items-center justify-center transition-all hover:scale-105"
+            style={{ background: "rgba(11,33,71,0.06)", color: "rgba(11,33,71,0.50)" }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.10)"; e.currentTarget.style.color = "#dc2626"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "rgba(11,33,71,0.06)"; e.currentTarget.style.color = "rgba(11,33,71,0.50)"; }}
+          >
             <X className="h-4 w-4" />
-          </Button>
+          </button>
         </div>
-        {children}
+        <div className="p-6 animate-in fade-in zoom-in-95 duration-200">{children}</div>
       </div>
     </div>
   );
 };
 
 export const Table = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className="w-full overflow-auto rounded-md border border-border bg-card/50">
+  <div className="w-full overflow-auto rounded-xl" style={{ border: "1px solid rgba(197,198,207,0.30)" }}>
     <table className={cn("w-full caption-bottom text-sm", className)}>{children}</table>
   </div>
 );
-export const TableHeader = ({ children }: { children: React.ReactNode }) => <thead className="[&_tr]:border-b bg-muted/50">{children}</thead>;
-export const TableBody = ({ children }: { children: React.ReactNode }) => <tbody className="[&_tr:last-child]:border-0">{children}</tbody>;
-export const TableRow = ({ children, className }: { children: React.ReactNode; className?: string }) => <tr className={cn("border-b border-border transition-colors hover:bg-muted/30 data-[state=selected]:bg-muted", className)}>{children}</tr>;
-export const TableHead = ({ children, className }: { children: React.ReactNode; className?: string }) => <th className={cn("h-12 px-4 text-left align-middle font-display font-semibold text-muted-foreground uppercase tracking-wider", className)}>{children}</th>;
-export const TableCell = ({ children, className }: { children: React.ReactNode; className?: string }) => <td className={cn("p-4 align-middle font-mono text-sm", className)}>{children}</td>;
+
+export const TableHeader = ({ children }: { children: React.ReactNode }) => (
+  <thead style={{ background: "rgba(11,33,71,0.025)", borderBottom: "1px solid rgba(197,198,207,0.25)" }}>{children}</thead>
+);
+
+export const TableBody = ({ children }: { children: React.ReactNode }) => (
+  <tbody className="[&_tr:last-child]:border-0">{children}</tbody>
+);
+
+export const TableRow = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <tr
+    className={cn("group border-b transition-colors cursor-default", className)}
+    style={{ borderColor: "rgba(197,198,207,0.20)" }}
+    onMouseEnter={e => (e.currentTarget.style.background = "rgba(59,95,173,0.03)")}
+    onMouseLeave={e => (e.currentTarget.style.background = "")}
+  >
+    {children}
+  </tr>
+);
+
+export const TableHead = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <th className={cn("h-11 px-4 text-left align-middle text-[9px] font-black uppercase tracking-widest", className)}
+    style={{ color: "rgba(11,33,71,0.40)" }}>
+    {children}
+  </th>
+);
+
+export const TableCell = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <td className={cn("px-4 py-3 align-middle text-sm", className)} style={{ color: "#0b2147" }}>
+    {children}
+  </td>
+);

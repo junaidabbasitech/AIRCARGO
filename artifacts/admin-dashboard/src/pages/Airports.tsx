@@ -204,36 +204,41 @@ export default function Airports() {
 
           {/* Bulk actions bar */}
           {selected.size > 0 && (
-            <div className="flex flex-wrap items-center gap-3 mb-4 p-3 bg-sky-50 border border-sky-200 rounded-xl">
-              <CheckSquare className="h-4 w-4 text-sky-600 shrink-0" />
-              <span className="text-sm font-semibold text-sky-700">{selected.size} selected</span>
-
+            <div className="flex flex-wrap items-center gap-3 mb-4 p-3 rounded-2xl"
+              style={{ background: "rgba(5,150,105,0.06)", border: "1px solid rgba(5,150,105,0.15)" }}>
+              <CheckSquare className="h-4 w-4 shrink-0" style={{ color: "#059669" }} />
+              <span className="text-sm font-bold" style={{ color: "#059669" }}>{selected.size} selected</span>
               {!allFilterSelected && data && selected.size < data.total && (
-                <button
-                  onClick={selectAllInFilter}
-                  disabled={bulkLoading}
-                  className="text-xs text-sky-600 hover:text-sky-800 font-semibold underline underline-offset-2 transition-colors disabled:opacity-50"
-                >
+                <button onClick={selectAllInFilter} disabled={bulkLoading}
+                  className="text-xs font-semibold underline underline-offset-2 transition-colors disabled:opacity-50"
+                  style={{ color: "#059669" }}>
                   Select all {data.total} matching this filter
                 </button>
               )}
               {allFilterSelected && (
-                <span className="text-xs text-sky-500 font-medium italic">All {selected.size} in filter selected</span>
+                <span className="text-xs font-medium italic" style={{ color: "rgba(5,150,105,0.60)" }}>All {selected.size} in filter selected</span>
               )}
-
-              <button onClick={bulkApprove} disabled={bulkLoading} className="ml-auto flex items-center gap-1.5 px-4 py-1.5 bg-green-500 hover:bg-green-600 active:scale-95 text-white text-xs font-bold rounded-lg transition-all duration-150 shadow hover:shadow-green-300/50 disabled:opacity-50">
+              <button onClick={bulkApprove} disabled={bulkLoading} className="btn-success ml-auto flex items-center gap-1.5 disabled:opacity-50">
                 <Check className="h-3.5 w-3.5" />
                 {bulkLoading ? "Processing..." : "Approve All"}
               </button>
-              <button onClick={bulkReject} disabled={bulkLoading} className="flex items-center gap-1.5 px-4 py-1.5 bg-red-500 hover:bg-red-600 active:scale-95 text-white text-xs font-bold rounded-lg transition-all duration-150 shadow hover:shadow-red-300/50 disabled:opacity-50">
+              <button onClick={bulkReject} disabled={bulkLoading} className="btn-danger flex items-center gap-1.5 disabled:opacity-50">
                 <X className="h-3.5 w-3.5" />
                 Reject All
               </button>
-              <button onClick={bulkDelete} disabled={bulkLoading} className="flex items-center gap-1.5 px-4 py-1.5 bg-slate-700 hover:bg-slate-900 active:scale-95 text-white text-xs font-bold rounded-lg transition-all duration-150 shadow disabled:opacity-50">
+              <button onClick={bulkDelete} disabled={bulkLoading}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-white text-xs font-bold transition-all disabled:opacity-50"
+                style={{ background: "linear-gradient(135deg, #475569, #1e293b)", boxShadow: "0 4px 12px rgba(71,85,105,0.30)" }}
+                onMouseEnter={e => { e.currentTarget.style.filter = "brightness(1.1)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.filter = ""; e.currentTarget.style.transform = ""; }}>
                 <Trash2 className="h-3.5 w-3.5" />
                 Delete All
               </button>
-              <button onClick={() => { setSelected(new Set()); setAllFilterSelected(false); }} className="text-xs text-slate-400 hover:text-slate-600 transition-colors px-2">Clear</button>
+              <button onClick={() => { setSelected(new Set()); setAllFilterSelected(false); }}
+                className="text-xs font-semibold px-2"
+                style={{ color: "rgba(11,33,71,0.40)" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "#0b2147")}
+                onMouseLeave={e => (e.currentTarget.style.color = "rgba(11,33,71,0.40)")}>Clear</button>
             </div>
           )}
 
