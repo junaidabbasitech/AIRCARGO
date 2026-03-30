@@ -498,18 +498,14 @@ export default function AirPublic() {
           className="pointer-events-none select-none absolute inset-0 w-full h-full object-cover"
           style={{ zIndex: 0 }}
         />
-        {/* Overlay — dark navy tint so text stays readable */}
+        {/* Very subtle bottom gradient so text stays readable without tinting the GIF */}
         <div
           className="absolute inset-0"
           style={{
             zIndex: 1,
-            background: isDark
-              ? "linear-gradient(135deg, rgba(5,10,25,0.88) 0%, rgba(11,33,71,0.82) 60%, rgba(5,10,25,0.88) 100%)"
-              : "linear-gradient(135deg, rgba(11,33,71,0.80) 0%, rgba(27,55,110,0.75) 60%, rgba(11,33,71,0.80) 100%)",
+            background: "linear-gradient(to bottom, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.25) 100%)",
           }}
         />
-        {/* Noise/grain texture for depth */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ zIndex: 2, backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
         {/* Hero content sits above all layers */}
         <div className="relative" style={{ zIndex: 3 }}>
         {/* Status + Theme toggle row */}
