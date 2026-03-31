@@ -150,7 +150,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
         </div>
 
         {/* Nav */}
-        <nav className="relative flex-1 overflow-y-auto py-4 px-2.5 space-y-0.5 scrollbar-none">
+        <nav className="relative flex-1 overflow-y-auto py-4 px-2.5 space-y-0.5 scrollbar-none border-r-[#cf3b0c] border-r-[3px]">
           {/* Public section */}
           {AIR_NAV.map(item => (
             <NavItem
@@ -216,7 +216,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
       {/* ── Main content ── */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top bar */}
-        <header className="h-14 flex items-center justify-between px-5 shrink-0 relative bg-[#87878700]"
+        <header className="h-14 flex items-center justify-between px-5 shrink-0 relative"
           style={{
             background: "#FFFFFF",
             borderBottom: "1px solid #FFFFFF",
@@ -261,9 +261,9 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
             {!isAuthenticated && (
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full"
                 style={{ background: "rgba(11,33,71,0.04)", border: "1px solid #0BDA30" }}>
-                <Lock className="h-3 w-3" style={{ color: "#F2FAFF" }} />
+                <Lock className="h-3 w-3" style={{ color: "#FF6767" }} />
                 <span className="text-[9px] font-semibold hidden sm:block"
-                  style={{ color: "(#F2FAFF)" }}>
+                  style={{ color: "#6767FF" }}>
                   Read-only
                 </span>
               </div>

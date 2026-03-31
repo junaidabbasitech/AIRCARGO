@@ -547,10 +547,10 @@ export default function AirPublic() {
           {/* Tab switcher */}
           <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-8" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}>
             {([
-              { key: "awb" as const, icon: ScanBarcode, label: "AWB Track", activeBg: "linear-gradient(135deg, #059669, #047857)", shadow: "rgba(5,150,105,0.35)" },
-              { key: "airlines" as const, icon: Plane, label: "Airlines", activeBg: "linear-gradient(135deg, var(--t-accent), #1d4ed8)", shadow: "var(--t-accent-glow)" },
-              { key: "airports" as const, icon: Building2, label: "Airports", activeBg: "linear-gradient(135deg, var(--t-accent2), #dc2626)", shadow: "var(--t-accent2-dim)" },
-              { key: "firms" as const, icon: Hash, label: "FIRMS Lookup", activeBg: "linear-gradient(135deg, #7c3aed, #6d28d9)", shadow: "rgba(124,58,237,0.35)" },
+              { key: "awb" as const, icon: ScanBarcode, label: "AWB Track", activeBg: "linear-gradient(135deg, #059669, #FFF700)", shadow: "rgba(5,150,105,0.35)" },
+              { key: "airlines" as const, icon: Plane, label: "Airlines", activeBg: "linear-gradient(135deg, #0000CD, #00965F)", shadow: "var(--t-accent-glow)" },
+              { key: "airports" as const, icon: Building2, label: "Airports", activeBg: "linear-gradient(135deg, var(--t-accent2), #701F0E)", shadow: "var(--t-accent-glow)" },
+              { key: "firms" as const, icon: Hash, label: "FIRMS Lookup", activeBg: "linear-gradient(135deg, var(--t-accent2), #6d28d9)", shadow: "rgba(124,58,237,0.35)" },
             ] as const).map(({ key, icon: Icon, label, activeBg, shadow }) => (
               <button key={key}
                 onClick={() => handleTab(key)}
