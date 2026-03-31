@@ -124,7 +124,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
         </div>
 
         {/* Brand */}
-        <div className="relative flex h-16 items-center gap-3 px-5"
+        <div className="relative flex h-16 items-center gap-3 px-5 border-r-[#b81f04] border-r-[3px]"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
           <div className="h-8 w-8 rounded-xl flex items-center justify-center shrink-0"
             style={{ background: "rgba(179,198,245,0.15)", border: "1px solid rgba(179,198,245,0.10)" }}>
