@@ -238,12 +238,12 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
             <div className="flex items-center gap-3">
               <div className="h-7 w-0.5 rounded-full hidden sm:block" style={{ background: "rgba(11,33,71,0.10)" }} />
               <div>
-                <h1 className="text-[13px] font-black tracking-widest uppercase leading-none"
-                  style={{ color: "#0b2147" }}>
+                <h1 className="text-[18px] font-black tracking-widest uppercase leading-none"
+                  style={{ color: "#000000" }}>
                   {pageLabel}
                 </h1>
-                <p className="text-[9px] font-semibold tracking-wide mt-0.5 hidden sm:block"
-                  style={{ color: "rgba(11,33,71,0.38)" }}>
+                <p className="text-[12px] font-semibold tracking-wide mt-0.5 hidden sm:block"
+                  style={{ color: "#000000" }}>
                   Aviation CBP Registry
                 </p>
               </div>
@@ -263,18 +263,18 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
             )}
             {!isAuthenticated && (
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full"
-                style={{ background: "rgba(11,33,71,0.04)", border: "1px solid rgba(11,33,71,0.08)" }}>
-                <Lock className="h-3 w-3" style={{ color: "rgba(11,33,71,0.35)" }} />
+                style={{ background: "rgba(11,33,71,0.04)", border: "1px solid #F2FAFF)" }}>
+                <Lock className="h-3 w-3" style={{ color: "#F2FAFF" }} />
                 <span className="text-[9px] font-semibold hidden sm:block"
-                  style={{ color: "rgba(11,33,71,0.40)" }}>
+                  style={{ color: "(#F2FAFF)" }}>
                   Read-only
                 </span>
               </div>
             )}
             <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full"
-              style={{ background: "rgba(0,157,108,0.07)", border: "1px solid rgba(0,157,108,0.14)" }}>
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-wider hidden sm:block">
+              style={{ background: "rgba(0,157,108,0.07)", border: "1px solid #008000" }}>
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider hidden sm:block">
                 Online
               </span>
             </div>

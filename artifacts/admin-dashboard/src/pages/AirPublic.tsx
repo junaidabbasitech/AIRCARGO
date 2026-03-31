@@ -492,15 +492,15 @@ export default function AirPublic() {
       <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden bg-[#878787]">
         {/* GIF background — limited to heading area only */}
         <img
-          src={`${BASE}/plane-takeoff.gif`}
+          src={`${BASE}/plane-takeoff.jpg`}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none select-none absolute top-0 left-0 right-0 w-full object-cover"
-          style={{ zIndex: 0, height: "380px", objectPosition: "center top" }}
+          className="pointer-events-none select-none absolute top-0 left-0 w-full h-[380px] object-cover object-top"
+          style={{ zIndex: 0 }}
         />
         {/* Overlay — same height as the GIF, fades out at bottom */}
         <div
-          className="absolute top-0 left-0 right-0"
+          className="absolute top-0 left-0 w-full h-[380px] object-contain bg-black"
           style={{
             zIndex: 1,
             height: "380px",
@@ -510,7 +510,7 @@ export default function AirPublic() {
         {/* Hero content sits above all layers */}
         <div className="relative" style={{ zIndex: 3 }}>
         {/* Status + Theme toggle row */}
-        <div className="flex items-center justify-between gap-3 mb-10 max-w-6xl mx-auto">
+        <div className="flex items-left justify-between gap-3 mb-10 max-w-6xl mx-left">
           <button
             onClick={() => setRequestOpen(true)}
             className="flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 text-red-600 border-t-blue-600 border-r-orange-600 border-b-blue-600 border-l-orange-600"
@@ -519,13 +519,13 @@ export default function AirPublic() {
             <span>Submit Data Request</span>
           </button>
           <div className="flex items-center gap-3 ml-auto">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)" }}>
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
-              <span className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">Live Data</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(16,185,129,0.1)", border: "1px solid #FF00FF" }}>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-900 animate-pulse inline-block" />
+              <span className="text-[10px] font-bold text-emerald-900 tracking-widest uppercase">Live Data</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "var(--t-accent-dim)", border: "1px solid var(orange)" }}>
-              <Radio className="h-3 w-3" style={{ color: "var(--t-accent)" }} />
-              <span className="text-[10px] font-bold tracking-widest uppercase hidden sm:inline" style={{ color: "var(--t-accent)" }}>Registry Online</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "var(--t-accent-dim)", border: "1px solid #CC5E13" }}>
+              <Radio className="h-3 w-3" style={{ color: "#1A4A96" }} />
+              <span className="text-[10px] font-bold tracking-widest uppercase hidden sm:inline" style={{ color: "#1A4A96" }}>Registry Online</span>
             </div>
             <ThemeToggle compact />
           </div>
@@ -546,7 +546,7 @@ export default function AirPublic() {
           </p>
 
           {/* Tab switcher */}
-          <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-7" style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-border)" }}>
+          <div className="inline-flex rounded-2xl p-1.5 gap-1 bg-[#0ea5e914] mb-[28px] mt-[0px] mr-[100px]" style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-border)" }}>
             {([
               { key: "awb" as const, icon: ScanBarcode, label: "AWB Track", activeBg: "linear-gradient(135deg, #059669, #047857)", shadow: "rgba(5,150,105,0.35)" },
               { key: "airlines" as const, icon: Plane, label: "Airlines", activeBg: "linear-gradient(135deg, var(--t-accent), #1d4ed8)", shadow: "var(--t-accent-glow)" },
