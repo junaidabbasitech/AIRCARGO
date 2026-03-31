@@ -513,7 +513,7 @@ export default function AirPublic() {
           <button
             onClick={() => setRequestOpen(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
-            style={{ background: "linear-gradient(135deg, rgba(5,150,105,0.2), rgba(5,150,105,0.1))", border: "1px solid rgba(5,150,105,0.4)", color: "#34d399" }}>
+            style={{ background: "linear-gradient(135deg, rgba(5,150,105,0.2), rgba(5,150,105,0.1))", border: "1px solid #9B1313", color: "#9B1313" }}>
             <MessageSquarePlus className="h-3.5 w-3.5" />
             <span>Submit Data Request</span>
           </button>
@@ -522,9 +522,9 @@ export default function AirPublic() {
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
               <span className="text-[10px] font-bold text-emerald-300 tracking-widest uppercase">Live Data</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.4)" }}>
-              <Radio className="h-3 w-3" style={{ color: "rgba(147,197,253,0.8)" }} />
-              <span className="text-[10px] font-bold tracking-widest uppercase hidden sm:inline" style={{ color: "rgba(147,197,253,0.8)" }}>Registry Online</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(59,130,246,0.15)", border: "1px solid #520075" }}>
+              <Radio className="h-3 w-3" style={{ color: "#0BDA51" }} />
+              <span className="text-[10px] font-bold tracking-widest uppercase hidden sm:inline" style={{ color: "#FF00FF" }}>Registry Online</span>
             </div>
             <ThemeToggle compact />
           </div>
@@ -532,9 +532,9 @@ export default function AirPublic() {
 
         {/* Title section */}
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.4)" }}>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: "rgba(59,130,246,0.15)", border: "1px solid #520075" }}>
             <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse inline-block" />
-            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "rgba(147,197,253,0.9)" }}>Global Aviation Registry</span>
+            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#0000CD" }}>Global Aviation Registry</span>
           </div>
 
           <h1 className="font-display text-4xl sm:text-5xl font-black mb-4 leading-tight" style={{ color: "#ffffff", letterSpacing: "-0.02em" }}>
@@ -693,7 +693,7 @@ export default function AirPublic() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label className="block text-[12px] font-bold uppercase tracking-widest mb-2" style={{ color: "var(--t-text-muted)" }}>AWB Number</label>
+                  <label className="block text-[12px] font-bold uppercase tracking-widest mb-2" style={{ color: "#000000" }}>AWB Number</label>
                   <input
                     type="text"
                     value={awbInput}
@@ -708,10 +708,10 @@ export default function AirPublic() {
                       outlineColor: "var(--t-accent)"
                     }}
                   />
-                  <p className="text-[10px] mt-1.5" style={{ color: "var(--t-text-muted)" }}>3-digit prefix identifies the airline</p>
+                  <p className="text-[10px] mt-1.5" style={{ color: "#4E545C" }}>3-digit prefix identifies the airline</p>
                 </div>
                 <div>
-                  <label className="block text-[12px] font-bold uppercase tracking-widest mb-2" style={{ color: "var(--t-text-muted)" }}>Destination Airport</label>
+                  <label className="block text-[12px] font-bold uppercase tracking-widest mb-2" style={{ color: "#000000" }}>Destination Airport</label>
                   <input
                     type="text"
                     value={awbAirport}
@@ -723,11 +723,11 @@ export default function AirPublic() {
                     style={{
                       background: "var(--t-card)",
                       border: "1px solid var(--t-border)",
-                      color: "var(--t-text)",
+                      color: "#000000",
                       outlineColor: "var(--t-accent)"
                     }}
                   />
-                  <p className="text-[10px] mt-1.5" style={{ color: "var(--t-text-muted)" }}>Airport IATA code where cargo will arrive</p>
+                  <p className="text-[10px] mt-1.5" style={{ color: "#4E545C" }}>Airport IATA code where cargo will arrive</p>
                 </div>
               </div>
 
@@ -808,7 +808,7 @@ export default function AirPublic() {
             {/* Quick reference */}
             {!awbResult && !awbError && (
               <div className="rounded-2xl p-5 shadow-lg" style={cardStyle}>
-                <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: "var(--t-text-muted)" }}>Common AWB Prefixes</p>
+                <p className="text-[18px] font-bold uppercase tracking-widest mb-3" style={{ color: "#000000" }}>Common AWB Prefixes</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {[["176","Emirates (EK)"],["157","Qatar Airways (QR)"],["020","Lufthansa (LH)"],["057","Air France (AF)"],
                     ["235","Turkish Airlines (TK)"],["108","Atlas Air (5Y)"],["125","British Airways (BA)"],["618","Singapore Airlines (SQ)"],
@@ -817,7 +817,7 @@ export default function AirPublic() {
                       className="text-left p-2.5 rounded-lg transition-all"
                       style={{ background: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)", border: "2px solid rgba(249,115,22,0.35)" }}>
                       <p className="text-sm font-black font-mono" style={{ color: "var(--t-accent)" }}>{prefix}</p>
-                      <p className="text-[10px] leading-tight mt-0.5" style={{ color: "#ffffff" }}>{name}</p>
+                      <p className="text-[10px] leading-tight mt-0.5" style={{ color: "#4E545C" }}>{name}</p>
                     </button>
                   ))}
                 </div>
