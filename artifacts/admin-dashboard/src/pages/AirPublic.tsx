@@ -523,7 +523,7 @@ export default function AirPublic() {
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-900 animate-pulse inline-block" />
               <span className="text-[10px] font-bold text-emerald-900 tracking-widest uppercase">Live Data</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "var(--t-accent-dim)", border: "1px solid #CC5E13" }}>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-[#06061c] bg-[#286994f2] border-t-[#945123] border-r-[#945123] border-b-[#945123] border-l-[#945123] border-t-[3px] border-r-[3px] border-b-[3px] border-l-[3px] rounded-tl-[3000px] rounded-tr-[3000px] rounded-br-[3000px] rounded-bl-[3000px]" style={{ background: "var(--t-accent-dim)", border: "1px solid #CC5E13" }}>
               <Radio className="h-3 w-3" style={{ color: "#1A4A96" }} />
               <span className="text-[10px] font-bold tracking-widest uppercase hidden sm:inline" style={{ color: "#1A4A96" }}>Registry Online</span>
             </div>
