@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { Database as DbIcon, Table2, RefreshCw, Search, ChevronLeft, ChevronRight, Edit2, Trash2, Save, X, AlertTriangle, Info } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Database as DbIcon, Table2, RefreshCw, Search, ChevronLeft, ChevronRight, Edit2, Trash2, Save, X, AlertTriangle, Info, Download, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
@@ -134,6 +134,11 @@ export default function Database() {
   const [dataLoading, setDataLoading] = useState(false);
   const [editRow, setEditRow] = useState<Record<string, any> | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importMode, setImportMode] = useState<"append" | "replace">("append");
+  const [importing, setImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -193,6 +198,53 @@ export default function Database() {
       await loadTableData(selectedTable, page, search);
       await loadTables();
     } catch (e: any) { toast.error(e.message); }
+  };
+
+  const handleExportTable = async () => {
+    if (!selectedTable) return;
+    try {
+      const res = await fetch(`${BASE}/api/db-admin/tables/${selectedTable}/export`);
+      if (!res.ok) throw new Error("Export failed");
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${selectedTable}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast.success(`Exported ${selectedTable}.csv`);
+    } catch (e: any) { toast.error(e.message); }
+  };
+
+  const handleImport = async () => {
+    if (!selectedTable || !importFile) return;
+    setImporting(true);
+    try {
+      const text = await importFile.text();
+      const res = await fetch(`${BASE}/api/db-admin/tables/${selectedTable}/import`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ csv: text, mode: importMode }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Import failed");
+      }
+      const result = await res.json();
+      toast.success(`Imported ${result.importedCount} rows`);
+      if (result.errors?.length > 0) {
+        toast.error(`${result.errors.length} errors (check console)`);
+        console.error(result.errors);
+      }
+      setShowImportModal(false);
+      setImportFile(null);
+      setImportMode("append");
+      await loadTableData(selectedTable, 1, "");
+      await loadTables();
+    } catch (e: any) { toast.error(e.message); }
+    finally { setImporting(false); }
   };
 
   const displayCols = schema.slice(0, 8);
@@ -333,6 +385,22 @@ export default function Database() {
                   <span className="text-xs font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{total.toLocaleString()} rows</span>
                 </div>
                 <div className="flex items-center gap-2 ml-auto">
+                  <button 
+                    onClick={handleExportTable}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                    title="Download CSV"
+                  >
+                    <Download className="h-3 w-3" />
+                    Export CSV
+                  </button>
+                  <button 
+                    onClick={() => setShowImportModal(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    title="Upload CSV"
+                  >
+                    <Upload className="h-3 w-3" />
+                    Import CSV
+                  </button>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                     <input
@@ -444,6 +512,75 @@ export default function Database() {
           onSave={handleSave}
           onClose={() => setEditRow(null)}
         />
+      )}
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setShowImportModal(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3 p-5 border-b border-slate-100">
+              <div className="h-9 w-9 rounded-xl bg-blue-100 flex items-center justify-center"><Upload className="h-4 w-4 text-blue-600" /></div>
+              <div>
+                <h3 className="font-bold text-slate-800">Import CSV — {TABLE_LABELS[selectedTable!] ?? selectedTable}</h3>
+                <p className="text-xs text-slate-400">Upload CSV file to bulk insert or update records</p>
+              </div>
+              <button onClick={() => setShowImportModal(false)} className="ml-auto p-2 rounded-lg hover:bg-slate-100 text-slate-400"><X className="h-4 w-4" /></button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Import Mode</label>
+                <div className="flex gap-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" checked={importMode === "append"} onChange={() => setImportMode("append")} className="accent-blue-500" />
+                    <span className="text-sm text-slate-600">Append (Upsert on ID)</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" checked={importMode === "replace"} onChange={() => setImportMode("replace")} className="accent-blue-500" />
+                    <span className="text-sm text-slate-600">Replace All</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Select CSV File</label>
+                <div
+                  className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center cursor-pointer hover:bg-slate-50 transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+                  <p className="text-sm font-semibold text-slate-700">{importFile ? importFile.name : "Click to select CSV file"}</p>
+                  <p className="text-xs text-slate-400 mt-1">CSV with headers matching table columns</p>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv"
+                  onChange={e => setImportFile(e.target.files?.[0] ?? null)}
+                  className="hidden"
+                />
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-xs text-blue-800">
+                  <strong>Note:</strong> CSV must have headers matching table column names. In "Append" mode, rows with matching IDs will be updated.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 p-4 border-t border-slate-100 bg-slate-50">
+              <button onClick={() => setShowImportModal(false)} className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-colors">Cancel</button>
+              <button
+                onClick={handleImport}
+                disabled={importing || !importFile}
+                className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all active:scale-95 disabled:opacity-50"
+              >
+                <Upload className="h-3.5 w-3.5" />
+                {importing ? "Importing..." : "Import"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

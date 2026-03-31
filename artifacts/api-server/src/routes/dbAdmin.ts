@@ -215,4 +215,123 @@ router.delete("/db-admin/tables/:table/rows/:id", async (req, res) => {
   }
 });
 
+// GET /api/db-admin/tables/:table/export — export table as CSV
+router.get("/db-admin/tables/:table/export", async (req, res) => {
+  const { table } = req.params;
+  if (!isAllowed(table)) return res.status(403).json({ message: "Table not allowed" });
+
+  try {
+    const result = await pool.query(`SELECT * FROM ${table} ORDER BY id`);
+    const rows = result.rows;
+
+    if (rows.length === 0) {
+      res.setHeader("Content-Type", "text/csv");
+      res.setHeader("Content-Disposition", `attachment; filename="${table}.csv"`);
+      return res.send("");
+    }
+
+    const headers = Object.keys(rows[0]);
+    const csv = [
+      headers.map(h => `"${h}"`).join(","),
+      ...rows.map(row =>
+        headers.map(h => {
+          const val = row[h];
+          if (val === null || val === undefined) return "";
+          const str = String(val).replace(/"/g, '""');
+          return `"${str}"`;
+        }).join(",")
+      )
+    ].join("\n");
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename="${table}.csv"`);
+    return res.send(csv);
+  } catch (err: any) {
+    req.log.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// POST /api/db-admin/tables/:table/import — import CSV data
+router.post("/db-admin/tables/:table/import", async (req, res) => {
+  const { table } = req.params;
+  if (!isAllowed(table)) return res.status(403).json({ message: "Table not allowed" });
+
+  try {
+    const { csv, mode } = req.body as { csv: string; mode: "replace" | "append" };
+    if (!csv) return res.status(400).json({ message: "CSV data required" });
+
+    const lines = csv.trim().split("\n");
+    if (lines.length < 2) return res.status(400).json({ message: "CSV must have headers and at least one data row" });
+
+    const headers = lines[0].split(",").map((h: string) => h.trim().replace(/^"(.*)"$/, "$1"));
+    const rows = lines.slice(1).map(line => {
+      const values: string[] = [];
+      let current = "";
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === "," && !inQuotes) {
+          values.push(current.trim());
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim());
+      return values;
+    });
+
+    // Validate columns
+    const colsResult = await pool.query(`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_schema = 'public' AND table_name = $1
+    `, [table]);
+    const validCols = new Set(colsResult.rows.map((r: any) => r.column_name));
+    const invalidCols = headers.filter(h => !validCols.has(h));
+    if (invalidCols.length > 0) {
+      return res.status(400).json({ message: `Invalid columns: ${invalidCols.join(", ")}` });
+    }
+
+    let importedCount = 0;
+    const errors: string[] = [];
+
+    if (mode === "replace") {
+      await pool.query(`DELETE FROM ${table}`);
+    }
+
+    for (let i = 0; i < rows.length; i++) {
+      try {
+        const values = rows[i];
+        const placeholders = headers.map((_, idx) => `$${idx + 1}`).join(",");
+        const parsedValues = values.map((v, idx) => {
+          if (v === "" || v === "null") return null;
+          const col = headers[idx];
+          if (col === "id") return parseInt(v) || v;
+          return v;
+        });
+        await pool.query(
+          `INSERT INTO ${table} (${headers.join(",")}) VALUES (${placeholders}) ON CONFLICT (id) DO UPDATE SET ${headers.filter(h => h !== "id").map((h, idx) => `${h} = $${headers.indexOf(h) + 1}`).join(", ")}`,
+          parsedValues
+        );
+        importedCount++;
+      } catch (e: any) {
+        errors.push(`Row ${i + 1}: ${e.message}`);
+      }
+    }
+
+    return res.json({ importedCount, errors: errors.slice(0, 10) });
+  } catch (err: any) {
+    req.log.error(err);
+    return res.status(500).json({ message: err.message || "Internal server error" });
+  }
+});
+
 export default router;
