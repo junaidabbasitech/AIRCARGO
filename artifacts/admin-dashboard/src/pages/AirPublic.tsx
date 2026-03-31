@@ -541,7 +541,7 @@ export default function AirPublic() {
           <h1 className="font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ color: "#ffffff", letterSpacing: "-0.02em" }}>
             Precision{" "}<span style={{ color: "#7dd3fc" }}>Intelligence</span>{" "}Search
           </h1>
-          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{ color: "rgba(255,255,255,0.85)" }}>
+          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto mr-[100px] bg-[#8f8989d9] opacity-[1]" style={{ color: "rgba(255,255,255,0.85)" }}>
             Search for Airlines, Airports, and AWB data with complete access to ISC charges, FIRMS codes, and operational details sourced from Aviation Regulatory Authority databases.
           </p>
 
