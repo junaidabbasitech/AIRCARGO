@@ -3,6 +3,7 @@ import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster, toast } from "sonner";
 import { Lock, Plane, Shield } from "lucide-react";
+import { useAuditLogger } from "@/hooks/useAuditLogger";
 import { Layout } from "@/components/Layout";
 import { AviationBg } from "@/components/AviationBg";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
@@ -131,10 +132,12 @@ function AppRouter() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => sessionStorage.getItem(AUTH_KEY) === "1"
   );
+  const { logPageView, logUserAction } = useAuditLogger();
 
   const isProtected = location !== "/air" && !location.startsWith("/air");
 
   const handleLogout = () => {
+    logUserAction("SESSION_LOGOUT", "navigation");
     sessionStorage.removeItem(AUTH_KEY);
     setIsAuthenticated(false);
     navigate("/air");
@@ -176,10 +179,15 @@ function AppRouter() {
     if (location === "/" && !isAuthenticated) navigate("/air");
   }, [location, isAuthenticated]);
 
+  useEffect(() => {
+    logPageView(location);
+  }, [location]);
+
   if (isProtected && !isAuthenticated) {
     return (
       <PasswordGate onSuccess={() => {
         setIsAuthenticated(true);
+        logUserAction("SESSION_LOGIN", "navigation");
         navigate("/cmd");
       }} />
     );
