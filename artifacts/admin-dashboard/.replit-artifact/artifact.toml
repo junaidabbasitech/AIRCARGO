@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "Aviation CBP Admin Dashboard"
+title = "air-cargo"
 version = "1.0.0"
 id = "artifacts/admin-dashboard"
 router = "path"
