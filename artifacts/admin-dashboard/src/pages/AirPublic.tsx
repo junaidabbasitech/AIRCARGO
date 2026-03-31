@@ -489,7 +489,7 @@ export default function AirPublic() {
         </div>
       )}
       {/* ─── HERO ─── */}
-      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden">
+      <div className="relative z-10 px-4 sm:px-8 pb-16 overflow-hidden pt-[4px]">
         {/* Background image */}
         <img
           src={`${BASE}/plane-takeoff.jpg`}
