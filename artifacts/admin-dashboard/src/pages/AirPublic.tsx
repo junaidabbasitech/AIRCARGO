@@ -489,7 +489,7 @@ export default function AirPublic() {
         </div>
       )}
       {/* ─── HERO ─── */}
-      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden bg-[#0094e07a]">
+      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden bg-[#878787]">
         {/* GIF background — limited to heading area only */}
         <img
           src={`${BASE}/plane-takeoff.gif`}

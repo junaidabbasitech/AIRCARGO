@@ -221,7 +221,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
         {/* Top bar */}
         <header className="h-14 flex items-center justify-between px-5 shrink-0 relative"
           style={{
-            background: "var(--t-card)",
+            background: "#878787",
             borderBottom: "1px solid rgba(11,33,71,0.08)",
             boxShadow: "0 1px 12px rgba(11,33,71,0.05)",
           }}>
@@ -282,7 +282,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
         </header>
 
         {/* Page content */}
-        <div className="flex-1 overflow-auto p-5" style={{ background: "var(--t-bg)" }}>
+        <div className="flex-1 overflow-auto p-5" style={{ background: "#878787" }}>
           {children}
         </div>
       </main>
