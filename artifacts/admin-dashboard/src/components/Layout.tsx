@@ -88,7 +88,6 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "var(--t-bg)" }}>
       <AviationBg />
-
       {/* Mobile overlay */}
       {isMobileOpen && (
         <div
@@ -96,7 +95,6 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
           onClick={close}
         />
       )}
-
       {/* ── Sidebar ── */}
       <aside
         className={cn(
@@ -206,7 +204,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
             </button>
           ) : (
             <div className="flex items-center gap-2 px-3.5 py-2.5">
-              <div className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: "#34d399" }} />
+              <div className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: "#FFFFFF" }} />
               <span className="text-[10px] font-mono tracking-widest"
                 style={{ color: "rgba(179,198,245,0.35)" }}>
                 v1.0 · LIVE
@@ -215,15 +213,14 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
           )}
         </div>
       </aside>
-
       {/* ── Main content ── */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top bar */}
-        <header className="h-14 flex items-center justify-between px-5 shrink-0 relative"
+        <header className="h-14 flex items-center justify-between px-5 shrink-0 relative bg-[#87878700]"
           style={{
-            background: "#878787",
-            borderBottom: "1px solid rgba(11,33,71,0.08)",
-            boxShadow: "0 1px 12px rgba(11,33,71,0.05)",
+            background: "#FFFFFF",
+            borderBottom: "1px solid #FFFFFF",
+            boxShadow: "0 1px 12px #FFFFFF",
           }}>
           <div className="flex items-center gap-3">
             <button
@@ -263,7 +260,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
             )}
             {!isAuthenticated && (
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full"
-                style={{ background: "rgba(11,33,71,0.04)", border: "1px solid #F2FAFF)" }}>
+                style={{ background: "rgba(11,33,71,0.04)", border: "1px solid #0BDA30" }}>
                 <Lock className="h-3 w-3" style={{ color: "#F2FAFF" }} />
                 <span className="text-[9px] font-semibold hidden sm:block"
                   style={{ color: "(#F2FAFF)" }}>
@@ -282,7 +279,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
         </header>
 
         {/* Page content */}
-        <div className="flex-1 overflow-auto p-5" style={{ background: "#878787" }}>
+        <div className="flex-1 overflow-auto p-5" style={{ background: "#FFFFFF" }}>
           {children}
         </div>
       </main>
