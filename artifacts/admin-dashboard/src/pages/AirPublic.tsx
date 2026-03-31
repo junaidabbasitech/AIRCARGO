@@ -489,64 +489,63 @@ export default function AirPublic() {
         </div>
       )}
       {/* ─── HERO ─── */}
-      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden bg-[#878787]">
-        {/* GIF background — limited to heading area only */}
+      <div className="relative z-10 px-4 sm:px-8 pt-10 pb-16 overflow-hidden">
+        {/* Background image */}
         <img
           src={`${BASE}/plane-takeoff.jpg`}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none select-none absolute top-0 left-0 w-full h-[380px] object-cover object-top"
+          className="pointer-events-none select-none absolute top-0 left-0 w-full h-[360px] object-cover object-top"
           style={{ zIndex: 0 }}
         />
-        {/* Overlay — same height as the GIF, fades out at bottom */}
+        {/* Gradient overlay for readability */}
         <div
-          className="absolute top-0 left-0 w-full h-[380px] object-contain bg-black"
+          className="absolute top-0 left-0 w-full h-[360px]"
           style={{
             zIndex: 1,
-            height: "380px",
-            background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.28) 80%, rgba(0,0,0,0.55) 100%)",
+            background: "linear-gradient(to bottom, rgba(11,33,71,0.35) 0%, rgba(11,33,71,0.5) 50%, rgba(11,33,71,0.75) 100%)",
           }}
         />
         {/* Hero content sits above all layers */}
         <div className="relative" style={{ zIndex: 3 }}>
         {/* Status + Theme toggle row */}
-        <div className="flex items-left justify-between gap-3 mb-10 max-w-6xl mx-left">
+        <div className="flex items-center justify-between gap-3 mb-10 max-w-6xl mx-auto">
           <button
             onClick={() => setRequestOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 text-red-600 border-t-blue-600 border-r-orange-600 border-b-blue-600 border-l-orange-600"
-            style={{ background: "rgba(5,150,105,0.15)", border: "1px solid blue", color: "#d34934", transition: "all 0.3s ease" }}>
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
+            style={{ background: "linear-gradient(135deg, rgba(5,150,105,0.2), rgba(5,150,105,0.1))", border: "1px solid rgba(5,150,105,0.4)", color: "#34d399" }}>
             <MessageSquarePlus className="h-3.5 w-3.5" />
             <span>Submit Data Request</span>
           </button>
           <div className="flex items-center gap-3 ml-auto">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(16,185,129,0.1)", border: "1px solid #FF00FF" }}>
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-900 animate-pulse inline-block" />
-              <span className="text-[10px] font-bold text-emerald-900 tracking-widest uppercase">Live Data</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.4)" }}>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
+              <span className="text-[10px] font-bold text-emerald-300 tracking-widest uppercase">Live Data</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-[#FFFFFF] bg-[#286994f2] border-t-[#945123] border-r-[#945123] border-b-[#945123] border-l-[#945123] border-t-[3px] border-r-[3px] border-b-[3px] border-l-[3px] rounded-tl-[3000px] rounded-tr-[3000px] rounded-br-[3000px] rounded-bl-[3000px]" style={{ background: "var(--t-accent-dim)", border: "1px solid #CC5E13" }}>
-              <Radio className="h-3 w-3" style={{ color: "#FFFFFF" }} />
-              <span className="text-[10px] font-bold tracking-widest uppercase hidden sm:inline" style={{ color: "#FFFFFF" }}>Registry Online</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.4)" }}>
+              <Radio className="h-3 w-3" style={{ color: "rgba(147,197,253,0.8)" }} />
+              <span className="text-[10px] font-bold tracking-widest uppercase hidden sm:inline" style={{ color: "rgba(147,197,253,0.8)" }}>Registry Online</span>
             </div>
             <ThemeToggle compact />
           </div>
         </div>
 
-        {/* Title */}
-        <div className="max-w-3xl mx-auto text-center rounded-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5" style={{ background: "rgb(147,197,253)", border: "2px solid #FFFFFF" }}>
+        {/* Title section */}
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.4)" }}>
             <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse inline-block" />
-            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#FFFFFF" }}>Technical Registry Query</span>
+            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "rgba(147,197,253,0.9)" }}>Global Aviation Registry</span>
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl font-black mb-3 leading-tight" style={{ color: "#ffffff", letterSpacing: "-0.02em" }}>
-            Precision{" "}<span style={{ color: "#7dd3fc" }}>Intelligence</span>{" "}Search
+          <h1 className="font-display text-4xl sm:text-5xl font-black mb-4 leading-tight" style={{ color: "#ffffff", letterSpacing: "-0.02em" }}>
+            Global{" "}<span style={{ background: "linear-gradient(120deg, rgba(147,197,253,0.95), rgba(34,197,94,0.95))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Cargo Search</span>
           </h1>
-          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto mr-[100px] bg-[#8f8989d9] opacity-[1]" style={{ color: "rgba(255,255,255,0.85)" }}>
-            Search for Airlines, Airports, and AWB data with complete access to ISC charges, FIRMS codes, and operational details sourced from Aviation Regulatory Authority databases.
+          <p className="text-sm sm:text-base mb-8 leading-relaxed max-w-2xl mx-auto" style={{ color: "rgba(255,255,255,0.9)" }}>
+            Search Airlines, Airports, and AWBs with complete access to ISC charges, FIRMS codes, and operational details.
           </p>
 
           {/* Tab switcher */}
-          <div className="inline-flex rounded-2xl p-1.5 gap-1 bg-[#0ea5e914] mb-[28px] mt-[0px] mr-[100px]" style={{ background: "var(--t-accent-dim)", border: "1px solid var(--t-border)" }}>
+          <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-8" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}>
             {([
               { key: "awb" as const, icon: ScanBarcode, label: "AWB Track", activeBg: "linear-gradient(135deg, #059669, #047857)", shadow: "rgba(5,150,105,0.35)" },
               { key: "airlines" as const, icon: Plane, label: "Airlines", activeBg: "linear-gradient(135deg, var(--t-accent), #1d4ed8)", shadow: "var(--t-accent-glow)" },
@@ -555,21 +554,21 @@ export default function AirPublic() {
             ] as const).map(({ key, icon: Icon, label, activeBg, shadow }) => (
               <button key={key}
                 onClick={() => handleTab(key)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-wider transition-all duration-200 text-[#ffffff]"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all duration-200"
                 style={tab === key
-                  ? { background: activeBg, color: "#fff", boxShadow: `0 4px 20px ${shadow}` }
-                  : { color: "#ffffff" }}>
+                  ? { background: activeBg, color: "#fff", boxShadow: `0 4px 15px ${shadow}` }
+                  : { color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.05)" }}>
                 <Icon className="h-3.5 w-3.5" />
                 {label}
                 {key === "airlines" && airlines && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md"
-                    style={{ background: tab === "airlines" ? "rgba(255,255,255,0.2)" : "var(--t-card)", color: tab === "airlines" ? "#ffffff" : "var(--t-text-muted)" }}>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded-md"
+                    style={{ background: tab === "airlines" ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)", color: "#ffffff" }}>
                     {airlines.total}
                   </span>
                 )}
                 {key === "airports" && airports && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md"
-                    style={{ background: tab === "airports" ? "rgba(255,255,255,0.2)" : "var(--t-card)", color: tab === "airports" ? "#fff" : "var(--t-text-muted)" }}>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded-md"
+                    style={{ background: tab === "airports" ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)", color: "#ffffff" }}>
                     {airports.total}
                   </span>
                 )}
@@ -579,23 +578,19 @@ export default function AirPublic() {
 
           {/* Search bar — hidden on AWB and FIRMS tabs */}
           {tab !== "awb" && tab !== "firms" && <div className="relative max-w-2xl mx-auto">
-            {isDark && (
-              <div className="absolute inset-0 rounded-2xl blur-xl opacity-40" style={{ background: "var(--t-accent-dim)" }} />
-            )}
-            <div className="relative flex items-center rounded-2xl overflow-hidden transition-all duration-300 shadow-xl" style={{
-              background: isDark ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.9)",
-              border: `1px solid var(--t-border)`, backdropFilter: "blur(12px)"
+            <div className="relative flex items-center rounded-2xl overflow-hidden transition-all duration-300 shadow-lg" style={{
+              background: "rgba(255,255,255,0.95)",
+              border: `1px solid rgba(255,255,255,0.3)`, backdropFilter: "blur(10px)"
             }}>
-              <Search className="ml-5 h-5 w-5 shrink-0" style={{ color: "var(--t-text-muted)" }} />
+              <Search className="ml-5 h-5 w-5 shrink-0 text-slate-400" />
               <input
                 type="text" value={search}
                 onChange={e => { setSearch(e.target.value); setPage(1); }}
                 placeholder={tab === "airlines" ? "Search airline name, IATA or ICAO code..." : "Search airport name, city, state, IATA..."}
-                className="flex-1 px-4 py-4 bg-transparent focus:outline-none text-sm"
-                style={{ color: "var(--t-text)" }}
+                className="flex-1 px-4 py-3.5 bg-transparent focus:outline-none text-sm text-slate-700"
               />
               {search && (
-                <button onClick={() => setSearch("")} className="mr-3 p-1.5 rounded-lg transition-all" style={{ color: "var(--t-text-muted)" }}>
+                <button onClick={() => setSearch("")} className="mr-3 p-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-600">
                   <X className="h-4 w-4" />
                 </button>
               )}
@@ -603,14 +598,14 @@ export default function AirPublic() {
                 onClick={() => setShowFilters(v => !v)}
                 className="mr-2 flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-200"
                 style={showFilters || hasActiveFilters ? {
-                  background: "var(--t-accent)", color: "#fff", boxShadow: "0 2px 12px var(--t-accent-glow)"
+                  background: "#0b2147", color: "#fff", boxShadow: "0 2px 12px rgba(11,33,71,0.3)"
                 } : {
-                  background: "var(--t-card)", color: "var(--t-text-sub)", border: "1px solid var(--t-border)"
+                  background: "rgba(11,33,71,0.08)", color: "#0b2147", border: "1px solid rgba(11,33,71,0.15)"
                 }}
               >
                 <Filter className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Filters</span>
-                {hasActiveFilters && <span className="h-4 w-4 rounded-full bg-white/30 text-[9px] flex items-center justify-center font-black">!</span>}
+                {hasActiveFilters && <span className="h-4 w-4 rounded-full bg-amber-400 text-[9px] flex items-center justify-center font-black text-slate-700">!</span>}
               </button>
             </div>
           </div>}
@@ -685,37 +680,38 @@ export default function AirPublic() {
         {tab === "awb" && (
           <div>
             {/* Input card */}
-            <div className="rounded-2xl p-6 shadow-xl mb-6" style={{ ...cardStyle, background: isDark ? "rgba(5,150,105,0.06)" : "rgba(5,150,105,0.04)", border: "2px solid #f97316" }}>
+            <div className="rounded-2xl p-6 shadow-lg mb-6" style={{ ...cardStyle, background: isDark ? "rgba(5,150,105,0.08)" : "rgba(5,150,105,0.05)", border: "1px solid rgba(5,150,105,0.3)" }}>
               <div className="flex items-center gap-3 mb-5">
-                <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(5,150,105,0.15)", border: "2px solid #f97316" }}>
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(5,150,105,0.15)", border: "1px solid rgba(5,150,105,0.4)" }}>
                   <ScanBarcode className="h-5 w-5 text-emerald-400" />
                 </div>
                 <div>
                   <h2 className="text-base font-black tracking-wide" style={{ color: "var(--t-text)" }}>AWB Lookup</h2>
-                  <p className="text-xs font-mono text-[#211e1e]" style={{ color: "#ffffff" }}>Air Waybill → Airline + ISC details at destination</p>
+                  <p className="text-xs" style={{ color: "var(--t-text-muted)" }}>Enter Air Waybill and destination airport to find airlines and ISC details</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label className="block text-[15px] font-bold uppercase tracking-widest mb-1.5 text-[#000000]" style={{ color: "#ffffff" }}>AWB Number</label>
+                  <label className="block text-[12px] font-bold uppercase tracking-widest mb-2" style={{ color: "var(--t-text-muted)" }}>AWB Number</label>
                   <input
                     type="text"
                     value={awbInput}
                     onChange={e => setAwbInput(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && handleAwbSearch()}
                     placeholder="e.g. 176-12345678"
-                    className="w-full px-4 py-3 rounded-xl text-sm font-mono focus:outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl text-sm font-mono focus:outline-none transition-all focus:ring-2"
                     style={{
-                      background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
-                      border: "2px solid rgba(249,115,22,0.5)",
-                      color: "var(--t-text)"
+                      background: "var(--t-card)",
+                      border: "1px solid var(--t-border)",
+                      color: "var(--t-text)",
+                      outlineColor: "var(--t-accent)"
                     }}
                   />
-                  <p className="text-[10px] mt-1.5 text-[#fcfcfc]" style={{ color: "#ffffff" }}>3-digit prefix identifies the airline (e.g. 176 = Emirates)</p>
+                  <p className="text-[10px] mt-1.5" style={{ color: "var(--t-text-muted)" }}>3-digit prefix identifies the airline</p>
                 </div>
                 <div>
-                  <label className="block text-[15px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "#ffffff" }}>Destination Airport</label>
+                  <label className="block text-[12px] font-bold uppercase tracking-widest mb-2" style={{ color: "var(--t-text-muted)" }}>Destination Airport</label>
                   <input
                     type="text"
                     value={awbAirport}
@@ -723,14 +719,15 @@ export default function AirPublic() {
                     onKeyDown={e => e.key === "Enter" && handleAwbSearch()}
                     placeholder="IATA code, e.g. JFK"
                     maxLength={4}
-                    className="w-full px-4 py-3 rounded-xl text-sm font-mono uppercase focus:outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl text-sm font-mono uppercase focus:outline-none transition-all focus:ring-2"
                     style={{
-                      background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
-                      border: "2px solid rgba(249,115,22,0.5)",
-                      color: "var(--t-text)"
+                      background: "var(--t-card)",
+                      border: "1px solid var(--t-border)",
+                      color: "var(--t-text)",
+                      outlineColor: "var(--t-accent)"
                     }}
                   />
-                  <p className="text-[10px] mt-1.5 text-[#ffffff] border-t-[#fafafa] border-r-[#fafafa] border-b-[#fafafa] border-l-[#fafafa]" style={{ color: "#ffffff)" }}>Airport IATA code where cargo will arrive</p>
+                  <p className="text-[10px] mt-1.5" style={{ color: "var(--t-text-muted)" }}>Airport IATA code where cargo will arrive</p>
                 </div>
               </div>
 
@@ -810,8 +807,8 @@ export default function AirPublic() {
 
             {/* Quick reference */}
             {!awbResult && !awbError && (
-              <div className="rounded-2xl p-5" style={{ background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)", border: "2px solid #f97316" }}>
-                <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: "#ffffff" }}>Common AWB Prefixes</p>
+              <div className="rounded-2xl p-5 shadow-lg" style={cardStyle}>
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: "var(--t-text-muted)" }}>Common AWB Prefixes</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {[["176","Emirates (EK)"],["157","Qatar Airways (QR)"],["020","Lufthansa (LH)"],["057","Air France (AF)"],
                     ["235","Turkish Airlines (TK)"],["108","Atlas Air (5Y)"],["125","British Airways (BA)"],["618","Singapore Airlines (SQ)"],
@@ -1425,10 +1422,10 @@ export default function AirPublic() {
 
 function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full"
+    <span className="inline-flex items-center gap-2 text-[10px] font-bold px-3 py-1.5 rounded-full backdrop-blur-sm transition-all hover:shadow-md"
       style={{ background: "var(--t-accent-dim)", color: "var(--t-accent)", border: "1px solid var(--t-accent-border)" }}>
       {label}
-      <button onClick={onRemove} className="hover:opacity-70 transition-opacity"><X className="h-2.5 w-2.5" /></button>
+      <button onClick={onRemove} className="hover:opacity-60 transition-opacity ml-0.5"><X className="h-3 w-3" /></button>
     </span>
   );
 }
