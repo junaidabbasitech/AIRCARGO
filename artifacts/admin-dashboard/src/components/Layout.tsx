@@ -189,7 +189,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
           {/* Divider */}
           <div className="mx-2 my-3" style={{ height: 1, background: "rgba(255,255,255,0.06)" }} />
           <p className="px-3.5 pb-1 text-[9px] font-black uppercase tracking-widest"
-            style={{ color: "rgba(179,198,245,0.35)" }}>
+            style={{ color: "#ffffff" }}>
             Command Center
           </p>
 
@@ -207,11 +207,11 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
 
         {/* Sidebar footer */}
         <div className="relative p-3 space-y-1 border-r-[#c41d08] border-r-[3px]"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-          <div className="flex items-center justify-between px-2 py-2 rounded-xl border-t-[#f71111] border-r-[#f71111] border-b-[#f71111] border-l-[#f71111] border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px]"
+          style={{ borderTop: "1px solid #ffffff" }}>
+          <div className="flex items-center justify-between px-2 py-2 rounded-xl border-t-[#e82a0e] border-r-[#e82a0e] border-b-[#e82a0e] border-l-[#e82a0e] border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px]"
             style={{ background: "rgba(255,255,255,0.03)" }}>
             <span className="text-[9px] font-bold uppercase tracking-widest pl-1.5"
-              style={{ color: "rgba(179,198,245,0.35)" }}>Theme</span>
+              style={{ color: "#ffffff" }}>Theme</span>
             <ThemeToggle direction="up" />
           </div>
 
