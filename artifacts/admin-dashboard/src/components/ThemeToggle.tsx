@@ -33,8 +33,8 @@ export function ThemeToggle({
           className="h-8 w-8 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
           style={{
             background: isDark ? "rgba(255,255,255,0.10)" : "rgba(11,33,71,0.07)",
-            color: isDark ? "#fbbf24" : "#475569",
-            border: "1px solid " + (isDark ? "rgba(255,255,255,0.12)" : "rgba(11,33,71,0.12)"),
+            color: isDark ? "#ffffff" : "#ffffff",
+            border: "1px solid " + (isDark ? "#ffffff" : "#ffffff"),
           }}
         >
           {isDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}

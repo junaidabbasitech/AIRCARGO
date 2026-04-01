@@ -513,7 +513,7 @@ export default function AirPublic() {
           <button
             onClick={() => setRequestOpen(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 bg-[#e86d6dbf] border-t-[3px] border-r-[3px] border-b-[3px] border-l-[3px] border-t-[#132c9b] border-r-[#132c9b] border-b-[#132c9b] border-l-[#132c9b] text-[#fafafa]"
-            style={{ background: "linear-gradient(135deg, #9b1313, #a39134d9", border: "1px solid #13139b", color: "#9B1313" }}>
+            style={{ background: "linear-gradient(135deg, #51aeb5, #a39134d9", border: "2px solid #9b1313", color: "#9B1313" }}>
             <MessageSquarePlus className="h-3.5 w-3.5" />
             <span>Submit Data Request</span>
           </button>
