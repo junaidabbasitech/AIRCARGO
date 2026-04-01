@@ -408,10 +408,6 @@ export default function Duplicates() {
                 <Search className="h-4 w-4" />
                 {loading ? "Scanning…" : checked ? "Re-Scan Database" : "Check for Duplicates"}
               </button>
-              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all"
-                style={{ background: "rgba(11,33,71,0.05)", color: "#0b2147", border: "1px solid rgba(11,33,71,0.10)" }}>
-                Scan History
-              </button>
             </div>
           </div>
           <div className="shrink-0 hidden sm:flex items-center justify-center h-24 w-24 rounded-2xl"
