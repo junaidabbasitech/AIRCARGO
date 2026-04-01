@@ -184,7 +184,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
         </nav>
 
         {/* Sidebar footer */}
-        <div className="relative p-3 space-y-1"
+        <div className="relative p-3 space-y-1 border-r-[#c41d08] border-r-[3px]"
           style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
           <div className="flex items-center justify-between px-2 py-2 rounded-xl"
             style={{ background: "rgba(255,255,255,0.03)" }}>
