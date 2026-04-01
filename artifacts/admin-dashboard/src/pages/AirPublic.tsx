@@ -693,13 +693,13 @@ export default function AirPublic() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label className="block text-[12px] font-bold uppercase tracking-widest mb-2" style={{ color: "#000000" }}>AWB Number</label>
+                  <label className="block text-[12px] font-bold uppercase tracking-widest mb-2" style={{ color: "#000000" }}>AWB Prefix </label>
                   <input
                     type="text"
                     value={awbInput}
                     onChange={e => setAwbInput(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && handleAwbSearch()}
-                    placeholder="e.g. 176-12345678"
+                    placeholder="e.g. 176"
                     className="w-full px-4 py-3 rounded-xl text-sm font-mono focus:outline-none transition-all focus:ring-2"
                     style={{
                       background: "var(--t-card)",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import {
@@ -74,8 +74,44 @@ function NavItem({
   );
 }
 
+function BrandLogo({ navigate }: { navigate: (to: string) => void }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onClick={() => navigate("/air")}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="flex items-center gap-3 cursor-pointer group transition-all duration-200 hover:opacity-90"
+      title="Go to AIR Search"
+    >
+      <div
+        className="h-8 w-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200"
+        style={{
+          background: hovered ? "rgba(234,88,12,0.25)" : "rgba(179,198,245,0.15)",
+          border: hovered ? "1px solid rgba(234,88,12,0.30)" : "1px solid rgba(179,198,245,0.10)",
+        }}
+      >
+        <Plane
+          className="h-4 w-4 transition-colors duration-200"
+          style={{ color: hovered ? "#ea580c" : "#b3c6f5" }}
+        />
+      </div>
+      <div>
+        <div className="text-[13px] font-black tracking-[0.15em] leading-none"
+          style={{ color: "#dbe8ff" }}>
+          AVIACBP
+        </div>
+        <div className="text-[8.5px] font-semibold tracking-widest uppercase mt-0.5"
+          style={{ color: "rgba(179,198,245,0.40)" }}>
+          Aviation Registry
+        </div>
+      </div>
+    </button>
+  );
+}
+
 export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
 
   const isAirActive = location === "/air" || location === "/";
@@ -110,7 +146,6 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
             style={{ background: "rgba(179,198,245,0.05)" }} />
           <div className="absolute bottom-20 -right-10 h-36 w-36 rounded-full blur-[60px]"
             style={{ background: "rgba(179,198,245,0.04)" }} />
-          {/* Subtle plane watermark in sidebar */}
           <svg className="absolute bottom-28 right-1 opacity-[0.04]" width="90" height="60"
             viewBox="0 0 120 80" fill="white">
             <ellipse cx="60" cy="40" rx="48" ry="10" />
@@ -126,20 +161,7 @@ export function Layout({ children, isAuthenticated, onLogout }: LayoutProps) {
         {/* Brand */}
         <div className="relative flex h-16 items-center gap-3 px-5 border-r-[#b81f04] border-r-[3px]"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-          <div className="h-8 w-8 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: "rgba(179,198,245,0.15)", border: "1px solid rgba(179,198,245,0.10)" }}>
-            <Plane className="h-4 w-4" style={{ color: "#b3c6f5" }} />
-          </div>
-          <div>
-            <div className="text-[13px] font-black tracking-[0.15em] leading-none"
-              style={{ color: "#dbe8ff" }}>
-              AVIACBP
-            </div>
-            <div className="text-[8.5px] font-semibold tracking-widest uppercase mt-0.5"
-              style={{ color: "rgba(179,198,245,0.40)" }}>
-              Aviation Registry
-            </div>
-          </div>
+          <BrandLogo navigate={navigate} />
           <button
             className="md:hidden ml-auto p-1.5 rounded-lg hover:bg-white/10 transition-all"
             style={{ color: "rgba(203,213,225,0.55)" }}

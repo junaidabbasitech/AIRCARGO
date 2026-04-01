@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent, Button, Badge } from "@/components/ui";
-import { GitMerge, Trash2, Search, AlertTriangle, CheckCircle2, Plane, Building2, Network, ChevronDown, ChevronRight, Info } from "lucide-react";
+import { GitMerge, Trash2, Search, AlertTriangle, CheckCircle2, Plane, Building2, Network, ChevronDown, ChevronRight, Info, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
@@ -357,6 +357,26 @@ export default function Duplicates() {
     catch (e: any) { toast.error(e.message); } finally { setActionLoading(false); }
   };
 
+  const handleBulkDeleteAll = async () => {
+    if (!data) return;
+    const airlineIds = data.airlines.groups.flatMap(g => g.records.slice(1).map(r => r.id));
+    const airportIds = data.airports.groups.flatMap(g => g.records.slice(1).map(r => r.id));
+    const opsIds = data.operations.groups.flatMap(g => g.records.slice(1).map(r => r.id));
+    const total = airlineIds.length + airportIds.length + opsIds.length;
+    if (total === 0) { toast.info("No duplicate extras to delete"); return; }
+    if (!confirm(`Delete ALL ${total} duplicate records across ${data.airlines.totalGroups + data.airports.totalGroups + data.operations.totalGroups} groups?\n\nFirst record of each group will be kept.\n\nThis action cannot be undone.`)) return;
+    setActionLoading(true);
+    try {
+      const results: string[] = [];
+      if (airlineIds.length > 0) { const r = await apiFetch("/api/duplicates/airlines/delete", { method: "POST", body: JSON.stringify({ ids: airlineIds }) }); results.push(`${r.deleted} airlines`); }
+      if (airportIds.length > 0) { const r = await apiFetch("/api/duplicates/airports/delete", { method: "POST", body: JSON.stringify({ ids: airportIds }) }); results.push(`${r.deleted} airports`); }
+      if (opsIds.length > 0) { const r = await apiFetch("/api/duplicates/operations/delete", { method: "POST", body: JSON.stringify({ ids: opsIds }) }); results.push(`${r.deleted} operations`); }
+      toast.success(`Deleted: ${results.join(", ")}`);
+      await apiFetch("/api/audit-logs", { method: "POST", body: JSON.stringify({ level: "warn", entityType: "duplicate", action: "BULK_DELETE_ALL_EXTRAS", changes: { airlineIds, airportIds, opsIds, total }, performedBy: "admin" }) }).catch(() => {});
+      await checkDuplicates();
+    } catch (e: any) { toast.error(e.message); } finally { setActionLoading(false); }
+  };
+
   const tabs = [
     { key: "airlines" as const, label: "Airlines", icon: Plane, data: data?.airlines },
     { key: "airports" as const, label: "Airports", icon: Building2, data: data?.airports },
@@ -439,6 +459,31 @@ export default function Duplicates() {
       {/* Results */}
       {checked && data && (
         <>
+          {/* Bulk Actions Bar */}
+          {(data.airlines.totalGroups + data.airports.totalGroups + data.operations.totalGroups) > 0 && (
+            <div className="flex items-center gap-4 px-5 py-4 rounded-2xl"
+              style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.18)" }}>
+              <div className="h-9 w-9 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+                <Zap className="h-4.5 w-4.5 text-red-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-red-700">
+                  {data.airlines.totalDuplicates + data.airports.totalDuplicates + data.operations.totalDuplicates} duplicate records removable across all categories
+                </p>
+                <p className="text-xs text-red-500 mt-0.5">Bulk action keeps the first record of each group and permanently deletes all extras.</p>
+              </div>
+              <button
+                onClick={handleBulkDeleteAll}
+                disabled={actionLoading}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-bold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60"
+                style={{ background: "#dc2626", boxShadow: "0 4px 12px rgba(220,38,38,0.25)" }}
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete All Extras
+              </button>
+            </div>
+          )}
+
           {/* Tab summary */}
           <div className="grid grid-cols-3 gap-4">
             {tabs.map(({ key, label, icon: Icon, data: d }) => (

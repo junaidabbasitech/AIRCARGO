@@ -20,7 +20,7 @@ const formSchema = z.object({
   source: z.string().optional().nullable(),
 });
 
-const PAGE_SIZES = [18, 36, 54, 108];
+const PAGE_SIZES = [18, 36, 54, 108, 150];
 
 function statusBadge(status: string, flagged: boolean) {
   if (flagged) return { label: "Action Required", bg: "rgba(239,68,68,0.12)", color: "#dc2626", border: "rgba(239,68,68,0.25)" };

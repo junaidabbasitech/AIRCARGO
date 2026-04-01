@@ -19,7 +19,7 @@ const formSchema = z.object({
   services: z.string().optional().nullable(),
 });
 
-const PAGE_SIZES = [20, 40, 50, 100];
+const PAGE_SIZES = [20, 40, 50, 100, 150];
 
 export default function GroundHandlers() {
   const [search, setSearch] = useState("");

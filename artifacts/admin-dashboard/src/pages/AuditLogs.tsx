@@ -10,7 +10,7 @@ import {
 import { useTheme } from "@/context/ThemeContext";
 
 const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
-const PAGE_SIZES = [20, 50, 100];
+const PAGE_SIZES = [20, 50, 100, 150];
 
 const ENTITY_TYPES = [
   { value: "", label: "All Entities" },

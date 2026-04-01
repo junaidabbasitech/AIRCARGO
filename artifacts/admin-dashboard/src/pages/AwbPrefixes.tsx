@@ -48,7 +48,7 @@ async function updatePrefix(id: number, awbPrefix: string | null) {
   return data;
 }
 
-const PAGE_SIZES = [20, 50, 100];
+const PAGE_SIZES = [20, 50, 100, 150];
 
 export default function AwbPrefixes() {
   const { isDark } = useTheme();

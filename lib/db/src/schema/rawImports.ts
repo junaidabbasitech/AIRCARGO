@@ -9,6 +9,8 @@ export const rawImportsTable = pgTable("raw_imports", {
   rawData: jsonb("raw_data").notNull(),
   importedAt: timestamp("imported_at", { withTimezone: true }).notNull().defaultNow(),
   flagged: boolean("flagged").notNull().default(false),
+  status: text("status").notNull().default("pending"),
+  processedAt: timestamp("processed_at", { withTimezone: true }),
 });
 
 export const insertRawImportSchema = createInsertSchema(rawImportsTable).omit({ id: true, importedAt: true });

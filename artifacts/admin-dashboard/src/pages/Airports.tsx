@@ -20,7 +20,7 @@ const formSchema = z.object({
   source: z.string().optional().nullable(),
 });
 
-const PAGE_SIZES = [16, 32, 48, 96];
+const PAGE_SIZES = [16, 32, 48, 96, 150];
 
 function statusInfo(status: string, flagged: boolean) {
   if (flagged) return { label: "Restricted", dot: "#dc2626", border: "#dc2626" };

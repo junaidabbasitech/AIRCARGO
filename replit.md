@@ -1,5 +1,13 @@
 # Workspace
 
+## Recent Changes (Session)
+- **Sync approval flow**: Sync now stages data in `raw_imports` as `pending` (not inserted directly into main tables). Admin must approve/reject each record. Auto-skips records already in the DB. `status` and `processedAt` columns added to `raw_imports` schema.
+- **SyncData page**: Rebuilt with status filter (pending/approved/rejected/skipped), per-row approve/reject buttons, bulk approve/reject with checkbox selection, and live pending-count banner.
+- **Duplicates page**: Added "Delete All Extras" bulk action bar that appears when duplicates are found — keeps first record of each group, deletes all others across all entity types, with audit log.
+- **Layout**: AVIACBP plane icon now turns orange-600 on hover; clicking the brand logo navigates to `/air`.
+- **PAGE_SIZES**: Added 150 to all list pages (Airlines, Airports, AwbPrefixes, GroundHandlers, AuditLogs).
+- **Sync route**: Added `POST /api/sync/raw-data/:id/approve`, `POST /api/sync/raw-data/:id/reject`, `POST /api/sync/raw-data/bulk-approve`, `POST /api/sync/raw-data/bulk-reject` endpoints.
+
 ## Overview
 
 pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
