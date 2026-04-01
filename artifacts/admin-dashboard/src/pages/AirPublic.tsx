@@ -545,7 +545,7 @@ export default function AirPublic() {
           </p>
 
           {/* Tab switcher */}
-          <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-8" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}>
+          <div className="inline-flex rounded-2xl p-1.5 gap-1 mb-8 border-t-[#de0707e0] border-r-[#de0707e0] border-b-[#de0707e0] border-l-[#de0707e0] border-t-[3px] border-r-[3px] border-b-[3px] border-l-[3px]" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}>
             {([
               { key: "awb" as const, icon: ScanBarcode, label: "AWB Track", activeBg: "linear-gradient(135deg, #059669, #FFF700)", shadow: "rgba(5,150,105,0.35)" },
               { key: "airlines" as const, icon: Plane, label: "Airlines", activeBg: "linear-gradient(135deg, #0000CD, #00965F)", shadow: "var(--t-accent-glow)" },
