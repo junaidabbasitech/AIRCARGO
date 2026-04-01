@@ -680,7 +680,7 @@ export default function AirPublic() {
         {tab === "awb" && (
           <div>
             {/* Input card */}
-            <div className="rounded-2xl p-6 shadow-lg mb-6" style={{ ...cardStyle, background: isDark ? "rgba(5,150,105,0.08)" : "rgba(5,150,105,0.05)", border: "1px solid rgba(5,150,105,0.3)" }}>
+            <div className="rounded-2xl p-6 shadow-lg mb-6 border-t-[#050a96d4] border-r-[#050a96d4] border-b-[#050a96d4] border-l-[#050a96d4] border-t-[3px] border-r-[3px] border-b-[3px] border-l-[3px]" style={{ ...cardStyle, background: isDark ? "rgba(5,150,105,0.08)" : "rgba(5,150,105,0.05)", border: "1px solid rgba(5,150,105,0.3)" }}>
               <div className="flex items-center gap-3 mb-5">
                 <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(5,150,105,0.15)", border: "1px solid rgba(5,150,105,0.4)" }}>
                   <ScanBarcode className="h-5 w-5 text-emerald-400" />
