@@ -1,0 +1,1 @@
+{"version":3,"file":"syncStatusResponse.d.ts","sourceRoot":"","sources":["../../../src/generated/types/syncStatusResponse.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAEH,MAAM,WAAW,kBAAkB;IACjC,UAAU,EAAE,IAAI,GAAG,IAAI,CAAC;IACxB,eAAe,EAAE,MAAM,EAAE,CAAC;IAC1B,aAAa,EAAE,MAAM,CAAC;IACtB,aAAa,EAAE,MAAM,CAAC;IACtB,aAAa,EAAE,MAAM,CAAC;CACvB"}

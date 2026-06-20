@@ -1,0 +1,1 @@
+{"version":3,"file":"rawDataResponse.d.ts","sourceRoot":"","sources":["../../../src/generated/types/rawDataResponse.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,gBAAgB,CAAC;AAEnD,MAAM,WAAW,eAAe;IAC9B,IAAI,EAAE,YAAY,EAAE,CAAC;IACrB,KAAK,EAAE,MAAM,CAAC;IACd,IAAI,EAAE,MAAM,CAAC;IACb,KAAK,EAAE,MAAM,CAAC;CACf"}

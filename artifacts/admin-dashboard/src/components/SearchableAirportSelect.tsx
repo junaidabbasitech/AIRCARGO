@@ -27,7 +27,7 @@ export function SearchableAirportSelect({ value, onChange, placeholder = "Search
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // When value is set externally (edit mode), resolve the airport name
   useEffect(() => {

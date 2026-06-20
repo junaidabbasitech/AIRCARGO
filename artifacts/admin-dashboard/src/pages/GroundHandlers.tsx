@@ -63,7 +63,14 @@ export default function GroundHandlers() {
   const openModal = (handler?: GroundHandler) => {
     if (handler) {
       setEditingHandler(handler);
-      reset({ name: handler.name, airportId: handler.airportId, contactName: handler.contactName, contactPhone: handler.contactPhone, contactEmail: handler.contactEmail, services: handler.services });
+      reset({
+        name: handler.name,
+        airportId: handler.airportId,
+        contactName: handler.contactName ?? undefined,
+        contactPhone: handler.contactPhone ?? undefined,
+        contactEmail: handler.contactEmail ?? undefined,
+        services: handler.services ?? undefined,
+      });
     } else {
       setEditingHandler(null);
       reset({ name: "", airportId: null, contactName: "", contactPhone: "", contactEmail: "", services: "" });
@@ -80,7 +87,7 @@ export default function GroundHandlers() {
   };
 
   const handleBulkSubmit = () => {
-    if(!csvData.trim()) return toast.error("CSV data cannot be empty");
+    if(!csvData.trim()) { toast.error("CSV data cannot be empty"); return; }
     bulkMut.mutate({ data: { csvData } });
   };
 

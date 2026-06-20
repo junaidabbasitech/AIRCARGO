@@ -134,7 +134,7 @@ export default function SyncData() {
   });
 
   const handleSync = () => {
-    if (sources.length === 0) return toast.error("Select at least one source");
+    if (sources.length === 0) { toast.error("Select at least one source"); return; }
     syncMut.mutate({ data: { sources: sources as SyncRequestSourcesItem[] } });
   };
 

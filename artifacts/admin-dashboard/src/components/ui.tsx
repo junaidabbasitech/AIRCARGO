@@ -217,24 +217,25 @@ export const Modal = ({ isOpen, onClose, title, children }: {
   );
 };
 
-export const Table = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+export const Table = ({ children, className, ...props }: React.TableHTMLAttributes<HTMLTableElement> & { children: React.ReactNode; className?: string }) => (
   <div className="w-full overflow-auto rounded-xl" style={{ border: "1px solid rgba(197,198,207,0.30)" }}>
-    <table className={cn("w-full caption-bottom text-sm", className)}>{children}</table>
+    <table {...props} className={cn("w-full caption-bottom text-sm", className)}>{children}</table>
   </div>
 );
 
-export const TableHeader = ({ children }: { children: React.ReactNode }) => (
-  <thead style={{ background: "rgba(11,33,71,0.025)", borderBottom: "1px solid rgba(197,198,207,0.25)" }}>{children}</thead>
+export const TableHeader = ({ children, ...props }: React.HTMLAttributes<HTMLTableSectionElement> & { children: React.ReactNode }) => (
+  <thead {...props} style={{ background: "rgba(11,33,71,0.025)", borderBottom: "1px solid rgba(197,198,207,0.25)" }}>{children}</thead>
 );
 
-export const TableBody = ({ children }: { children: React.ReactNode }) => (
-  <tbody className="[&_tr:last-child]:border-0">{children}</tbody>
+export const TableBody = ({ children, ...props }: React.HTMLAttributes<HTMLTableSectionElement> & { children: React.ReactNode }) => (
+  <tbody {...props} className={cn("[&_tr:last-child]:border-0", (props as any).className)}>{children}</tbody>
 );
 
-export const TableRow = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+export const TableRow = ({ children, className, ...props }: React.HTMLAttributes<HTMLTableRowElement> & { children: React.ReactNode; className?: string }) => (
   <tr
+    {...props}
     className={cn("group border-b transition-colors cursor-default", className)}
-    style={{ borderColor: "rgba(197,198,207,0.20)" }}
+    style={{ borderColor: "rgba(197,198,207,0.20)", ...(props as any).style }}
     onMouseEnter={e => (e.currentTarget.style.background = "rgba(59,95,173,0.03)")}
     onMouseLeave={e => (e.currentTarget.style.background = "")}
   >
@@ -242,15 +243,15 @@ export const TableRow = ({ children, className }: { children: React.ReactNode; c
   </tr>
 );
 
-export const TableHead = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <th className={cn("h-11 px-4 text-left align-middle text-[9px] font-black uppercase tracking-widest", className)}
-    style={{ color: "rgba(11,33,71,0.40)" }}>
+export const TableHead = ({ children, className, ...props }: React.ThHTMLAttributes<HTMLTableHeaderCellElement> & { children: React.ReactNode; className?: string }) => (
+  <th {...props} className={cn("h-11 px-4 text-left align-middle text-[9px] font-black uppercase tracking-widest", className)}
+    style={{ color: "rgba(11,33,71,0.40)", ...(props as any).style }}>
     {children}
   </th>
 );
 
-export const TableCell = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <td className={cn("px-4 py-3 align-middle text-sm", className)} style={{ color: "#0b2147" }}>
+export const TableCell = ({ children, className, ...props }: React.TdHTMLAttributes<HTMLTableDataCellElement> & { children: React.ReactNode; className?: string }) => (
+  <td {...props} className={cn("px-4 py-3 align-middle text-sm", className)} style={{ color: "#0b2147", ...(props as any).style }}>
     {children}
   </td>
 );

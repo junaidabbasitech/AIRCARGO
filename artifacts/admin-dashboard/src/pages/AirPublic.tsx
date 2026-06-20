@@ -1052,7 +1052,7 @@ export default function AirPublic() {
                     placeholder="e.g. ABCD, XY12"
                     maxLength={10}
                     className="w-full px-4 py-3 rounded-xl font-mono text-sm focus:outline-none focus:ring-2"
-                    style={{ ...inputStyle, focusRingColor: "#7c3aed" }}
+                    style={{ ...inputStyle }}
                   />
                 </div>
                 <div className="flex items-end">
