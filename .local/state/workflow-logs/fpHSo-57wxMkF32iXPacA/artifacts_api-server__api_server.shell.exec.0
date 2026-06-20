@@ -1,0 +1,10 @@
+
+> @workspace/api-server@0.0.0 dev /home/runner/workspace/artifacts/api-server
+> NODE_ENV=development tsx ./src/index.ts
+
+[23:26:37.031] [32mINFO[39m (231): [36mServer listening[39m
+    [35mport[39m: 8080
+[23:26:37.031] [32mINFO[39m (231): [36mRunning per-table seed in FK dependency order[39m
+    [35mscriptsDir[39m: "/home/runner/workspace/scripts"
+[23:26:37.103] [32mINFO[39m (231): [36mTable seeded/patched[39m
+    [35mtable[39m: "airlines"

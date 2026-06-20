@@ -1,0 +1,239 @@
+
+> @workspace/api-server@0.0.0 dev /home/runner/workspace/artifacts/api-server
+> NODE_ENV=development tsx ./src/index.ts
+
+[17:16:30.668] [32mINFO[39m (234): [36mServer listening[39m
+    [35mport[39m: 8080
+[17:16:30.669] [32mINFO[39m (234): [36mRunning per-table seed in FK dependency order[39m
+    [35mscriptsDir[39m: "/home/runner/workspace/scripts"
+[17:16:30.728] [32mINFO[39m (234): [36mTable seeded/patched[39m
+    [35mtable[39m: "airlines"
+[17:16:30.896] [32mINFO[39m (234): [36mTable seeded/patched[39m
+    [35mtable[39m: "airports"
+[17:16:30.903] [32mINFO[39m (234): [36mTable seeded/patched[39m
+    [35mtable[39m: "ground_handlers"
+[17:16:30.912] [32mINFO[39m (234): [36mTable seeded/patched[39m
+    [35mtable[39m: "airline_operations"
+[17:16:30.920] [32mINFO[39m (234): [36mTable seeded/patched[39m
+    [35mtable[39m: "airlines_patch"
+[17:16:30.939] [32mINFO[39m (234): [36mTable seeded/patched[39m
+    [35mtable[39m: "airline_operations_patch"
+[17:16:30.966] [32mINFO[39m (234): [36mTable seeded/patched[39m
+    [35mtable[39m: "isc_charges_patch"
+[17:16:30.979] [32mINFO[39m (234): [36mTable seeded/patched[39m
+    [35mtable[39m: "excel_import_patch"
+[17:16:30.982] [32mINFO[39m (234): [36mSeed complete[39m
+    [35mairlines[39m: "131"
+    [35mairports[39m: "731"
+    [35mops[39m: "361"
+    [35mhandlers[39m: "13"
+[17:16:39.298] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 1,
+      "method": "POST",
+      "url": "/api/audit-logs"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 27
+[17:16:39.367] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 2,
+      "method": "POST",
+      "url": "/api/audit-logs"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 4
+[17:16:39.556] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 3,
+      "method": "GET",
+      "url": "/api/airports"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 16
+[17:16:39.569] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 4,
+      "method": "GET",
+      "url": "/api/airlines"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 11
+[17:17:31.110] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 5,
+      "method": "GET",
+      "url": "/api/awb-search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 15
+[17:23:10.884] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 6,
+      "method": "POST",
+      "url": "/api/audit-logs"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 42
+[17:23:12.708] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 7,
+      "method": "POST",
+      "url": "/api/audit-logs"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 6
+[17:23:12.795] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 8,
+      "method": "POST",
+      "url": "/api/audit-logs"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 5
+[17:23:12.870] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 9,
+      "method": "GET",
+      "url": "/api/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 14
+[17:23:15.090] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 10,
+      "method": "GET",
+      "url": "/api/ground-handlers"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 6
+[17:23:15.092] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 11,
+      "method": "POST",
+      "url": "/api/audit-logs"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 5
+[17:23:16.901] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 12,
+      "method": "GET",
+      "url": "/api/ground-handlers"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3
+[17:23:19.484] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 13,
+      "method": "GET",
+      "url": "/api/ground-handlers"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3
+[17:23:20.039] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 14,
+      "method": "GET",
+      "url": "/api/ground-handlers"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3
+[17:23:21.325] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 15,
+      "method": "GET",
+      "url": "/api/ground-handlers"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 3
+[17:23:25.774] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 16,
+      "method": "POST",
+      "url": "/api/audit-logs"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 8
+[17:23:25.785] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 17,
+      "method": "GET",
+      "url": "/api/stats"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 14
+[17:23:26.246] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 19,
+      "method": "GET",
+      "url": "/api/airlines"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 3
+[17:23:26.247] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 18,
+      "method": "POST",
+      "url": "/api/audit-logs"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 5
+[17:23:26.254] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 20,
+      "method": "GET",
+      "url": "/api/airports"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 2
+[17:23:33.336] [32mINFO[39m (234): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 21,
+      "method": "GET",
+      "url": "/api/awb-search"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 5
